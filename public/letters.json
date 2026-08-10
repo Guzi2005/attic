@@ -1,0 +1,107 @@
+{
+  "artboard": {
+    "w": 2880,
+    "h": 1920
+  },
+  "letters": [
+    {
+      "id": "letter-0",
+      "file": "parts/letters/00-Y.png",
+      "char": "Y",
+      "x": 921,
+      "y": 41,
+      "w": 119,
+      "h": 217
+    },
+    {
+      "id": "letter-1",
+      "file": "parts/letters/01-O.png",
+      "char": "O",
+      "x": 1030,
+      "y": 44,
+      "w": 109,
+      "h": 221
+    },
+    {
+      "id": "letter-2",
+      "file": "parts/letters/02-U.png",
+      "char": "U",
+      "x": 1147,
+      "y": 56,
+      "w": 125,
+      "h": 212
+    },
+    {
+      "id": "letter-3",
+      "file": "parts/letters/03-apos.png",
+      "char": "apos",
+      "x": 1293,
+      "y": 66,
+      "w": 53,
+      "h": 60
+    },
+    {
+      "id": "letter-4",
+      "file": "parts/letters/04-R.png",
+      "char": "R",
+      "x": 1357,
+      "y": 50,
+      "w": 107,
+      "h": 219
+    },
+    {
+      "id": "letter-5",
+      "file": "parts/letters/05-E.png",
+      "char": "E",
+      "x": 1476,
+      "y": 55,
+      "w": 114,
+      "h": 208
+    },
+    {
+      "id": "letter-6",
+      "file": "parts/letters/06-N.png",
+      "char": "N",
+      "x": 1617,
+      "y": 52,
+      "w": 114,
+      "h": 222
+    },
+    {
+      "id": "letter-7",
+      "file": "parts/letters/07-O2.png",
+      "char": "O2",
+      "x": 1730,
+      "y": 46,
+      "w": 115,
+      "h": 228
+    },
+    {
+      "id": "letter-8",
+      "file": "parts/letters/08-W.png",
+      "char": "W",
+      "x": 1843,
+      "y": 37,
+      "w": 105,
+      "h": 234
+    },
+    {
+      "id": "letter-9",
+      "file": "parts/letters/09-A.png",
+      "char": "A",
+      "x": 924,
+      "y": 271,
+      "w": 113,
+      "h": 212
+    },
+    {
+      "id": "letter-10",
+      "file": "parts/letters/10-T.png",
+      "char": "T",
+      "x": 1032,
+      "y": 273,
+      "w": 124,
+      "h": 210
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "artboard": {
+    "w": 2880,
+    "h": 1920
+  },
+  "marks": [
+    {
+      "id": "check-1",
+      "file": "parts/marks/check-1.png",
+      "x": 1255,
+      "y": 1568,
+      "w": 92,
+      "h": 63,
+      "kind": "check"
+    },
+    {
+      "id": "check-2",
+      "file": "parts/marks/check-2.png",
+      "x": 1258,
+      "y": 1655,
+      "w": 82,
+      "h": 59,
+      "kind": "check"
+    },
+    {
+      "id": "cross",
+      "file": "parts/marks/cross.png",
+      "x": 1264,
+      "y": 1743,
+      "w": 75,
+      "h": 76,
+      "kind": "cross"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2880 1920" fill="none" overflow="visible">
+  <path id="top-outer" class="frame-rail" data-rail="top-outer" d="M 0 7 L 480 7 L 549 0 L 1206 0 L 1461 7 L 1593 7 L 1704 0 L 2433 0 L 2475 5 L 2598 0 L 2879 0" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+  <path id="top-inner" class="frame-rail" data-rail="top-inner" d="M 0 64 L 480 64 L 549 57 L 633 55 L 1206 57 L 1461 64 L 1593 64 L 1704 57 L 1812 57 L 1932 50 L 1971 56 L 2193 50 L 2271 57 L 2433 57 L 2475 62 L 2598 57 L 2879 57" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+  <path id="bottom-inner" class="frame-rail" data-rail="bottom-inner" d="M 0 1862 L 231 1860 L 318 1856 L 720 1856 L 1011 1851 L 1248 1856 L 1323 1863 L 1557 1863 L 1740 1856 L 2879 1856" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+  <path id="bottom-outer" class="frame-rail" data-rail="bottom-outer" d="M 0 1919 L 720 1916 L 1011 1911 L 1323 1919 L 1740 1916 L 2879 1916" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+  <path id="left-outer" class="frame-rail" data-rail="left-outer" d="M 2 0 L 2 138 L 9 387 L 0 468 L 2 1919" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+  <path id="right-outer" class="frame-rail" data-rail="right-outer" d="M 2877 0 L 2869 345 L 2869 393 L 2876 426 L 2878 468 L 2877 1919" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+</svg>

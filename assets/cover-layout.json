@@ -1,0 +1,215 @@
+{
+  "meta": {
+    "artboard": {
+      "w": 2880,
+      "h": 1920
+    },
+    "background": "#dee1f6",
+    "atlas": {
+      "image": "cover-atlas.png",
+      "size": {
+        "w": 1036,
+        "h": 3928
+      }
+    },
+    "dpi": 300
+  },
+  "frames": {
+    "text-left-fluorescent": {
+      "x": 4,
+      "y": 4,
+      "w": 771,
+      "h": 1057
+    },
+    "text-right-florescent": {
+      "x": 4,
+      "y": 1065,
+      "w": 617,
+      "h": 1056
+    },
+    "text-youre-now-at": {
+      "x": 4,
+      "y": 2125,
+      "w": 1027,
+      "h": 446
+    },
+    "pin-green": {
+      "x": 4,
+      "y": 2575,
+      "w": 254,
+      "h": 364
+    },
+    "pin-magenta": {
+      "x": 262,
+      "y": 2575,
+      "w": 240,
+      "h": 331
+    },
+    "underline-green": {
+      "x": 4,
+      "y": 2943,
+      "w": 756,
+      "h": 316
+    },
+    "underline-magenta": {
+      "x": 4,
+      "y": 3263,
+      "w": 761,
+      "h": 293
+    },
+    "checklist-text": {
+      "x": 4,
+      "y": 3560,
+      "w": 659,
+      "h": 265
+    },
+    "checklist-marks": {
+      "x": 667,
+      "y": 3560,
+      "w": 92,
+      "h": 251
+    },
+    "arrow-right": {
+      "x": 763,
+      "y": 3560,
+      "w": 114,
+      "h": 237
+    },
+    "arrow-left": {
+      "x": 881,
+      "y": 3560,
+      "w": 107,
+      "h": 237
+    },
+    "text-reason": {
+      "x": 4,
+      "y": 3829,
+      "w": 805,
+      "h": 93
+    }
+  },
+  "placements": {
+    "text-youre-now-at": {
+      "x": 921,
+      "y": 37,
+      "w": 1027,
+      "h": 446,
+      "frame": "text-youre-now-at",
+      "source": "atlas"
+    },
+    "checklist-text": {
+      "x": 1269,
+      "y": 1559,
+      "w": 659,
+      "h": 265,
+      "frame": "checklist-text",
+      "source": "atlas"
+    },
+    "checklist-marks": {
+      "x": 1255,
+      "y": 1568,
+      "w": 92,
+      "h": 251,
+      "frame": "checklist-marks",
+      "source": "atlas"
+    },
+    "text-reason": {
+      "x": 981,
+      "y": 1465,
+      "w": 805,
+      "h": 93,
+      "frame": "text-reason",
+      "source": "atlas"
+    },
+    "center-illustration": {
+      "x": 941,
+      "y": 499,
+      "w": 994,
+      "h": 980,
+      "file": "center-illustration.png",
+      "source": "file"
+    },
+    "arrow-right": {
+      "x": 2555,
+      "y": 1575,
+      "w": 114,
+      "h": 237,
+      "frame": "arrow-right",
+      "source": "atlas"
+    },
+    "text-right-florescent": {
+      "x": 2034,
+      "y": 490,
+      "w": 617,
+      "h": 1056,
+      "frame": "text-right-florescent",
+      "source": "atlas"
+    },
+    "arrow-left": {
+      "x": 156,
+      "y": 1590,
+      "w": 107,
+      "h": 237,
+      "frame": "arrow-left",
+      "source": "atlas"
+    },
+    "text-left-fluorescent": {
+      "x": 138,
+      "y": 503,
+      "w": 771,
+      "h": 1057,
+      "frame": "text-left-fluorescent",
+      "source": "atlas"
+    },
+    "pin-magenta": {
+      "x": 1965,
+      "y": 106,
+      "w": 240,
+      "h": 331,
+      "frame": "pin-magenta",
+      "source": "atlas"
+    },
+    "underline-magenta": {
+      "x": 2006,
+      "y": 724,
+      "w": 761,
+      "h": 293,
+      "frame": "underline-magenta",
+      "source": "atlas"
+    },
+    "underline-green": {
+      "x": 95,
+      "y": 724,
+      "w": 756,
+      "h": 316,
+      "frame": "underline-green",
+      "source": "atlas"
+    },
+    "pin-green": {
+      "x": 614,
+      "y": 108,
+      "w": 254,
+      "h": 364,
+      "frame": "pin-green",
+      "source": "atlas"
+    },
+    "outline": {
+      "x": 0,
+      "y": 0,
+      "w": 2880,
+      "h": 1920,
+      "file": "outline.png",
+      "source": "file"
+    }
+  },
+  "doors": {
+    "left": {
+      "pathId": "door-left",
+      "href": "https://attic.fluorescentmice.fun"
+    },
+    "right": {
+      "pathId": "door-right",
+      "href": "https://attic.fluorescentmice.fun"
+    }
+  }
+}

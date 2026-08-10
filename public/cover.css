@@ -1,0 +1,577 @@
+:root {
+  --bg: #dee1f6;
+  --art-w: 2880;
+  --art-h: 1920;
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-land: cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+}
+
+body {
+  overflow: hidden;
+}
+
+.stage {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}
+
+.artboard {
+  position: relative;
+  width: min(100vw, calc(100vh * (var(--art-w) / var(--art-h))));
+  height: min(100vh, calc(100vw * (var(--art-h) / var(--art-w))));
+  background: var(--bg);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.z-base { z-index: 1; }
+.z-rails { z-index: 3; }
+.z-under-glyphs { z-index: 4; } /* underlines sit under letterforms */
+.z-content { z-index: 5; }
+.z-shade { z-index: 12; }
+.z-accent { z-index: 18; }
+.z-underline { z-index: 19; }
+.z-texthit { z-index: 22; }
+.z-hit { z-index: 30; }
+
+.frame-rails {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.frame-rails path {
+  fill: none;
+  stroke: #1a1a1a;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* —— hand-drawn text underlines —— */
+.sketch-underlines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.sketch-uline {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.sketch-uline.is-top {
+  stroke: #7a86a8;
+  stroke-width: 3.2;
+  transition-duration: 1.15s;
+}
+
+.sketch-uline.is-reason {
+  stroke: #8a90a8;
+  stroke-width: 2.8;
+}
+
+.sketch-uline.is-check {
+  stroke: #9fd48a;
+  stroke-width: 3;
+}
+
+.sketch-uline.is-cross {
+  stroke: #c48ab8;
+  stroke-width: 3;
+}
+
+.artboard.is-hover-top-text .sketch-uline.is-top {
+  stroke-dashoffset: 0;
+}
+
+.artboard.is-hover-reason .sketch-uline.is-reason,
+.artboard.is-hover-row-0 .sketch-uline.is-row-0,
+.artboard.is-hover-row-1 .sketch-uline.is-row-1,
+.artboard.is-hover-row-2 .sketch-uline.is-row-2 {
+  stroke-dashoffset: 0;
+}
+
+.text-hit {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.text-hits-bottom {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.text-hits-bottom .text-hit {
+  pointer-events: auto;
+}
+
+.text-hit:focus-visible {
+  outline: 2px dashed rgba(80, 90, 120, 0.45);
+  outline-offset: 4px;
+}
+
+.layer {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  max-width: none;
+  image-rendering: auto;
+}
+
+/* —— letters hang & drop —— */
+.letters {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.letter {
+  position: absolute;
+  transform-origin: 0 0;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.letter img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.letter-string {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(40, 40, 50, 0.35), rgba(40, 40, 50, 0.08));
+  transform-origin: top center;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.artboard.is-ready .letter {
+  animation: letter-drop 1.15s var(--ease-land) forwards;
+}
+
+.artboard.is-ready .letter-string {
+  animation: string-settle 1.15s var(--ease-land) forwards;
+}
+
+@keyframes letter-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-42%) rotate(-14deg);
+  }
+  55% {
+    opacity: 1;
+  }
+  78% {
+    transform: translateY(1.6%) rotate(1.4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes string-settle {
+  0% {
+    opacity: 0.55;
+    transform: scaleY(1.55);
+  }
+  70% {
+    opacity: 0.28;
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(1);
+  }
+}
+
+/* —— illustration triangles —— */
+.illustration {
+  position: absolute;
+  pointer-events: auto;
+  overflow: visible;
+  z-index: 16;
+}
+
+.illustration svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+.illu-floor,
+.tri-pieces,
+.tri-casts,
+.tri-lifted,
+.tri-hits {
+  pointer-events: none;
+}
+
+.tri-hit {
+  pointer-events: fill;
+  cursor: pointer;
+  fill: rgba(0, 0, 0, 0.001);
+}
+
+/* fixed pad under illustration — rounded continuous corners, slightly inset */
+.illu-pad {
+  fill: rgba(86, 88, 104, 0.36);
+  pointer-events: none;
+}
+
+/* region slice brightens in sync with that piece's lift height */
+.illu-pad-lit {
+  pointer-events: none;
+}
+
+.illu-pad-lit path {
+  fill: rgba(168, 170, 186, 0.78);
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-soft);
+}
+
+.illu-pad-lit.is-bright path {
+  opacity: 1;
+}
+
+/* hard cast onto neighbors only, offset toward diagonal center */
+.tri-cast {
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-soft);
+  pointer-events: none;
+}
+
+.tri-cast.is-on {
+  opacity: 1;
+}
+
+.tri-cast-shape {
+  fill: rgba(72, 74, 90, 0.48);
+  transform: translate(0, 0);
+  transition: transform 0.45s var(--ease-soft);
+  pointer-events: none;
+}
+
+.tri-cast.is-on .tri-cast-shape {
+  transform: translate(var(--cast-x, 0px), var(--cast-y, 0px));
+}
+
+.tri-visual {
+  transform: scale(1);
+  transform-box: view-box;
+  filter: brightness(1);
+  /* origin set in JS to diagonal cross (centerLocal) */
+  transition:
+    transform 0.45s var(--ease-soft),
+    filter 0.45s var(--ease-soft);
+  pointer-events: none;
+  will-change: transform, filter;
+}
+
+/* outward from diagonal cross (no downward drop) + mild brighten */
+.tri-visual.is-up {
+  transform: scale(1.08);
+  filter: brightness(1.1);
+}
+
+/* —— wipes / pins / arrows —— */
+.wipe {
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.55s var(--ease-soft);
+  z-index: 19; /* above door grey shade */
+}
+
+.wipe .layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.artboard.is-hover-left .wipe[data-wipe="underline-green"],
+.artboard.is-hover-right .wipe[data-wipe="underline-magenta"] {
+  clip-path: inset(0 0 0 0);
+}
+
+.pin {
+  transform: translateY(0);
+  transition: transform 0.35s ease, filter 0.28s ease;
+  will-change: transform, filter;
+  filter: drop-shadow(0 0 0 transparent);
+}
+
+.artboard.is-hover-left .pin[data-layer="pin-green"],
+.artboard.is-hover-right .pin[data-layer="pin-magenta"] {
+  animation: pin-float 1.1s ease-in-out infinite;
+  /* thin hard white outline — same as arrows */
+  filter:
+    drop-shadow(1px 0 0 #fff)
+    drop-shadow(-1px 0 0 #fff)
+    drop-shadow(0 1px 0 #fff)
+    drop-shadow(0 -1px 0 #fff)
+    drop-shadow(1px 1px 0 #fff)
+    drop-shadow(-1px -1px 0 #fff)
+    drop-shadow(1px -1px 0 #fff)
+    drop-shadow(-1px 1px 0 #fff);
+}
+
+@keyframes pin-float {
+  0%,
+  100% { transform: translateY(0); }
+  50% { transform: translateY(-3.5%); }
+}
+
+.arrow {
+  transform: scale(1);
+  transform-origin: center center;
+  transition: transform 0.35s var(--ease-soft), filter 0.28s ease;
+  will-change: transform, filter;
+  filter: drop-shadow(0 0 0 transparent);
+}
+
+.artboard.is-hover-left .arrow[data-arrow="left"],
+.artboard.is-hover-right .arrow[data-arrow="right"] {
+  transform: scale(1.14);
+  /* thin hard white outline */
+  filter:
+    drop-shadow(1px 0 0 #fff)
+    drop-shadow(-1px 0 0 #fff)
+    drop-shadow(0 1px 0 #fff)
+    drop-shadow(0 -1px 0 #fff)
+    drop-shadow(1px 1px 0 #fff)
+    drop-shadow(-1px -1px 0 #fff)
+    drop-shadow(1px -1px 0 #fff)
+    drop-shadow(-1px 1px 0 #fff);
+}
+
+/* —— doors —— */
+.doors {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.door-link {
+  cursor: pointer;
+}
+
+.doors-hit {
+  pointer-events: none;
+}
+
+.door-hit {
+  fill: rgba(0, 0, 0, 0.001);
+  pointer-events: fill;
+}
+
+.door-shade {
+  fill: rgba(40, 42, 55, 0);
+  pointer-events: none;
+  transition: fill 0.28s ease;
+}
+
+.artboard.is-hover-left .door-shade[data-door="left"],
+.artboard.is-hover-right .door-shade[data-door="right"] {
+  fill: rgba(40, 42, 55, 0.16);
+}
+
+/* —— checklist marks bounce —— */
+.marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mark {
+  position: absolute;
+  transform-origin: center center;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.mark-shadow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 0;
+  /* light from front-upper-left → near cast to lower-right */
+  transform: translate(1.5px, 2px) rotate(4deg) scale(1.32);
+  transform-origin: 30% 25%;
+  filter: brightness(0);
+  opacity: 0.32;
+}
+
+.mark-ink {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* lemon-lime 4-point star under the mark — short tutu spin then leave */
+.mark-star {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 145%;
+  height: 145%;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.15) rotate(0deg);
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.mark-star polygon {
+  fill: #d4eb82;
+  stroke: rgba(212, 235, 130, 0.55);
+  stroke-width: 0.6;
+}
+
+.artboard.is-ready .mark {
+  animation: mark-arrive 1.35s var(--ease-land) forwards;
+}
+
+.artboard.is-ready .mark-star {
+  animation: mark-star-tutu 1.35s cubic-bezier(0.2, 0.7, 0.25, 1) forwards;
+}
+
+@keyframes mark-arrive {
+  0% {
+    opacity: 0;
+    transform: translate(var(--from-x), var(--from-y)) scale(0.12) rotate(0deg);
+  }
+  42% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1.2) rotate(0deg);
+  }
+  58% {
+    transform: translate(0, 0) scale(0.92) rotate(-8deg);
+  }
+  72% {
+    transform: translate(0, 0) scale(1.04) rotate(6deg);
+  }
+  86% {
+    transform: translate(0, 0) scale(0.98) rotate(-3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+/* short spin flare, then leave */
+@keyframes mark-star-tutu {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.15) rotate(0deg);
+  }
+  22% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.85) rotate(200deg);
+  }
+  48% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15) rotate(420deg);
+  }
+  72% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(0.95) rotate(560deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.25) rotate(700deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wipe { transition: none; }
+  .sketch-uline { transition: none; }
+  .artboard.is-hover-top-text .sketch-uline.is-top,
+  .artboard.is-hover-reason .sketch-uline.is-reason,
+  .artboard.is-hover-row-0 .sketch-uline.is-row-0,
+  .artboard.is-hover-row-1 .sketch-uline.is-row-1,
+  .artboard.is-hover-row-2 .sketch-uline.is-row-2 {
+    stroke-dashoffset: 0;
+  }
+  .artboard.is-ready .letter,
+  .artboard.is-ready .letter-string,
+  .artboard.is-ready .mark,
+  .artboard.is-ready .mark-star {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .artboard.is-ready .mark-star {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  .tri-visual.is-up {
+    transform: none;
+    filter: none;
+  }
+  .tri-cast.is-on {
+    opacity: 0;
+  }
+  .tri-cast.is-on .tri-cast-shape {
+    transform: none;
+  }
+  .artboard.is-hover-left .pin[data-layer="pin-green"],
+  .artboard.is-hover-right .pin[data-layer="pin-magenta"] {
+    animation: none;
+    transform: translateY(-2%);
+  }
+}

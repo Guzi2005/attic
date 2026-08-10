@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Attic — fluorescentmice.fun</title>
+  <link rel="stylesheet" href="./cover.css" />
+</head>
+<body>
+  <main id="stage" class="stage" aria-label="Attic cover">
+    <div class="artboard" id="artboard">
+      <svg class="frame-rails z-rails" viewBox="0 0 2880 1920" aria-hidden="true"></svg>
+
+      <img class="layer z-base" data-layer="outline" alt="" draggable="false" />
+
+      <div class="letters z-content" id="letters" aria-label="YOU'RE NOW AT"></div>
+
+      <div class="illustration z-content" id="illustration" aria-label="Attic illustration"></div>
+
+      <img class="layer z-content" data-layer="text-reason" alt="The Reason I'm Here:" draggable="false" />
+      <img class="layer z-content" data-layer="checklist-text" alt="" draggable="false" />
+      <img class="layer z-content" data-layer="text-left-fluorescent" alt="fluorescentmice.fun" draggable="false" />
+      <img class="layer z-content" data-layer="text-right-florescent" alt="florescentmice.fun" draggable="false" />
+
+      <!-- hand-drawn hover underlines for top / bottom copy -->
+      <svg class="sketch-underlines z-under-glyphs" viewBox="0 0 2880 1920" aria-hidden="true"></svg>
+      <button type="button" class="text-hit text-hit-top z-texthit" id="hit-top-text" aria-label="YOU'RE NOW AT"></button>
+      <div class="text-hits-bottom z-texthit" id="hits-bottom-text"></div>
+
+      <!-- door grey shade (below pins/arrows) -->
+      <svg class="doors doors-shade z-shade" viewBox="0 0 2880 1920" aria-hidden="true">
+        <defs>
+          <path id="door-left-path" />
+          <path id="door-right-path" />
+        </defs>
+        <use href="#door-left-path" class="door-shade" data-door="left" />
+        <use href="#door-right-path" class="door-shade" data-door="right" />
+      </svg>
+
+      <!-- accents above door shade: underlines, pins, arrows -->
+      <div class="wipe z-underline" data-wipe="underline-green">
+        <img class="layer" data-layer="underline-green" alt="" draggable="false" />
+      </div>
+      <div class="wipe z-underline" data-wipe="underline-magenta">
+        <img class="layer" data-layer="underline-magenta" alt="" draggable="false" />
+      </div>
+      <img class="layer pin z-accent" data-layer="pin-green" alt="" draggable="false" />
+      <img class="layer pin z-accent" data-layer="pin-magenta" alt="" draggable="false" />
+      <img class="layer arrow z-accent" data-layer="arrow-left" data-arrow="left" alt="" draggable="false" />
+      <img class="layer arrow z-accent" data-layer="arrow-right" data-arrow="right" alt="" draggable="false" />
+
+      <div class="marks z-accent" id="marks" aria-hidden="true"></div>
+
+      <!-- transparent hit targets on top -->
+      <svg class="doors doors-hit z-hit" viewBox="0 0 2880 1920" aria-hidden="true">
+        <a class="door-link" id="door-left-link" href="https://attic.fluorescentmice.fun" aria-label="Enter via fluorescentmice.fun">
+          <use href="#door-left-path" class="door-hit" data-door="left" />
+        </a>
+        <a class="door-link" id="door-right-link" href="https://attic.fluorescentmice.fun" aria-label="Enter via florescentmice.fun">
+          <use href="#door-right-path" class="door-hit" data-door="right" />
+        </a>
+      </svg>
+    </div>
+  </main>
+  <script type="module" src="./cover.js"></script>
+</body>
+</html>

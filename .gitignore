@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Local / debug artifacts
+assets/raw/
+assets/*-debug.png
+assets/*before-defringe*
+assets/compose-preview.png
+assets/pad-shadow-preview.png
+assets/tmp_inventory*.json
+*.before-defringe.png
