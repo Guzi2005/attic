@@ -22,6 +22,10 @@
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+}
+
+/* direct visit / hash — soft rise */
+.home.is-visible:not(.is-enter-zoom):not(.is-bento-hold) {
   animation: home-rise 0.95s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
@@ -35,6 +39,51 @@
     opacity: 1;
     filter: blur(0);
     transform: none;
+  }
+}
+
+/* measure + hold crates at start pose (no second “reload” flash) */
+.home.is-bento-hold {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+}
+
+.home.is-bento-hold .tile,
+.home.is-bento-hold .home-hello,
+.home.is-bento-hold .home-build {
+  opacity: 0.55;
+  transform: translate(var(--push-x, 0px), var(--push-y, 0px)) scale(0.28);
+  animation: none !important;
+}
+
+/* through-door: tiles push apart like expanding crates — once */
+.home.is-enter-zoom {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+}
+
+.home.is-enter-zoom.is-visible {
+  pointer-events: auto;
+}
+
+.home.is-enter-zoom:not(.is-bento-hold) .tile,
+.home.is-enter-zoom:not(.is-bento-hold) .home-hello,
+.home.is-enter-zoom:not(.is-bento-hold) .home-build {
+  animation: tile-push-out 1.15s cubic-bezier(0.2, 0.75, 0.22, 1) both;
+  animation-delay: calc(var(--push-i, 0) * 28ms);
+  will-change: transform, opacity;
+}
+
+@keyframes tile-push-out {
+  0% {
+    opacity: 0.55;
+    transform: translate(var(--push-x, 0px), var(--push-y, 0px)) scale(0.28);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
   }
 }
 
@@ -149,18 +198,40 @@ a.tile:focus-visible {
 
 .home-build {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: flex-start;
   min-height: 0;
-  padding: 0 clamp(0.2rem, 0.8vmin, 0.6rem);
+  padding: 0 clamp(0.2rem, 0.8vmin, 0.6rem) 0.15rem;
   pointer-events: none;
 }
 
-.home-build-svg {
-  display: block;
-  width: min(100%, 22rem);
+.build-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  width: auto;
   height: auto;
-  max-height: 100%;
+  max-width: 100%;
+}
+
+.build-barrier {
+  display: block;
+  flex: 0 0 auto;
+  /* 等比缩放，不拉满格子、不扯斜线/字 */
+  width: clamp(7.5rem, 16vmin, 11.5rem);
+  height: auto;
+  aspect-ratio: 200 / 56;
+  overflow: visible;
+}
+
+.build-cone {
+  display: block;
+  flex: 0 0 auto;
+  height: clamp(2.6rem, 5.6vmin, 4rem);
+  width: auto;
+  aspect-ratio: 40 / 70;
   overflow: visible;
 }
 
@@ -257,6 +328,41 @@ a.tile:focus-visible {
 .span-flower {
   grid-column: 5 / 10;
   grid-row: 4;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: clamp(0.35rem, 1.2vmin, 0.85rem);
+}
+
+.span-flower .tile-title {
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-self: flex-end;
+}
+
+.flower-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: clamp(1px, 0.35vmin, 4px);
+  height: 70%;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.flower-unit {
+  display: block;
+  height: 100%;
+  width: auto;
+  aspect-ratio: 24 / 56;
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
 .span-cow2 {
@@ -321,10 +427,21 @@ a.tile:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home.is-visible {
+  .home.is-visible:not(.is-enter-zoom):not(.is-bento-hold) {
     animation: none;
     opacity: 1;
     filter: none;
+    transform: none;
+  }
+
+  .home.is-bento-hold .tile,
+  .home.is-bento-hold .home-hello,
+  .home.is-bento-hold .home-build,
+  .home.is-enter-zoom:not(.is-bento-hold) .tile,
+  .home.is-enter-zoom:not(.is-bento-hold) .home-hello,
+  .home.is-enter-zoom:not(.is-bento-hold) .home-build {
+    animation: none !important;
+    opacity: 1;
     transform: none;
   }
 

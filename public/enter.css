@@ -1,5 +1,7 @@
 /* —— enter attic: camera + door + flash —— */
 .camera {
+  position: relative;
+  z-index: 70;
   width: 100vw;
   height: 100vh;
   display: grid;
@@ -10,24 +12,68 @@
 }
 
 .camera.is-zooming {
-  animation: cam-through-door 1.55s cubic-bezier(0.33, 0.02, 0.2, 1) forwards;
+  background: transparent;
+  /* phase1 settle → phase2 one continuous curve (no second pause) */
+  animation: cam-through-door 1.65s cubic-bezier(0.55, 0.02, 0.12, 1) forwards;
+}
+
+/* your door-hole luminance mask — home peeks only through the arch */
+.camera.is-zooming.has-door-hole {
+  background: transparent;
+}
+
+.camera.is-zooming.has-door-hole .stage {
+  -webkit-mask-image: var(--door-hole-mask);
+  mask-image: var(--door-hole-mask);
+  -webkit-mask-mode: luminance;
+  mask-mode: luminance;
+  -webkit-mask-source-type: luminance;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  background: transparent;
 }
 
 @keyframes cam-through-door {
   0% {
-    transform: scale(1) translate3d(0, 0, 0);
+    transform: scale(1);
   }
-  28% {
-    transform: scale(1.08) translate3d(var(--cam-x, 0%), var(--cam-y, 0%), 0);
+  /* phase 1 — one approach beat */
+  30% {
+    transform: scale(1.3);
   }
+  /* phase 2 — no plateau, accelerate through the hole */
   100% {
-    transform: scale(4.6) translate3d(var(--cam-x, 0%), var(--cam-y, 0%), 0);
+    transform: scale(8.8);
   }
 }
 
 .z-beyond { z-index: 28; }
 .z-doorleaf { z-index: 29; }
 .z-doordeco { z-index: 30; }
+
+/* door leaf above home + outside .stage mask so the leaf stays solid */
+.door-enter-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: 85;
+  pointer-events: none;
+  overflow: visible;
+  opacity: 0;
+  visibility: hidden;
+  transform-style: preserve-3d;
+  perspective: 2200px;
+  perspective-origin: var(--door-hinge-x, 50%) var(--door-hinge-y, 50%);
+}
+
+.door-enter-layer.is-active {
+  opacity: 1;
+  visibility: visible;
+}
 
 .door-beyond {
   position: absolute;
@@ -36,16 +82,21 @@
   height: 100%;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.artboard.is-entering .door-beyond {
-  opacity: 1;
 }
 
 .artboard.is-entering {
   pointer-events: none;
   overflow: visible;
+  /* keep cover opaque — hole mask (not full clear) reveals home */
+}
+
+/*
+  Chromium tears when CSS mask + SVG clipPath share a subtree.
+  Park only the clip-heavy illustration; keep your door hole mask + the rest of the cover.
+*/
+.artboard.is-entering #illustration {
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 /* idle door text — hide while the 3D pivot takes over */
@@ -65,16 +116,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
   transform-style: preserve-3d;
-  perspective: 2200px;
-  perspective-origin: var(--door-hinge-x, 50%) var(--door-hinge-y, 50%);
-}
-
-.artboard.is-entering .door-pivot {
-  opacity: 1;
-  visibility: visible;
 }
 
 .door-pivot-root {
@@ -155,20 +197,23 @@
   pointer-events: none;
 }
 
-.artboard.is-entering.is-enter-left .door-pivot-root {
-  animation: door-swing-left 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+.door-enter-layer.is-enter-left .door-pivot-root {
+  animation: door-swing-left 1.15s cubic-bezier(0.18, 0.75, 0.22, 1) forwards;
 }
 
-.artboard.is-entering.is-enter-right .door-pivot-root {
-  animation: door-swing-right 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+.door-enter-layer.is-enter-right .door-pivot-root {
+  animation: door-swing-right 1.15s cubic-bezier(0.18, 0.75, 0.22, 1) forwards;
 }
 
 @keyframes door-swing-left {
   0% {
     transform: perspective(2200px) translate3d(0, 0, 0) rotateY(0deg);
   }
+  55% {
+    transform: perspective(2200px) translate3d(0, 0, 36px) rotateY(-78deg);
+  }
   100% {
-    transform: perspective(2200px) translate3d(0, 0, 28px) rotateY(-72deg);
+    transform: perspective(2200px) translate3d(0, 0, 48px) rotateY(-108deg);
   }
 }
 
@@ -176,8 +221,11 @@
   0% {
     transform: perspective(2200px) translate3d(0, 0, 0) rotateY(0deg);
   }
+  55% {
+    transform: perspective(2200px) translate3d(0, 0, 36px) rotateY(78deg);
+  }
   100% {
-    transform: perspective(2200px) translate3d(0, 0, 28px) rotateY(72deg);
+    transform: perspective(2200px) translate3d(0, 0, 48px) rotateY(108deg);
   }
 }
 
@@ -185,19 +233,9 @@
   pointer-events: none;
 }
 
-/* settle non-door layers; keep stage opacity so door 3D isn't flattened early */
+/* keep cover opaque — only the door hole mask reveals home */
 .stage.is-exiting {
   overflow: visible;
-}
-
-.stage.is-exiting .artboard > :not(.door-pivot):not(.door-beyond) {
-  animation: stage-sink-layer 1.55s ease forwards;
-}
-
-@keyframes stage-sink-layer {
-  0% { opacity: 1; }
-  72% { opacity: 1; }
-  100% { opacity: 0; }
 }
 
 .flash {
@@ -210,13 +248,12 @@
 }
 
 .flash.is-burst {
-  animation: flash-burst 0.85s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
+  animation: flash-burst 0.4s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
 }
 
 @keyframes flash-burst {
   0% { opacity: 0; }
-  18% { opacity: 1; }
-  55% { opacity: 1; }
+  35% { opacity: 0.35; }
   100% { opacity: 0; }
 }
 
@@ -232,18 +269,15 @@ body.is-on-home .camera {
   .camera.is-zooming {
     animation: none;
   }
-  .artboard.is-entering .door-pivot-root {
+  .door-enter-layer.is-enter-left .door-pivot-root,
+  .door-enter-layer.is-enter-right .door-pivot-root {
     animation: none;
   }
-  .artboard.is-entering .door-pivot {
+  .door-enter-layer {
     opacity: 0;
     visibility: hidden;
   }
   .flash.is-burst {
-    animation: none;
-    opacity: 0;
-  }
-  .stage.is-exiting .artboard > :not(.door-pivot):not(.door-beyond) {
     animation: none;
     opacity: 0;
   }

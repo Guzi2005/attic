@@ -25,12 +25,85 @@ function assetUrl(path) {
   return new URL(`./${path}`, import.meta.url).href;
 }
 
+let coverFallbackShown = false;
+let coverAssetFails = 0;
+
+function showCoverFallback() {
+  if (coverFallbackShown || !artboard) return;
+  coverFallbackShown = true;
+  const panel = document.getElementById("cover-fallback");
+  if (panel) {
+    panel.hidden = false;
+    panel.removeAttribute("hidden");
+  }
+  artboard.classList.add("is-fallback", "is-ready");
+  console.warn("[attic] cover assets failed — showing SVG fallback");
+}
+
+function noteCoverAssetFail(critical = false) {
+  coverAssetFails += 1;
+  if (critical || coverAssetFails >= 3) showCoverFallback();
+}
+
+/** Hide broken <img> immediately so alt text never piles up. */
+function watchCoverImg(img, { critical = false } = {}) {
+  if (!img) return;
+  img.alt = "";
+  img.setAttribute("alt", "");
+  const fail = () => {
+    img.removeAttribute("src");
+    img.style.display = "none";
+    img.setAttribute("aria-hidden", "true");
+    noteCoverAssetFail(critical);
+  };
+  img.addEventListener("error", fail, { once: true });
+  if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) {
+    fail();
+  }
+}
+
+function watchSvgImage(img, { critical = false } = {}) {
+  if (!img) return;
+  img.addEventListener(
+    "error",
+    () => {
+      img.remove();
+      noteCoverAssetFail(critical);
+    },
+    { once: true }
+  );
+}
+
+function setupCoverFallbackUi() {
+  const panel = document.getElementById("cover-fallback");
+  if (!panel || panel.dataset.bound === "1") return;
+  panel.dataset.bound = "1";
+  panel.querySelectorAll("[data-enter]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const side = btn.getAttribute("data-enter") === "right" ? "right" : "left";
+      const doorId = side === "left" ? "door-left-path" : "door-right-path";
+      const hasDoor = Boolean(document.getElementById(doorId)?.getAttribute("d"));
+      if (!coverLayout || !hasDoor) {
+        const home = document.getElementById("home");
+        document.body.classList.add("is-on-home");
+        home?.setAttribute("aria-hidden", "false");
+        home?.classList.add("is-enter-zoom");
+        window.location.hash = "home";
+        return;
+      }
+      enterAttic(side);
+    });
+  });
+}
+
 function setupLayers(layout, AW, AH) {
   const skip = new Set([
     "text-youre-now-at",
     "center-illustration",
     "checklist-marks",
   ]);
+  const criticalLayers = new Set(["outline", "text-reason", "checklist-text"]);
 
   for (const [name, place] of Object.entries(layout.placements)) {
     if (skip.has(name)) continue;
@@ -50,6 +123,7 @@ function setupLayers(layout, AW, AH) {
         img.style.top = "0";
         img.style.width = "100%";
         img.style.height = "100%";
+        watchCoverImg(img);
       }
       continue;
     }
@@ -58,6 +132,7 @@ function setupLayers(layout, AW, AH) {
     for (const el of nodes) {
       placeBox(el, place, AW, AH);
       el.src = src;
+      watchCoverImg(el, { critical: criticalLayers.has(name) });
     }
   }
 }
@@ -275,6 +350,93 @@ function doorMetrics(side) {
   };
 }
 
+/** Camera zoom target = door opening center in #camera % coords */
+function doorCameraOrigin(side, camera) {
+  const hit = artboard.querySelector(`.door-hit[data-door="${side}"]`);
+  const cam = camera.getBoundingClientRect();
+  if (!hit || cam.width < 1 || cam.height < 1) {
+    return {
+      originX: side === "left" ? 22 : 78,
+      originY: 52,
+    };
+  }
+  const r = hit.getBoundingClientRect();
+  // aim through the arch cavity (slightly above geometric mid)
+  const px = r.left + r.width * 0.5;
+  const py = r.top + r.height * 0.42;
+  return {
+    originX: ((px - cam.left) / cam.width) * 100,
+    originY: ((py - cam.top) / cam.height) * 100,
+  };
+}
+
+/** Door leaf layer aligned to the artboard box inside #camera */
+function syncDoorEnterLayer(camera) {
+  const layer = document.getElementById("door-enter-layer");
+  if (!layer || !camera) return;
+  const cam = camera.getBoundingClientRect();
+  const ab = artboard.getBoundingClientRect();
+  if (cam.width < 1 || ab.width < 1) return;
+  layer.style.left = `${ab.left - cam.left}px`;
+  layer.style.top = `${ab.top - cam.top}px`;
+  layer.style.width = `${ab.width}px`;
+  layer.style.height = `${ab.height}px`;
+}
+
+/** Punch a luminance hole only at the door so home peeks through (your mask). */
+function applyDoorHoleMask(side, camera) {
+  const stage = document.getElementById("stage");
+  const pathEl = document.getElementById(
+    side === "left" ? "door-left-path" : "door-right-path"
+  );
+  const d = pathEl?.getAttribute("d");
+  const box = stage?.getBoundingClientRect();
+  const ab = artboard.getBoundingClientRect();
+  if (!stage || !d || !box || box.width < 1 || box.height < 1 || ab.width < 1) {
+    camera?.classList.remove("has-door-hole");
+    return;
+  }
+  // Mask is painted on .stage — size the SVG to the stage box.
+  const ox = ab.left - box.left;
+  const oy = ab.top - box.top;
+  const sx = ab.width / 2880;
+  const sy = ab.height / 1920;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(
+    box.width
+  )}" height="${Math.round(box.height)}" viewBox="0 0 ${box.width} ${
+    box.height
+  }"><rect width="100%" height="100%" fill="#fff"/><g transform="translate(${ox},${oy}) scale(${sx},${sy})"><path d="${d}" fill="#000"/></g></svg>`;
+  stage.style.setProperty(
+    "--door-hole-mask",
+    `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`
+  );
+  camera.classList.add("has-door-hole");
+}
+
+function clearDoorHoleMask(camera) {
+  const stage = document.getElementById("stage");
+  camera?.classList.remove("has-door-hole");
+  stage?.style.removeProperty("--door-hole-mask");
+}
+
+function prepareBentoPush() {
+  const bento = document.querySelector(".bento");
+  if (!bento) return;
+  const cells = bento.querySelectorAll(".tile, .home-hello, .home-build");
+  const br = bento.getBoundingClientRect();
+  const cx = br.left + br.width / 2;
+  const cy = br.top + br.height / 2;
+  cells.forEach((el, i) => {
+    const r = el.getBoundingClientRect();
+    const ex = r.left + r.width / 2;
+    const ey = r.top + r.height / 2;
+    // start clustered toward center, then shove out to final slot
+    el.style.setProperty("--push-x", `${(cx - ex) * 0.62}px`);
+    el.style.setProperty("--push-y", `${(cy - ey) * 0.62}px`);
+    el.style.setProperty("--push-i", String(i));
+  });
+}
+
 function doorMaskImage(d) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2880 1920"><path fill="#fff" d="${d}"/></svg>`;
   return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
@@ -335,6 +497,7 @@ function mountDoorDeco(side, d) {
     img.draggable = false;
     img.src = src.src;
     placeBox(img, place, AW, AH);
+    watchCoverImg(img);
     deco.appendChild(img);
   }
 }
@@ -347,6 +510,7 @@ function enterAttic(side) {
   const stage = document.getElementById("stage");
   const flash = document.getElementById("flash");
   const home = document.getElementById("home");
+  const enterLayer = document.getElementById("door-enter-layer");
   const pivotRoot = document.getElementById("door-pivot-root");
   const leafPath = document.getElementById("door-leaf-path");
   const thicknessHost = document.getElementById("door-leaf-thickness");
@@ -364,27 +528,20 @@ function enterAttic(side) {
   }
 
   const m = doorMetrics(side);
-  const camRect = camera.getBoundingClientRect();
-  const abRect = artboard.getBoundingClientRect();
-  const originPx = abRect.left + (m.cx / 100) * abRect.width;
-  const originPy = abRect.top + (m.cy / 100) * abRect.height;
-  const originX =
-    camRect.width > 0
-      ? ((originPx - camRect.left) / camRect.width) * 100
-      : m.cx;
-  const originY =
-    camRect.height > 0
-      ? ((originPy - camRect.top) / camRect.height) * 100
-      : m.cy;
+  const { originX, originY } = doorCameraOrigin(side, camera);
 
-  camera.style.setProperty("--cam-x", `${(50 - originX) * 0.22}%`);
-  camera.style.setProperty("--cam-y", `${(50 - originY) * 0.12}%`);
+  camera.style.removeProperty("--cam-x");
+  camera.style.removeProperty("--cam-y");
   camera.style.transformOrigin = `${originX}% ${originY}%`;
+  syncDoorEnterLayer(camera);
+  applyDoorHoleMask(side, camera);
 
   const hingeXPct = `${(m.hingeX / 2880) * 100}%`;
   const hingeYPct = `${(m.hingeY / 1920) * 100}%`;
   artboard.style.setProperty("--door-hinge-x", hingeXPct);
   artboard.style.setProperty("--door-hinge-y", hingeYPct);
+  enterLayer?.style.setProperty("--door-hinge-x", hingeXPct);
+  enterLayer?.style.setProperty("--door-hinge-y", hingeYPct);
   const pivot = document.getElementById("door-pivot");
   pivot?.style.setProperty("--door-hinge-x", hingeXPct);
   pivot?.style.setProperty("--door-hinge-y", hingeYPct);
@@ -397,12 +554,29 @@ function enterAttic(side) {
     "is-entering",
     side === "left" ? "is-enter-left" : "is-enter-right"
   );
+  enterLayer?.classList.remove("is-enter-left", "is-enter-right");
+  enterLayer?.classList.add(
+    "is-active",
+    side === "left" ? "is-enter-left" : "is-enter-right"
+  );
+  enterLayer?.setAttribute("aria-hidden", "false");
   stage?.classList.add("is-exiting");
+
+  /* hold clustered pose first — peek through door without a finished layout flash */
+  home?.classList.add("is-bento-hold");
+  home?.setAttribute("aria-hidden", "false");
+  layoutFlowerRow();
+  prepareBentoPush();
 
   const finish = () => {
     document.body.classList.add("is-on-home");
     home?.classList.add("is-visible");
+    home?.classList.remove("is-bento-hold");
     home?.setAttribute("aria-hidden", "false");
+    enterLayer?.classList.remove("is-active", "is-enter-left", "is-enter-right");
+    enterLayer?.setAttribute("aria-hidden", "true");
+    clearDoorHoleMask(camera);
+    layoutFlowerRow();
     if (location.hash !== "#home") {
       history.pushState({ view: "home" }, "", "#home");
     }
@@ -410,6 +584,8 @@ function enterAttic(side) {
 
   if (reduceMotion) {
     flash?.classList.remove("is-burst");
+    home?.classList.add("is-visible");
+    home?.classList.remove("is-bento-hold");
     finish();
     return;
   }
@@ -419,12 +595,19 @@ function enterAttic(side) {
   });
 
   window.setTimeout(() => {
+    home?.classList.add("is-visible", "is-enter-zoom");
+    // reflow so hold transform is committed, then release into one push-out
+    void home?.offsetWidth;
+    home?.classList.remove("is-bento-hold");
+  }, 300);
+
+  window.setTimeout(() => {
     flash?.classList.add("is-burst");
-  }, 1100);
+  }, 1320);
 
   window.setTimeout(() => {
     finish();
-  }, 1580);
+  }, 1650);
 }
 
 function showHomeImmediate() {
@@ -432,6 +615,51 @@ function showHomeImmediate() {
   document.body.classList.add("is-on-home");
   home?.classList.add("is-visible");
   home?.setAttribute("aria-hidden", "false");
+  layoutFlowerRow();
+}
+
+const FLOWER_SVG = `<svg class="flower-unit" viewBox="0 0 24 56" aria-hidden="true"><path d="M12 56 V24" stroke="#4a6b38" stroke-width="2.2"/><circle cx="12" cy="14" r="10" fill="#c45c4a"/><circle cx="12" cy="14" r="3.6" fill="#e8c84a"/></svg>`;
+
+function layoutFlowerRow() {
+  const row = document.getElementById("flower-row");
+  if (!row) return;
+  const h = row.clientHeight;
+  const w = row.clientWidth;
+  if (h < 4 || w < 4) return;
+
+  const gap = parseFloat(getComputedStyle(row).columnGap || getComputedStyle(row).gap) || 0;
+  const unitW = h * (24 / 56);
+  // only whole flowers that fit with gaps — never clip a half flower
+  const n = Math.max(0, Math.floor((w + gap) / (unitW + gap)));
+  if (row.dataset.count === String(n)) return;
+  row.dataset.count = String(n);
+  row.innerHTML = n > 0 ? FLOWER_SVG.repeat(n) : "";
+}
+
+function setupFlowerRow() {
+  const row = document.getElementById("flower-row");
+  if (!row) return;
+  const tile = row.closest(".span-flower");
+  const home = document.getElementById("home");
+
+  const schedule = () => {
+    requestAnimationFrame(() => layoutFlowerRow());
+  };
+
+  if (typeof ResizeObserver !== "undefined") {
+    const ro = new ResizeObserver(schedule);
+    ro.observe(row);
+    if (tile) ro.observe(tile);
+    if (home) ro.observe(home);
+  }
+  window.addEventListener("resize", schedule);
+  if (home) {
+    new MutationObserver(schedule).observe(home, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  }
+  schedule();
 }
 
 function setupRouting() {
@@ -468,8 +696,9 @@ function setupLetters(lettersData, AW, AH) {
 
     const img = document.createElement("img");
     img.src = assetUrl(letter.file);
-    img.alt = letter.char === "apos" ? "'" : letter.char.replace(/\d/g, "");
+    img.alt = "";
     img.draggable = false;
+    watchCoverImg(img);
 
     el.append(string, img);
     root.appendChild(el);
@@ -542,6 +771,7 @@ function setupIllustration(regionsData, AW, AH) {
   const basePad = document.createElementNS(svgNS, "image");
   basePad.classList.add("illu-pad");
   placePadImage(basePad);
+  watchSvgImage(basePad);
   floorLayer.appendChild(basePad);
 
   // lift = nearby lightens (same inset pad, brighter in that region)
@@ -552,6 +782,7 @@ function setupIllustration(regionsData, AW, AH) {
     lit.setAttribute("clip-path", `url(#clip-${region.id})`);
     const litImg = document.createElementNS(svgNS, "image");
     placePadImage(litImg);
+    watchSvgImage(litImg);
     lit.appendChild(litImg);
     floorLayer.appendChild(lit);
   }
@@ -638,6 +869,7 @@ function setupIllustration(regionsData, AW, AH) {
     image.setAttribute("width", String(w));
     image.setAttribute("height", String(h));
     image.setAttribute("preserveAspectRatio", "none");
+    watchSvgImage(image, { critical: id === "bottom" });
     visual.appendChild(image);
     pieceLayer.appendChild(visual);
     visuals[id] = visual;
@@ -724,12 +956,14 @@ function setupMarks(marksData, AW, AH) {
     shadow.alt = "";
     shadow.draggable = false;
     shadow.setAttribute("aria-hidden", "true");
+    watchCoverImg(shadow);
 
     const ink = document.createElement("img");
     ink.className = "mark-ink";
     ink.src = src;
-    ink.alt = mark.kind === "cross" ? "x" : "check";
+    ink.alt = "";
     ink.draggable = false;
+    watchCoverImg(ink);
 
     el.append(star, shadow, ink);
     root.appendChild(el);
@@ -869,6 +1103,8 @@ function setupSketchUnderlines(lettersData, marksData, layout, AW, AH) {
 }
 
 async function load() {
+  setupCoverFallbackUi();
+
   const [layout, doorsXml, lettersData, marksData, regionsData, railsXml] = await Promise.all([
     fetch(layoutUrl).then((r) => r.json()),
     fetch(doorsUrl).then((r) => r.text()),
@@ -889,6 +1125,7 @@ async function load() {
   setupMarks(marksData, AW, AH);
   setupSketchUnderlines(lettersData, marksData, layout, AW, AH);
   setupRouting();
+  setupFlowerRow();
 
   // kick entrance animations after first paint
   requestAnimationFrame(() => {
@@ -908,8 +1145,6 @@ async function load() {
 
 load().catch((err) => {
   console.error(err);
-  document.body.insertAdjacentHTML(
-    "beforeend",
-    `<pre style="color:#900;padding:1rem;white-space:pre-wrap">${err}</pre>`
-  );
+  setupCoverFallbackUi();
+  showCoverFallback();
 });

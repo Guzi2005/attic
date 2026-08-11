@@ -128,6 +128,105 @@ body {
   -webkit-user-select: none;
 }
 
+/* PNG 失败占位：纯 SVG + 字体，盖住破图叠字 */
+.cover-fallback {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  box-sizing: border-box;
+  padding: clamp(1rem, 3.5vw, 2.5rem);
+  background: var(--bg);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.6rem, 1.6vw, 1.25rem);
+  text-align: center;
+  pointer-events: auto;
+}
+
+.artboard.is-fallback .cover-fallback {
+  display: flex;
+}
+
+.artboard.is-fallback > :not(.cover-fallback) {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.cover-fallback-art {
+  width: min(78%, 520px);
+  height: auto;
+  max-height: 52%;
+  display: block;
+}
+
+.cover-fallback-barrier {
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  fill: #ffffff;
+}
+
+.cover-fallback-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  max-width: 28rem;
+}
+
+.cover-fallback-brand {
+  margin: 0;
+  font-family: Syne, "Noto Sans SC", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  letter-spacing: -0.03em;
+  color: #2a2b38;
+  line-height: 1;
+}
+
+.cover-fallback-lede {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-weight: 500;
+  font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+  color: #5a5b6e;
+  line-height: 1.45;
+}
+
+.cover-fallback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+}
+
+.cover-fallback-btn {
+  appearance: none;
+  border: 2px solid #3a3b4a;
+  background: #fffef8;
+  color: #2a2b38;
+  font-family: Syne, "Noto Sans SC", sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s var(--ease-soft), transform 0.2s var(--ease-soft);
+}
+
+.cover-fallback-btn:hover {
+  background: #e8eaf8;
+  transform: translateY(-1px);
+}
+
+.cover-fallback-btn:focus-visible {
+  outline: 2px solid #5e5f70;
+  outline-offset: 3px;
+}
+
 .z-base { z-index: 1; }
 .z-rails { z-index: 3; }
 .z-under-glyphs { z-index: 4; } /* underlines sit under letterforms */
