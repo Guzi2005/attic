@@ -481,7 +481,7 @@ function setupIllustration(regionsData, AW, AH) {
   const imgSrc = assetUrl(regionsData.image);
   const [cx, cy] = regionsData.centerLocal || [w / 2, h / 2];
   // overlap clips so diagonal X seams don't flash page bg through the middle
-  const clipExpand = 1.14;
+  const clipExpand = 1.16;
 
   const svgNS = "http://www.w3.org/2000/svg";
   const xlinkNS = "http://www.w3.org/1999/xlink";
