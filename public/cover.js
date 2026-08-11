@@ -7,6 +7,8 @@ const railsUrl = new URL("./frame-rails.svg", import.meta.url);
 
 const artboard = document.getElementById("artboard");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+/** @type {any} */
+let coverLayout = null;
 
 function pct(n, total) {
   return `${(n / total) * 100}%`;
@@ -60,16 +62,162 @@ function setupLayers(layout, AW, AH) {
   }
 }
 
+const HORIZ_RAILS = new Set([
+  "top-outer",
+  "top-inner",
+  "bottom-inner",
+  "bottom-outer",
+]);
+
+function parsePolyPoints(d) {
+  const pts = [];
+  const re = /([ML])\s*([-\d.]+)\s+([-\d.]+)/gi;
+  let m;
+  while ((m = re.exec(d))) {
+    pts.push({ x: Number(m[2]), y: Number(m[3]) });
+  }
+  return pts;
+}
+
+function sampleRailY(pts, x) {
+  if (!pts.length) return 0;
+  if (x <= pts[0].x) return pts[0].y;
+  if (x >= pts[pts.length - 1].x) return pts[pts.length - 1].y;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i];
+    const b = pts[i + 1];
+    if (x >= a.x && x <= b.x) {
+      const t = b.x === a.x ? 0 : (x - a.x) / (b.x - a.x);
+      return a.y + t * (b.y - a.y);
+    }
+  }
+  return pts[pts.length - 1].y;
+}
+
+/** Extend a hand-drawn horizontal across [x0, x1] (past the verticals). */
+function extendHorizontalPath(d, x0, x1, step = 6) {
+  const pts = parsePolyPoints(d);
+  if (pts.length < 2) return d;
+  const out = [];
+  for (let x = x0; x <= x1; x += step) {
+    out.push([x, Math.round(sampleRailY(pts, x))]);
+  }
+  if (out[out.length - 1][0] !== x1) {
+    out.push([x1, Math.round(sampleRailY(pts, x1))]);
+  }
+  return `M ${out[0][0]} ${out[0][1]} ` + out.slice(1).map(([x, y]) => `L ${x} ${y}`).join(" ");
+}
+
+/** Match hand-stroke weight across IDE preview vs full browser windows. */
+function syncStrokeScale() {
+  if (!artboard) return;
+  const w = artboard.getBoundingClientRect().width;
+  // IDE Simple Browser is often ~800–1000px wide; full windows are wider.
+  // Scale stroke so relative ink weight stays close to that preview.
+  const ref = 920;
+  const scale = Math.min(2.35, Math.max(0.92, w / ref));
+  artboard.style.setProperty("--stroke-scale", scale.toFixed(3));
+  document.documentElement.style.setProperty("--stroke-scale", scale.toFixed(3));
+}
+
+/**
+ * Portrait voids: at most 2 swallow rows.
+ * 1 row  → hug artboard
+ * 2 rows → artboard + outer edge
+ * 3+ fit → outer edge + next inward (skip artboard-adjacent)
+ */
+function layoutVoidPatterns() {
+  const stage = document.getElementById("stage");
+  const top = document.querySelector(".stage-void-top");
+  const bot = document.querySelector(".stage-void-bot");
+  if (!stage || !artboard || !top || !bot) return;
+
+  const sr = stage.getBoundingClientRect();
+  const ar = artboard.getBoundingClientRect();
+  const voidH = Math.max(0, (sr.height - ar.height) / 2);
+  const tile = Math.round(
+    Math.min(168, Math.max(48, Math.min(sr.width, window.innerWidth) * 0.18))
+  );
+
+  document.documentElement.style.setProperty("--void-tile", `${tile}px`);
+
+  top.style.height = `${voidH}px`;
+  bot.style.height = `${voidH}px`;
+
+  const rowsFit = Math.floor(voidH / tile + 1e-6);
+  const edgePair = rowsFit >= 3;
+  const dual = !edgePair && rowsFit >= 2;
+
+  for (const el of [top, bot]) {
+    el.classList.toggle("is-dual", dual);
+    el.classList.toggle("is-edge-pair", edgePair);
+  }
+}
+
+function layoutRailsBleed() {
+  const bleed = document.getElementById("rails-bleed");
+  const stage = document.getElementById("stage");
+  if (!bleed || !stage || !artboard) return;
+
+  syncStrokeScale();
+  layoutVoidPatterns();
+
+  const ar = artboard.getBoundingClientRect();
+  const sr = stage.getBoundingClientRect();
+  if (ar.height < 2 || ar.width < 2) return;
+
+  bleed.style.top = `${ar.top - sr.top}px`;
+  bleed.style.height = `${ar.height}px`;
+  bleed.style.width = "100%";
+  bleed.style.left = "0";
+
+  // map full stage width into artboard units (artboard = 2880 wide)
+  const fullW = (sr.width / ar.width) * 2880;
+  const margin = (fullW - 2880) / 2;
+  bleed.setAttribute("viewBox", `${-margin} 0 ${fullW} 1920`);
+  bleed.setAttribute("preserveAspectRatio", "none");
+
+  // stretch each horizontal to the current bleed span
+  for (const path of bleed.querySelectorAll("path[data-rail]")) {
+    const src = path.dataset.srcD;
+    if (!src) continue;
+    path.setAttribute("d", extendHorizontalPath(src, -margin - 40, 2880 + margin + 40, 5));
+  }
+}
+
 function setupRails(railsXml) {
   const host = artboard.querySelector(".frame-rails");
+  const bleed = document.getElementById("rails-bleed");
   if (!host) return;
   const parsed = new DOMParser().parseFromString(railsXml, "image/svg+xml");
   const srcSvg = parsed.querySelector("svg");
   if (!srcSvg) return;
-  // keep host viewBox; inject paths
+
   host.innerHTML = "";
+  if (bleed) bleed.innerHTML = "";
+
   for (const path of srcSvg.querySelectorAll("path")) {
-    host.appendChild(document.importNode(path, true));
+    const id = path.getAttribute("id") || path.getAttribute("data-rail") || "";
+    const node = document.importNode(path, true);
+    if (HORIZ_RAILS.has(id)) {
+      if (!bleed) continue;
+      node.dataset.srcD = path.getAttribute("d") || "";
+      node.dataset.rail = id;
+      bleed.appendChild(node);
+    } else {
+      // verticals stay inside the artboard
+      host.appendChild(node);
+    }
+  }
+
+  layoutRailsBleed();
+  syncStrokeScale();
+  window.addEventListener("resize", layoutRailsBleed);
+  if (typeof ResizeObserver !== "undefined") {
+    const ro = new ResizeObserver(() => layoutRailsBleed());
+    ro.observe(artboard);
+    const stage = document.getElementById("stage");
+    if (stage) ro.observe(stage);
   }
 }
 
@@ -83,6 +231,7 @@ function setupDoors(doorsXml) {
   if (right && rightPath) rightPath.setAttribute("d", right.getAttribute("d"));
 
   const setHover = (side, on) => {
+    if (artboard.classList.contains("is-entering")) return;
     artboard.classList.toggle("is-hover-left", side === "left" && on);
     artboard.classList.toggle("is-hover-right", side === "right" && on);
   };
@@ -95,10 +244,192 @@ function setupDoors(doorsXml) {
 
   const leftLink = document.getElementById("door-left-link");
   const rightLink = document.getElementById("door-right-link");
-  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-    leftLink?.setAttribute("href", "#enter-left");
-    rightLink?.setAttribute("href", "#enter-right");
+  leftLink?.setAttribute("href", "#home");
+  rightLink?.setAttribute("href", "#home");
+
+  const onEnter = (side, event) => {
+    event.preventDefault();
+    enterAttic(side);
+  };
+  leftLink?.addEventListener("click", (e) => onEnter("left", e));
+  rightLink?.addEventListener("click", (e) => onEnter("right", e));
+}
+
+function doorMetrics(side) {
+  const hit = artboard.querySelector(`.door-hit[data-door="${side}"]`);
+  if (!hit || typeof hit.getBBox !== "function") {
+    return {
+      cx: side === "left" ? 18 : 82,
+      cy: 52,
+      hingeX: side === "left" ? 220 : 2660,
+      hingeY: 920,
+    };
   }
+  const bb = hit.getBBox();
+  return {
+    cx: ((bb.x + bb.width / 2) / 2880) * 100,
+    cy: ((bb.y + bb.height / 2) / 1920) * 100,
+    hingeX: side === "left" ? bb.x + 8 : bb.x + bb.width - 8,
+    hingeY: bb.y + bb.height * 0.42,
+    bb,
+  };
+}
+
+function doorMaskImage(d) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2880 1920"><path fill="#fff" d="${d}"/></svg>`;
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+}
+
+function buildDoorThickness(host, d, depthPx = 40) {
+  if (!host) return;
+  host.innerHTML = "";
+  const svgNS = "http://www.w3.org/2000/svg";
+  const stepPx = 2;
+  const steps = Math.max(8, Math.round(depthPx / stepPx));
+  for (let i = steps; i >= 1; i -= 1) {
+    const slab = document.createElement("div");
+    slab.className = "door-slab";
+    slab.style.transform = `translateZ(${-i * stepPx}px)`;
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", "0 0 2880 1920");
+    svg.setAttribute("aria-hidden", "true");
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("d", d);
+    // slight darken toward back for edge read
+    const t = i / steps;
+    const shade = Math.round(197 - t * 18);
+    path.setAttribute("fill", `rgb(${shade}, ${shade + 1}, ${shade + 13})`);
+    svg.appendChild(path);
+    slab.appendChild(svg);
+    host.appendChild(slab);
+  }
+}
+
+function mountDoorDeco(side, d) {
+  const deco = document.getElementById("door-pivot-deco");
+  if (!deco || !coverLayout) return;
+
+  const textKey =
+    side === "left" ? "text-left-fluorescent" : "text-right-florescent";
+  const arrowKey = side === "left" ? "arrow-left" : "arrow-right";
+  const textPlace = coverLayout.placements[textKey];
+  const arrowPlace = coverLayout.placements[arrowKey];
+  const srcText = artboard.querySelector(`[data-layer="${textKey}"]`);
+  const srcArrow = artboard.querySelector(`[data-layer="${arrowKey}"]`);
+
+  deco.innerHTML = "";
+  const mask = doorMaskImage(d);
+  deco.style.webkitMaskImage = mask;
+  deco.style.maskImage = mask;
+
+  const AW = 2880;
+  const AH = 1920;
+  for (const [place, src] of [
+    [textPlace, srcText],
+    [arrowPlace, srcArrow],
+  ]) {
+    if (!place || !src?.src) continue;
+    const img = document.createElement("img");
+    img.className = "layer";
+    img.alt = "";
+    img.draggable = false;
+    img.src = src.src;
+    placeBox(img, place, AW, AH);
+    deco.appendChild(img);
+  }
+}
+
+function enterAttic(side) {
+  if (document.body.classList.contains("is-on-home")) return;
+  if (artboard.classList.contains("is-entering")) return;
+
+  const camera = document.getElementById("camera");
+  const stage = document.getElementById("stage");
+  const flash = document.getElementById("flash");
+  const home = document.getElementById("home");
+  const pivotRoot = document.getElementById("door-pivot-root");
+  const leafPath = document.getElementById("door-leaf-path");
+  const thicknessHost = document.getElementById("door-leaf-thickness");
+  const beyondPath = document.getElementById("door-beyond-path");
+  const srcPath = document.getElementById(
+    side === "left" ? "door-left-path" : "door-right-path"
+  );
+
+  if (srcPath) {
+    const d = srcPath.getAttribute("d");
+    leafPath?.setAttribute("d", d);
+    beyondPath?.setAttribute("d", d);
+    buildDoorThickness(thicknessHost, d, 40);
+    mountDoorDeco(side, d);
+  }
+
+  const m = doorMetrics(side);
+  camera.style.setProperty("--cam-x", `${(50 - m.cx) * 0.22}%`);
+  camera.style.setProperty("--cam-y", `${(50 - m.cy) * 0.12}%`);
+  camera.style.transformOrigin = `${m.cx}% ${m.cy}%`;
+
+  const hingeXPct = `${(m.hingeX / 2880) * 100}%`;
+  const hingeYPct = `${(m.hingeY / 1920) * 100}%`;
+  artboard.style.setProperty("--door-hinge-x", hingeXPct);
+  artboard.style.setProperty("--door-hinge-y", hingeYPct);
+  if (pivotRoot) {
+    pivotRoot.style.transformOrigin = `${hingeXPct} ${hingeYPct}`;
+  }
+
+  artboard.classList.remove("is-hover-left", "is-hover-right");
+  artboard.classList.add(
+    "is-entering",
+    side === "left" ? "is-enter-left" : "is-enter-right"
+  );
+  stage?.classList.add("is-exiting");
+
+  const finish = () => {
+    document.body.classList.add("is-on-home");
+    home?.classList.add("is-visible");
+    home?.setAttribute("aria-hidden", "false");
+    if (location.hash !== "#home") {
+      history.pushState({ view: "home" }, "", "#home");
+    }
+  };
+
+  if (reduceMotion) {
+    flash?.classList.remove("is-burst");
+    finish();
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    camera.classList.add("is-zooming");
+  });
+
+  window.setTimeout(() => {
+    flash?.classList.add("is-burst");
+  }, 1050);
+
+  window.setTimeout(() => {
+    finish();
+  }, 1280);
+}
+
+function showHomeImmediate() {
+  const home = document.getElementById("home");
+  document.body.classList.add("is-on-home");
+  home?.classList.add("is-visible");
+  home?.setAttribute("aria-hidden", "false");
+}
+
+function setupRouting() {
+  if (location.hash === "#home") {
+    showHomeImmediate();
+  }
+  window.addEventListener("popstate", () => {
+    if (location.hash === "#home") {
+      showHomeImmediate();
+    } else {
+      // hard reload cover — simplest clean reset of camera state
+      location.reload();
+    }
+  });
 }
 
 function setupLetters(lettersData, AW, AH) {
@@ -149,8 +480,8 @@ function setupIllustration(regionsData, AW, AH) {
   const h = place.h;
   const imgSrc = assetUrl(regionsData.image);
   const [cx, cy] = regionsData.centerLocal || [w / 2, h / 2];
-  // slightly expand clips so diagonal seams don't flash page bg as white edges
-  const clipExpand = 1.045;
+  // overlap clips so diagonal X seams don't flash page bg through the middle
+  const clipExpand = 1.14;
 
   const svgNS = "http://www.w3.org/2000/svg";
   const xlinkNS = "http://www.w3.org/1999/xlink";
@@ -167,89 +498,113 @@ function setupIllustration(regionsData, AW, AH) {
     path.setAttribute("d", expandPathFromCenter(region.localPath, cx, cy, clipExpand));
     clip.appendChild(path);
     defs.appendChild(clip);
-
-    // cast only paints onto neighbors (full board minus own footprint)
-    const castClip = document.createElementNS(svgNS, "clipPath");
-    castClip.setAttribute("id", `cast-onto-${region.id}`);
-    castClip.setAttribute("clipPathUnits", "userSpaceOnUse");
-    castClip.setAttribute("clip-rule", "evenodd");
-    const board = document.createElementNS(svgNS, "path");
-    board.setAttribute("d", `M0 0H${w}V${h}H0Z`);
-    const hole = document.createElementNS(svgNS, "path");
-    hole.setAttribute("d", region.localPath);
-    castClip.append(board, hole);
-    defs.appendChild(castClip);
   }
   svg.appendChild(defs);
 
-  const padD = regionsData.padShadowPath;
-  // Fixed pad: rounded continuous silhouette under pieces (no pokey corners)
+  const padSrc = assetUrl(
+    regionsData.padShadowImage || "parts/illu-pad-shadow.png"
+  );
+  // Front light: fixed inset silhouette under shards, scaled to 90%
+  const padScale = 0.9;
+  const padW = w * padScale;
+  const padH = h * padScale;
+  const padX = (w - padW) / 2;
+  const padY = (h - padH) / 2;
+
+  const placePadImage = (img) => {
+    img.setAttribute("href", padSrc);
+    img.setAttributeNS(xlinkNS, "href", padSrc);
+    img.setAttribute("x", String(padX));
+    img.setAttribute("y", String(padY));
+    img.setAttribute("width", String(padW));
+    img.setAttribute("height", String(padH));
+    img.setAttribute("preserveAspectRatio", "none");
+  };
+
   const floorLayer = document.createElementNS(svgNS, "g");
   floorLayer.classList.add("illu-floor");
-  if (padD) {
-    const basePad = document.createElementNS(svgNS, "path");
-    basePad.classList.add("illu-pad");
-    basePad.setAttribute("d", padD);
-    floorLayer.appendChild(basePad);
+  const basePad = document.createElementNS(svgNS, "image");
+  basePad.classList.add("illu-pad");
+  placePadImage(basePad);
+  floorLayer.appendChild(basePad);
 
-    // per-region brightness boost while that piece is lifted
-    for (const region of regionsData.regions) {
-      const lit = document.createElementNS(svgNS, "g");
-      lit.classList.add("illu-pad-lit");
-      lit.dataset.region = region.id;
-      lit.setAttribute("clip-path", `url(#clip-${region.id})`);
-      const litPath = document.createElementNS(svgNS, "path");
-      litPath.setAttribute("d", padD);
-      lit.appendChild(litPath);
-      floorLayer.appendChild(lit);
-    }
+  // lift = nearby lightens (same inset pad, brighter in that region)
+  for (const region of regionsData.regions) {
+    const lit = document.createElementNS(svgNS, "g");
+    lit.classList.add("illu-pad-lit");
+    lit.dataset.region = region.id;
+    lit.setAttribute("clip-path", `url(#clip-${region.id})`);
+    const litImg = document.createElementNS(svgNS, "image");
+    placePadImage(litImg);
+    lit.appendChild(litImg);
+    floorLayer.appendChild(lit);
   }
 
   const pieceLayer = document.createElementNS(svgNS, "g");
   pieceLayer.classList.add("tri-pieces");
-  const castLayer = document.createElementNS(svgNS, "g");
-  castLayer.classList.add("tri-casts");
   const liftLayer = document.createElementNS(svgNS, "g");
   liftLayer.classList.add("tri-lifted");
   const hitLayer = document.createElementNS(svgNS, "g");
   hitLayer.classList.add("tri-hits");
 
   const order = ["bottom", "left", "right", "top"];
-  // unit vectors from each piece toward diagonal cross (inward cast)
-  const inward = {
-    top: [0, 1],
-    bottom: [0, -1],
-    left: [1, 0],
-    right: [-1, 0],
-  };
-  const castDist = 18;
   const byId = Object.fromEntries(regionsData.regions.map((r) => [r.id, r]));
   const visuals = {};
-  const casts = {};
   const padLits = {};
   for (const el of floorLayer.querySelectorAll(".illu-pad-lit")) {
     padLits[el.dataset.region] = el;
   }
   const hovered = new Set();
+  // individual outward nudge; pairs share one vector so their seam stays closed
+  const OUT = {
+    top: [0, -32],
+    bottom: [0, 32],
+    left: [-32, 0],
+    right: [32, 0],
+  };
 
   const doorRegions = () => {
-    if (artboard.classList.contains("is-hover-left")) return ["right", "bottom"];
-    if (artboard.classList.contains("is-hover-right")) return ["top", "left"];
+    // fluorescent (left door) → left + top; florescent (right) → right + bottom
+    if (artboard.classList.contains("is-hover-left")) return ["left", "top"];
+    if (artboard.classList.contains("is-hover-right")) return ["right", "bottom"];
     return [];
+  };
+
+  const liftOffsetFor = (activeIds) => {
+    if (activeIds.length === 0) return [0, 0];
+    if (activeIds.length === 1) return OUT[activeIds[0]] || [0, 0];
+    let sx = 0;
+    let sy = 0;
+    for (const id of activeIds) {
+      const o = OUT[id] || [0, 0];
+      sx += o[0];
+      sy += o[1];
+    }
+    let dx = sx / activeIds.length;
+    let dy = sy / activeIds.length;
+    const mag = Math.hypot(dx, dy);
+    if (mag > 0.1) {
+      const k = 32 / mag;
+      dx *= k;
+      dy *= k;
+    }
+    return [dx, dy];
   };
 
   const syncLift = () => {
     const fromDoor = new Set(doorRegions());
+    const active = order.filter((id) => hovered.has(id) || fromDoor.has(id));
+    const [dx, dy] = liftOffsetFor(active);
     for (const id of order) {
-      const on = hovered.has(id) || fromDoor.has(id);
+      const on = active.includes(id);
       const visual = visuals[id];
-      const cast = casts[id];
       if (!visual) continue;
       visual.classList.toggle("is-up", on);
-      cast?.classList.toggle("is-on", on);
+      visual.style.transform = on
+        ? `translate3d(${dx}px, ${dy}px, 0)`
+        : "translate3d(0, 0, 0)";
       padLits[id]?.classList.toggle("is-bright", on);
       (on ? liftLayer : pieceLayer).appendChild(visual);
-      if (on && cast) castLayer.appendChild(cast);
     }
   };
 
@@ -261,7 +616,6 @@ function setupIllustration(regionsData, AW, AH) {
     visual.classList.add("tri-visual");
     visual.dataset.region = id;
     visual.setAttribute("clip-path", `url(#clip-${id})`);
-    visual.style.transformOrigin = `${cx}px ${cy}px`;
     const image = document.createElementNS(svgNS, "image");
     image.setAttribute("href", imgSrc);
     image.setAttributeNS(xlinkNS, "href", imgSrc);
@@ -271,20 +625,6 @@ function setupIllustration(regionsData, AW, AH) {
     visual.appendChild(image);
     pieceLayer.appendChild(visual);
     visuals[id] = visual;
-
-    const castG = document.createElementNS(svgNS, "g");
-    castG.classList.add("tri-cast");
-    castG.dataset.region = id;
-    castG.setAttribute("clip-path", `url(#cast-onto-${id})`);
-    const [ix, iy] = inward[id] || [0, 0];
-    castG.style.setProperty("--cast-x", `${ix * castDist}px`);
-    castG.style.setProperty("--cast-y", `${iy * castDist}px`);
-    const castPath = document.createElementNS(svgNS, "path");
-    castPath.classList.add("tri-cast-shape");
-    castPath.setAttribute("d", region.localPath);
-    castG.appendChild(castPath);
-    castLayer.appendChild(castG);
-    casts[id] = castG;
 
     const hit = document.createElementNS(svgNS, "path");
     hit.classList.add("tri-hit");
@@ -302,8 +642,8 @@ function setupIllustration(regionsData, AW, AH) {
     });
   }
 
-  // floor → resting pieces → inward casts on neighbors → lifted pieces → hits
-  svg.append(floorLayer, pieceLayer, castLayer, liftLayer, hitLayer);
+  // floor (inset shadow) → resting pieces → lifted pieces → hits
+  svg.append(floorLayer, pieceLayer, liftLayer, hitLayer);
   root.appendChild(svg);
 
   root.addEventListener("pointerleave", () => {
@@ -523,6 +863,7 @@ async function load() {
   ]);
 
   const { w: AW, h: AH } = layout.meta.artboard;
+  coverLayout = layout;
 
   setupLayers(layout, AW, AH);
   setupRails(railsXml);
@@ -531,11 +872,14 @@ async function load() {
   setupIllustration(regionsData, AW, AH);
   setupMarks(marksData, AW, AH);
   setupSketchUnderlines(lettersData, marksData, layout, AW, AH);
+  setupRouting();
 
   // kick entrance animations after first paint
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      artboard.classList.add("is-ready");
+      if (!document.body.classList.contains("is-on-home")) {
+        artboard.classList.add("is-ready");
+      }
     });
   });
 

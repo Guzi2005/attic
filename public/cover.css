@@ -22,15 +22,104 @@ body {
 }
 
 .stage {
-  width: 100vw;
-  height: 100vh;
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: grid;
   place-items: center;
   background: var(--bg);
+  overflow: hidden;
+}
+
+/* portrait letterbox: swallow rows — max 2 */
+.stage-void {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--bg);
+  overflow: hidden;
+}
+
+.void-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--void-tile, 100px);
+  opacity: 0.92;
+  background-image: url("./parts/cover-void-pattern.png");
+  background-repeat: repeat-x;
+  background-size: var(--void-tile, 100px) var(--void-tile, 100px);
+}
+
+.stage-void-top {
+  top: 0;
+}
+
+.stage-void-top .void-row-art {
+  bottom: 0;
+  background-position: center bottom;
+}
+
+.stage-void-top .void-row-edge {
+  top: 0;
+  display: none;
+  background-position: center top;
+}
+
+.stage-void-top .void-row-mid {
+  top: var(--void-tile, 100px);
+  display: none;
+  background-position: center top;
+}
+
+.stage-void-bot {
+  bottom: 0;
+}
+
+.stage-void-bot .void-row-art {
+  top: 0;
+  background-position: center top;
+}
+
+.stage-void-bot .void-row-edge {
+  bottom: 0;
+  display: none;
+  background-position: center bottom;
+}
+
+.stage-void-bot .void-row-mid {
+  bottom: var(--void-tile, 100px);
+  display: none;
+  background-position: center bottom;
+}
+
+/* 2 rows: artboard + outer edge */
+.stage-void.is-dual .void-row-edge {
+  display: block;
+}
+
+/* would fit 3+: keep edge + mid, drop artboard-adjacent row */
+.stage-void.is-edge-pair .void-row-art {
+  display: none;
+}
+
+.stage-void.is-edge-pair .void-row-edge,
+.stage-void.is-edge-pair .void-row-mid {
+  display: block;
+}
+
+@media (max-aspect-ratio: 3 / 2) {
+  .stage-void {
+    display: block;
+  }
 }
 
 .artboard {
   position: relative;
+  z-index: 1;
   width: min(100vw, calc(100vh * (var(--art-w) / var(--art-h))));
   height: min(100vh, calc(100vw * (var(--art-h) / var(--art-w))));
   background: var(--bg);
@@ -58,10 +147,24 @@ body {
   overflow: visible;
 }
 
-.frame-rails path {
+/* full-viewport horizontals — continue past left/right verticals */
+.frame-rails-bleed {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 0;
+  height: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 3;
+}
+
+.frame-rails path,
+.frame-rails-bleed path {
   fill: none;
   stroke: #1a1a1a;
-  stroke-width: 2;
+  /* scales with artboard CSS size so external browsers match IDE weight */
+  stroke-width: calc(2.6px * var(--stroke-scale, 1));
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
@@ -89,23 +192,23 @@ body {
 
 .sketch-uline.is-top {
   stroke: #7a86a8;
-  stroke-width: 3.2;
+  stroke-width: calc(3.8px * var(--stroke-scale, 1));
   transition-duration: 1.15s;
 }
 
 .sketch-uline.is-reason {
   stroke: #8a90a8;
-  stroke-width: 2.8;
+  stroke-width: calc(3.4px * var(--stroke-scale, 1));
 }
 
 .sketch-uline.is-check {
   stroke: #9fd48a;
-  stroke-width: 3;
+  stroke-width: calc(3.6px * var(--stroke-scale, 1));
 }
 
 .sketch-uline.is-cross {
   stroke: #c48ab8;
-  stroke-width: 3;
+  stroke-width: calc(3.6px * var(--stroke-scale, 1));
 }
 
 .artboard.is-hover-top-text .sketch-uline.is-top {
@@ -241,7 +344,6 @@ body {
 
 .illu-floor,
 .tri-pieces,
-.tri-casts,
 .tri-lifted,
 .tri-hits {
   pointer-events: none;
@@ -253,54 +355,35 @@ body {
   fill: rgba(0, 0, 0, 0.001);
 }
 
-/* fixed pad under illustration — rounded continuous corners, slightly inset */
+/* front-light pad: silhouette under shards, drawn at 90% size */
 .illu-pad {
-  fill: rgba(86, 88, 104, 0.36);
   pointer-events: none;
+  opacity: 0.4;
 }
 
-/* region slice brightens in sync with that piece's lift height */
+/* when a shard lifts, that region lightens (more light reaches the pad) */
 .illu-pad-lit {
   pointer-events: none;
 }
 
-.illu-pad-lit path {
-  fill: rgba(168, 170, 186, 0.78);
+.illu-pad-lit image {
   opacity: 0;
-  transition: opacity 0.45s var(--ease-soft);
+  filter: brightness(1.75) saturate(0.85);
+  transition: opacity 0.35s var(--ease-soft);
 }
 
-.illu-pad-lit.is-bright path {
-  opacity: 1;
+.illu-pad-lit.is-bright image {
+  opacity: 0.72;
 }
 
-/* hard cast onto neighbors only, offset toward diagonal center */
-.tri-cast {
-  opacity: 0;
-  transition: opacity 0.45s var(--ease-soft);
-  pointer-events: none;
-}
-
-.tri-cast.is-on {
-  opacity: 1;
-}
-
-.tri-cast-shape {
-  fill: rgba(72, 74, 90, 0.48);
-  transform: translate(0, 0);
-  transition: transform 0.45s var(--ease-soft);
-  pointer-events: none;
-}
-
-.tri-cast.is-on .tri-cast-shape {
-  transform: translate(var(--cast-x, 0px), var(--cast-y, 0px));
+.illu-pad-lit:not(.is-bright) image {
+  transition: none;
 }
 
 .tri-visual {
-  transform: scale(1);
+  transform: translate3d(0, 0, 0);
   transform-box: view-box;
   filter: brightness(1);
-  /* origin set in JS to diagonal cross (centerLocal) */
   transition:
     transform 0.45s var(--ease-soft),
     filter 0.45s var(--ease-soft);
@@ -308,9 +391,8 @@ body {
   will-change: transform, filter;
 }
 
-/* outward from diagonal cross (no downward drop) + mild brighten */
+/* lift offset set in JS — single piece outward; pair shares one vector (seamless) */
 .tri-visual.is-up {
-  transform: scale(1.08);
   filter: brightness(1.1);
 }
 
@@ -336,14 +418,17 @@ body {
 }
 
 .pin {
+  opacity: 0;
   transform: translateY(0);
-  transition: transform 0.35s ease, filter 0.28s ease;
-  will-change: transform, filter;
+  transition: opacity 0.28s ease, transform 0.35s ease, filter 0.28s ease;
+  will-change: transform, filter, opacity;
   filter: drop-shadow(0 0 0 transparent);
+  pointer-events: none;
 }
 
 .artboard.is-hover-left .pin[data-layer="pin-green"],
 .artboard.is-hover-right .pin[data-layer="pin-magenta"] {
+  opacity: 1;
   animation: pin-float 1.1s ease-in-out infinite;
   /* thin hard white outline — same as arrows */
   filter:
@@ -442,11 +527,16 @@ body {
   object-fit: fill;
   pointer-events: none;
   z-index: 0;
-  /* light from front-upper-left → near cast to lower-right */
-  transform: translate(1.5px, 2px) rotate(4deg) scale(1.32);
+  /* light from front-upper-left → cast touches the ink; thicker stroke, not bigger */
+  transform: translate(1px, 1px) rotate(3deg);
   transform-origin: 30% 25%;
-  filter: brightness(0);
-  opacity: 0.32;
+  filter:
+    brightness(0)
+    drop-shadow(0.6px 0 0 #000)
+    drop-shadow(-0.6px 0 0 #000)
+    drop-shadow(0 0.6px 0 #000)
+    drop-shadow(0 -0.6px 0 #000);
+  opacity: 0.18;
 }
 
 .mark-ink {
@@ -560,14 +650,11 @@ body {
     transform: translate(-50%, -50%) scale(0);
   }
   .tri-visual.is-up {
-    transform: none;
+    transform: none !important;
     filter: none;
   }
-  .tri-cast.is-on {
+  .illu-pad-lit.is-bright image {
     opacity: 0;
-  }
-  .tri-cast.is-on .tri-cast-shape {
-    transform: none;
   }
   .artboard.is-hover-left .pin[data-layer="pin-green"],
   .artboard.is-hover-right .pin[data-layer="pin-magenta"] {

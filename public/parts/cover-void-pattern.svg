@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="5" result="n"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.87  0 0 0 0 0.88  0 0 0 0 0.96  0 0 0 0.12 0"/>
+    </filter>
+    <filter id="stamp" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.25" numOctaves="2" seed="9" result="t"/>
+      <feDisplacementMap in="SourceGraphic" in2="t" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- left-facing swallow: beak left, 3-prong tail right -->
+    <path id="bird-l" fill="#1a1a18" d="
+      M 6 28
+      L 14 24
+      C 18 18 26 14 36 16
+      C 48 18 58 22 66 20
+      L 78 12
+      L 70 28
+      L 80 30
+      L 68 34
+      L 78 44
+      L 64 36
+      C 52 40 40 40 28 36
+      C 18 34 12 32 6 28
+      Z"/>
+    <!-- right-facing -->
+    <path id="bird-r" fill="#1a1a18" d="
+      M 94 28
+      L 86 24
+      C 82 18 74 14 64 16
+      C 52 18 42 22 34 20
+      L 22 12
+      L 30 28
+      L 20 30
+      L 32 34
+      L 22 44
+      L 36 36
+      C 48 40 60 40 72 36
+      C 82 34 88 32 94 28
+      Z"/>
+  </defs>
+
+  <rect width="200" height="200" fill="#dee1f6"/>
+  <rect width="200" height="200" filter="url(#grain)"/>
+
+  <g filter="url(#stamp)" opacity="0.94">
+    <circle cx="48" cy="48" r="28" fill="#a7b3c9"/>
+    <use href="#bird-l" x="100" y="18"/>
+    <use href="#bird-r" x="0" y="118"/>
+    <circle cx="152" cy="152" r="28" fill="#a7b3c9"/>
+  </g>
+</svg>
