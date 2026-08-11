@@ -364,14 +364,30 @@ function enterAttic(side) {
   }
 
   const m = doorMetrics(side);
-  camera.style.setProperty("--cam-x", `${(50 - m.cx) * 0.22}%`);
-  camera.style.setProperty("--cam-y", `${(50 - m.cy) * 0.12}%`);
-  camera.style.transformOrigin = `${m.cx}% ${m.cy}%`;
+  const camRect = camera.getBoundingClientRect();
+  const abRect = artboard.getBoundingClientRect();
+  const originPx = abRect.left + (m.cx / 100) * abRect.width;
+  const originPy = abRect.top + (m.cy / 100) * abRect.height;
+  const originX =
+    camRect.width > 0
+      ? ((originPx - camRect.left) / camRect.width) * 100
+      : m.cx;
+  const originY =
+    camRect.height > 0
+      ? ((originPy - camRect.top) / camRect.height) * 100
+      : m.cy;
+
+  camera.style.setProperty("--cam-x", `${(50 - originX) * 0.22}%`);
+  camera.style.setProperty("--cam-y", `${(50 - originY) * 0.12}%`);
+  camera.style.transformOrigin = `${originX}% ${originY}%`;
 
   const hingeXPct = `${(m.hingeX / 2880) * 100}%`;
   const hingeYPct = `${(m.hingeY / 1920) * 100}%`;
   artboard.style.setProperty("--door-hinge-x", hingeXPct);
   artboard.style.setProperty("--door-hinge-y", hingeYPct);
+  const pivot = document.getElementById("door-pivot");
+  pivot?.style.setProperty("--door-hinge-x", hingeXPct);
+  pivot?.style.setProperty("--door-hinge-y", hingeYPct);
   if (pivotRoot) {
     pivotRoot.style.transformOrigin = `${hingeXPct} ${hingeYPct}`;
   }
@@ -404,11 +420,11 @@ function enterAttic(side) {
 
   window.setTimeout(() => {
     flash?.classList.add("is-burst");
-  }, 1050);
+  }, 1100);
 
   window.setTimeout(() => {
     finish();
-  }, 1280);
+  }, 1580);
 }
 
 function showHomeImmediate() {

@@ -5,7 +5,7 @@
   display: grid;
   place-items: center;
   transform-origin: center center;
-  will-change: transform, filter;
+  will-change: transform;
   background: var(--bg, #dee1f6);
 }
 
@@ -16,15 +16,12 @@
 @keyframes cam-through-door {
   0% {
     transform: scale(1) translate3d(0, 0, 0);
-    filter: brightness(1) contrast(1);
   }
   28% {
     transform: scale(1.08) translate3d(var(--cam-x, 0%), var(--cam-y, 0%), 0);
-    filter: brightness(1.02) contrast(1.02);
   }
   100% {
     transform: scale(4.6) translate3d(var(--cam-x, 0%), var(--cam-y, 0%), 0);
-    filter: brightness(1.35) contrast(1.08);
   }
 }
 
@@ -47,8 +44,6 @@
 }
 
 .artboard.is-entering {
-  perspective: 2200px;
-  perspective-origin: var(--door-hinge-x, 50%) var(--door-hinge-y, 50%);
   pointer-events: none;
   overflow: visible;
 }
@@ -72,6 +67,9 @@
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
+  transform-style: preserve-3d;
+  perspective: 2200px;
+  perspective-origin: var(--door-hinge-x, 50%) var(--door-hinge-y, 50%);
 }
 
 .artboard.is-entering .door-pivot {
@@ -167,19 +165,19 @@
 
 @keyframes door-swing-left {
   0% {
-    transform: translate3d(0, 0, 0) rotateY(0deg);
+    transform: perspective(2200px) translate3d(0, 0, 0) rotateY(0deg);
   }
   100% {
-    transform: translate3d(0, 0, 28px) rotateY(-82deg);
+    transform: perspective(2200px) translate3d(0, 0, 28px) rotateY(-72deg);
   }
 }
 
 @keyframes door-swing-right {
   0% {
-    transform: translate3d(0, 0, 0) rotateY(0deg);
+    transform: perspective(2200px) translate3d(0, 0, 0) rotateY(0deg);
   }
   100% {
-    transform: translate3d(0, 0, 28px) rotateY(82deg);
+    transform: perspective(2200px) translate3d(0, 0, 28px) rotateY(72deg);
   }
 }
 
@@ -187,15 +185,18 @@
   pointer-events: none;
 }
 
-/* vignette / settle rest of cover while zooming */
+/* settle non-door layers; keep stage opacity so door 3D isn't flattened early */
 .stage.is-exiting {
   overflow: visible;
-  animation: stage-sink 1.55s ease forwards;
 }
 
-@keyframes stage-sink {
+.stage.is-exiting .artboard > :not(.door-pivot):not(.door-beyond) {
+  animation: stage-sink-layer 1.55s ease forwards;
+}
+
+@keyframes stage-sink-layer {
   0% { opacity: 1; }
-  70% { opacity: 1; }
+  72% { opacity: 1; }
   100% { opacity: 0; }
 }
 
@@ -242,7 +243,7 @@ body.is-on-home .camera {
     animation: none;
     opacity: 0;
   }
-  .stage.is-exiting {
+  .stage.is-exiting .artboard > :not(.door-pivot):not(.door-beyond) {
     animation: none;
     opacity: 0;
   }
