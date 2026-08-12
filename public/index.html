@@ -19,16 +19,48 @@
 
   <div class="camera" id="camera">
     <main id="stage" class="stage" aria-label="Attic cover">
-      <!-- portrait letterbox: max 2 swallow rows (artboard first, then edges) -->
+      <!-- portrait letterbox: responsive swallow flow (canvas) -->
       <div class="stage-void stage-void-top" aria-hidden="true">
-        <div class="void-row void-row-edge"></div>
-        <div class="void-row void-row-mid"></div>
-        <div class="void-row void-row-art"></div>
+        <div class="void-parallax void-parallax-far" aria-hidden="true">
+          <div class="void-railing-arch-back" aria-hidden="true"></div>
+          <div class="void-railing-back" aria-hidden="true"></div>
+        </div>
+        <div class="void-parallax void-parallax-mid">
+          <div class="void-row void-row-edge">
+            <canvas class="void-flow-canvas" data-side="top" data-slot="edge" data-reversed="1"></canvas>
+          </div>
+          <div class="void-row void-row-inner">
+            <canvas class="void-flow-canvas" data-side="top" data-slot="inner" data-reversed="1"></canvas>
+          </div>
+          <div class="void-row void-row-art">
+            <canvas class="void-flow-canvas" data-side="top" data-slot="art" data-reversed="0"></canvas>
+          </div>
+        </div>
+        <div class="void-parallax void-parallax-near" aria-hidden="true">
+          <div class="void-railing-arch-front" aria-hidden="true"></div>
+          <div class="void-railing-front" aria-hidden="true"></div>
+        </div>
       </div>
       <div class="stage-void stage-void-bot" aria-hidden="true">
-        <div class="void-row void-row-art"></div>
-        <div class="void-row void-row-mid"></div>
-        <div class="void-row void-row-edge"></div>
+        <div class="void-parallax void-parallax-far" aria-hidden="true">
+          <div class="void-railing-arch-back" aria-hidden="true"></div>
+          <div class="void-railing-back" aria-hidden="true"></div>
+        </div>
+        <div class="void-parallax void-parallax-mid">
+          <div class="void-row void-row-art">
+            <canvas class="void-flow-canvas" data-side="bot" data-slot="art" data-reversed="1"></canvas>
+          </div>
+          <div class="void-row void-row-inner">
+            <canvas class="void-flow-canvas" data-side="bot" data-slot="inner" data-reversed="0"></canvas>
+          </div>
+          <div class="void-row void-row-edge">
+            <canvas class="void-flow-canvas" data-side="bot" data-slot="edge" data-reversed="0"></canvas>
+          </div>
+        </div>
+        <div class="void-parallax void-parallax-near" aria-hidden="true">
+          <div class="void-railing-arch-front" aria-hidden="true"></div>
+          <div class="void-railing-front" aria-hidden="true"></div>
+        </div>
       </div>
       <!-- horizontals bleed to full viewport width past the verticals -->
       <svg class="frame-rails-bleed" id="rails-bleed" viewBox="0 0 2880 1920" aria-hidden="true"></svg>
@@ -321,7 +353,7 @@
             <rect x="14" y="14" width="42" height="22" rx="9" fill="#f2f1e6"/>
             <path d="M48 16 C48 10 54 8 60 10 L62 22 L50 24 C47 24 46 20 48 16 Z" fill="#f2f1e6"/>
           </svg>
-          <span class="tile-title">拼布花园</span>
+          <span class="tile-title">绵羊栏</span>
         </a>
 
         <a class="tile c-forest span-rabbit" href="#garden">

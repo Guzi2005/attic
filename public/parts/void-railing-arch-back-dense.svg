@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-28 0 56 100" preserveAspectRatio="none">
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3.84"
+    stroke-linecap="butt"
+    d="M-28 100 V50 M28 100 V50"
+  />
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3.12"
+    stroke-linejoin="miter"
+    stroke-miterlimit="10"
+    stroke-linecap="butt"
+    d="M-28 50 C-28 28 -4 8 0 5.56 C4 8 28 28 28 50"
+  />
+</svg>

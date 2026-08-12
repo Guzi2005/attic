@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 100" preserveAspectRatio="none">
+  <!--
+    tip apex below rail by ~stroke/2 so the whole tip sits outside the gray
+    (kisses the inner edge, never buried in the bar).
+  -->
+  <rect x="-4" y="0" width="64" height="5" fill="#9AA0B8" />
+  <rect x="-4" y="88" width="64" height="12" fill="#9AA0B8" />
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3"
+    stroke-linecap="butt"
+    d="M0 100 V48 M56 100 V48"
+  />
+  <!-- tip @ 6.25 ≈ 5 + 2.5/2 -->
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="2.5"
+    stroke-linejoin="miter"
+    stroke-miterlimit="8"
+    stroke-linecap="butt"
+    d="M0 48 C0 30 22 9 28 6.25 C34 9 56 30 56 48"
+  />
+</svg>

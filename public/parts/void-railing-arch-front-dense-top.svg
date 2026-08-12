@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 100" preserveAspectRatio="none">
+  <!--
+    dense TOP void (thick page rail @ tip): tip fully BELOW the gray —
+    this was the row with severe occlusion.
+  -->
+  <rect x="-4" y="0" width="64" height="12" fill="#9AA0B8" />
+  <rect x="-4" y="96" width="64" height="4" fill="#9AA0B8" />
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3.84"
+    stroke-linecap="butt"
+    d="M0 100 V54 M56 100 V54"
+  />
+  <!-- tip @ 13.56 ≈ 12 + 3.12/2 — whole tip in open area, kisses gray edge -->
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3.12"
+    stroke-linejoin="miter"
+    stroke-miterlimit="10"
+    stroke-linecap="butt"
+    d="M0 54 C0 36 24 16 28 13.56 C32 16 56 36 56 54"
+  />
+</svg>

@@ -1,0 +1,27 @@
+{
+  "rowH": 517,
+  "totalW": 1018,
+  "leftRow": {
+    "circleW": 448,
+    "swallowW": 570,
+    "beakPad": 22,
+    "beakSide": "left",
+    "discCx": 0.5502,
+    "discCy": 0.6006,
+    "discRFracW": 0.3917,
+    "swallowCx": 0.4569,
+    "swallowCy": 0.6199
+  },
+  "rightRow": {
+    "swallowW": 588,
+    "circleW": 430,
+    "beakPad": 22,
+    "beakSide": "right",
+    "discCx": 0.4395,
+    "discCy": 0.3772,
+    "discRFracW": 0.4163,
+    "swallowCx": 0.5361,
+    "swallowCy": 0.3781
+  },
+  "matte": true
+}

@@ -2,6 +2,8 @@
   --bg: #dee1f6;
   --art-w: 2880;
   --art-h: 1920;
+  --page-margin-x: 20px;
+  --page-margin-y: 22px;
   --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-land: cubic-bezier(0.34, 1.3, 0.64, 1);
 }
@@ -31,84 +33,282 @@ body {
   overflow: hidden;
 }
 
-/* portrait letterbox: swallow rows — max 2 */
+/* portrait letterbox: canvas swallow flow — responsive modes */
 .stage-void {
   display: none;
   position: absolute;
   left: 0;
   right: 0;
   z-index: 0;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
   background-color: var(--bg);
-  overflow: hidden;
+  overflow: visible;
+}
+
+.stage-void.is-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Depth planes for door-zoom parallax (far / mid flock / near) */
+.void-parallax {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.void-parallax-far {
+  z-index: 0;
+}
+
+.void-parallax-mid {
+  z-index: 1;
+  /* keep letterbox interactive for moon toggle */
+  pointer-events: auto;
+}
+
+.void-parallax-near {
+  z-index: 3;
+}
+
+/* —— portrait railings —— */
+/* Tall portrait A-ribs: split front/back so swallows thread the gaps.
+   Drawn as background-image (same as posts) — black mask+luminance made them vanish. */
+.void-railing-arch-back,
+.void-railing-arch-front {
+  display: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-position: 0 0;
+}
+
+.void-railing-arch-back {
+  z-index: 0;
+  opacity: 0.65;
+  background-image: url("./parts/void-railing-arch-back.svg");
+}
+
+.void-railing-arch-front {
+  z-index: 3;
+  /* keep at 1 so horizontal gray bars stay fully opaque (strokes use softer #8B90A8) */
+  opacity: 1;
+  background-image: url("./parts/void-railing-arch-front.svg");
+}
+
+/* Near-square: pillars alternate front/back; gray rails hug black outline */
+.void-railing-back,
+.void-railing-front {
+  display: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  /* tile = 2 slots; roomy gaps between alternating posts — do not reuse A density */
+  background-size: 200px 100%;
+  background-position: 0 0;
+}
+
+.void-railing-back {
+  z-index: 0;
+  opacity: 0.5;
+  background-image: url("./parts/void-railing-post-back.svg");
+}
+
+.void-railing-front {
+  z-index: 2;
+  opacity: 1;
+  background-image: url("./parts/void-railing-post-front.svg");
 }
 
 .void-row {
   position: absolute;
   left: 0;
   right: 0;
-  height: var(--void-tile, 100px);
+  z-index: 1;
+  height: var(--void-tile, 64px);
+  opacity: 0;
+  visibility: hidden;
+  /* Only fade — animating top/bottom across mode switches parks rows off-screen. */
+  transition: opacity 0.18s linear;
+}
+
+/* Tall A-railing (aspect ≤ 41/50). Two densities vs ref shot ≈ 2/3. */
+@media (max-aspect-ratio: 41 / 50) {
+  .void-railing-arch-back,
+  .void-railing-arch-front {
+    display: block;
+    background-size: 80px 100%;
+  }
+
+  .void-railing-arch-back {
+    background-image: url("./parts/void-railing-arch-back.svg");
+    background-position: 40px 0;
+  }
+
+  .void-railing-arch-front {
+    background-image: url("./parts/void-railing-arch-front.svg");
+    background-position: 0 0;
+  }
+
+  /* wider-than-ref: top tips point down; gray ends swap with the flip */
+  .stage-void-top .void-railing-arch-back,
+  .stage-void-top .void-railing-arch-front {
+    transform: scaleY(-1);
+    transform-origin: center center;
+  }
+
+  .void-row:has(canvas[data-reversed="0"]) {
+    z-index: 1;
+  }
+  .void-row:has(canvas[data-reversed="1"]) {
+    z-index: 2;
+  }
+}
+
+/* Narrower than ref → denser A, both voids tips up, black=narrow / page=thick */
+@media (max-aspect-ratio: 2 / 3) {
+  .void-railing-arch-back,
+  .void-railing-arch-front {
+    background-size: 52px 100%;
+  }
+
+  .void-railing-arch-back {
+    background-image: url("./parts/void-railing-arch-back-dense.svg");
+    background-position: 26px 0;
+  }
+
+  .void-railing-arch-front {
+    background-image: url("./parts/void-railing-arch-front-dense.svg");
+    background-position: 0 0;
+  }
+
+  /* cancel flip — tips stay up on top void too */
+  .stage-void-top .void-railing-arch-back,
+  .stage-void-top .void-railing-arch-front {
+    transform: none;
+  }
+
+  /* top void: page at tip → thick tip rail / narrow black foot; tips below gray */
+  .stage-void-top .void-railing-arch-front {
+    background-image: url("./parts/void-railing-arch-front-dense-top.svg");
+  }
+
+  .stage-void-top .void-railing-arch-back {
+    background-image: url("./parts/void-railing-arch-back-dense-top.svg");
+  }
+
+  /* nudge top swallow band slightly toward the artboard */
+  .stage-void-top:not(.is-half) .void-parallax-mid {
+    top: 12px;
+  }
+}
+
+/* Near square (≈0.82–1): hand-drawn post sandwich */
+@media (min-aspect-ratio: 41 / 50) and (max-aspect-ratio: 1 / 1) {
+  .void-railing-back,
+  .void-railing-front {
+    display: block;
+  }
+}
+
+.void-row.is-active {
   opacity: 0.92;
-  background-image: url("./parts/cover-void-pattern.png");
-  background-repeat: repeat-x;
-  background-size: var(--void-tile, 100px) var(--void-tile, 100px);
+  visibility: visible;
+  overflow: visible;
+}
+
+.void-flow-canvas {
+  display: block;
+  width: calc(100% + 2 * var(--void-pad-x, 72px));
+  height: calc(100% + 2 * var(--void-pad-y, 16px));
+  margin-left: calc(-1 * var(--void-pad-x, 72px));
+  margin-top: calc(-1 * var(--void-pad-y, 16px));
 }
 
 .stage-void-top {
   top: 0;
 }
 
-.stage-void-top .void-row-art {
-  bottom: 0;
-  background-position: center bottom;
-}
-
-.stage-void-top .void-row-edge {
-  top: 0;
-  display: none;
-  background-position: center top;
-}
-
-.stage-void-top .void-row-mid {
-  top: var(--void-tile, 100px);
-  display: none;
-  background-position: center top;
-}
-
 .stage-void-bot {
   bottom: 0;
 }
 
-.stage-void-bot .void-row-art {
+.stage-void-top .void-row-edge {
   top: 0;
-  background-position: center top;
 }
 
 .stage-void-bot .void-row-edge {
   bottom: 0;
-  display: none;
-  background-position: center bottom;
 }
 
-.stage-void-bot .void-row-mid {
-  bottom: var(--void-tile, 100px);
-  display: none;
-  background-position: center bottom;
+/* Dual: both sides measure from the artboard with the same artGap + rowGap. */
+.stage-void-top .void-row-art {
+  bottom: var(--void-art-gap, 8px);
+  top: auto;
 }
 
-/* 2 rows: artboard + outer edge */
-.stage-void.is-dual .void-row-edge {
-  display: block;
+.stage-void-top .void-row-inner {
+  bottom: calc(var(--void-art-gap, 8px) + var(--void-tile, 64px) + var(--void-row-gap, 22px));
+  top: auto;
 }
 
-/* would fit 3+: keep edge + mid, drop artboard-adjacent row */
-.stage-void.is-edge-pair .void-row-art {
-  display: none;
+.stage-void-bot .void-row-art {
+  top: var(--void-art-gap, 8px);
+  bottom: auto;
 }
 
-.stage-void.is-edge-pair .void-row-edge,
-.stage-void.is-edge-pair .void-row-mid {
-  display: block;
+.stage-void-bot .void-row-inner {
+  top: calc(var(--void-art-gap, 8px) + var(--void-tile, 64px) + var(--void-row-gap, 22px));
+  bottom: auto;
+}
+
+/* Inset: same inter-row gap, mirrored from the outer edge. */
+.stage-void.is-inset .void-row-art,
+.stage-void.is-inset .void-row-inner {
+  top: auto;
+  bottom: auto;
+}
+
+.stage-void-top.is-inset .void-row-inner {
+  top: var(--void-inset-top, 40px);
+}
+
+.stage-void-top.is-inset .void-row-art {
+  top: calc(var(--void-inset-top, 40px) + var(--void-tile, 64px) + var(--void-row-gap, 22px));
+}
+
+.stage-void-bot.is-inset .void-row-inner {
+  bottom: var(--void-inset-top, 40px);
+}
+
+.stage-void-bot.is-inset .void-row-art {
+  bottom: calc(var(--void-inset-top, 40px) + var(--void-tile, 64px) + var(--void-row-gap, 22px));
+}
+
+/* Half row: fill letterbox; oversized tile is centered by canvas draw (not negative top). */
+.stage-void.is-half {
+  overflow: hidden;
+}
+
+.stage-void.is-half .void-row-edge {
+  left: 0;
+  right: 0;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+}
+
+.stage-void-top.is-half .void-row-edge {
+  top: 0;
+  bottom: 0;
+}
+
+.stage-void-bot.is-half .void-row-edge {
+  top: 0;
+  bottom: 0;
 }
 
 @media (max-aspect-ratio: 3 / 2) {
@@ -120,8 +320,14 @@ body {
 .artboard {
   position: relative;
   z-index: 1;
-  width: min(100vw, calc(100vh * (var(--art-w) / var(--art-h))));
-  height: min(100vh, calc(100vw * (var(--art-h) / var(--art-w))));
+  width: min(
+    calc(100vw - 2 * var(--page-margin-x)),
+    calc((100vh - 2 * var(--page-margin-y)) * (var(--art-w) / var(--art-h)))
+  );
+  height: min(
+    calc(100vh - 2 * var(--page-margin-y)),
+    calc((100vw - 2 * var(--page-margin-x)) * (var(--art-h) / var(--art-w)))
+  );
   background: var(--bg);
   overflow: hidden;
   user-select: none;
@@ -516,6 +722,46 @@ body {
   clip-path: inset(0 0 0 0);
 }
 
+/* Door domain text: diagonal wipe on load — left TR→BL, right TL→BR */
+.door-swing-plane img[data-layer="text-left-fluorescent"],
+.door-swing-plane img[data-layer="text-right-florescent"] {
+  will-change: clip-path;
+}
+
+.door-swing-plane img[data-layer="text-left-fluorescent"] {
+  clip-path: polygon(100% 0%, 100% 0%, 100% 0%, 100% 0%);
+}
+
+.door-swing-plane img[data-layer="text-right-florescent"] {
+  clip-path: polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%);
+}
+
+.artboard.is-ready .door-swing-plane img[data-layer="text-left-fluorescent"] {
+  animation: door-text-wipe-tr-bl 1.15s var(--ease-soft) 0.12s forwards;
+}
+
+.artboard.is-ready .door-swing-plane img[data-layer="text-right-florescent"] {
+  animation: door-text-wipe-tl-br 1.15s var(--ease-soft) 0.12s forwards;
+}
+
+@keyframes door-text-wipe-tr-bl {
+  from {
+    clip-path: polygon(100% 0%, 100% 0%, 100% 0%, 100% 0%);
+  }
+  to {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+
+@keyframes door-text-wipe-tl-br {
+  from {
+    clip-path: polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%);
+  }
+  to {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+
 .pin {
   opacity: 0;
   transform: translateY(0);
@@ -743,6 +989,11 @@ body {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+  .artboard.is-ready .door-swing-plane img[data-layer="text-left-fluorescent"],
+  .artboard.is-ready .door-swing-plane img[data-layer="text-right-florescent"] {
+    animation: none;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
   }
   .artboard.is-ready .mark-star {
     opacity: 0;

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 100" preserveAspectRatio="none">
+  <!--
+    必须 preserveAspectRatio="none"：mask-size 40px×100% 时纵向拉满 void，
+    否则 meet 会在高 letterbox 里上下留白，横栏贴不住页边/画板边。
+    上下横栏 y=0 与 y=100 吸附两端；A 顶点顶进顶栏下沿后被盖住。
+  -->
+  <g
+    fill="none"
+    stroke="#000"
+    stroke-width="2.5"
+    stroke-linejoin="miter"
+    stroke-miterlimit="8"
+    stroke-linecap="butt"
+  >
+    <!-- 竖腿占可见区下 2/3；峰顶进顶栏 -->
+    <path d="M-28 100 V37 C-28 26 -12 16 0 10 C12 16 28 26 28 37 V100" />
+    <path d="M0 100 V37 C0 26 16 16 28 10 C40 16 56 26 56 37 V100" />
+  </g>
+
+  <!-- 横栏贴死 viewBox 顶/底 = 页面边缘 & 画板横线 -->
+  <rect x="-14" y="0" width="56" height="10" fill="#000" />
+  <rect x="-14" y="90" width="56" height="10" fill="#000" />
+</svg>

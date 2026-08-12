@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 100" preserveAspectRatio="none">
+  <!-- dense bottom: tip fully outside narrow rail -->
+  <rect x="-4" y="0" width="64" height="4" fill="#9AA0B8" />
+  <rect x="-4" y="88" width="64" height="12" fill="#9AA0B8" />
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3.84"
+    stroke-linecap="butt"
+    d="M0 100 V50 M56 100 V50"
+  />
+  <!-- tip @ 5.56 ≈ 4 + 3.12/2 -->
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3.12"
+    stroke-linejoin="miter"
+    stroke-miterlimit="10"
+    stroke-linecap="butt"
+    d="M0 50 C0 28 24 8 28 5.56 C32 8 56 28 56 50"
+  />
+</svg>

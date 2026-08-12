@@ -1,3 +1,6 @@
+import { initVoidFlow, layoutVoidPatterns, prefetchVoidAssets } from "./void-flow.js";
+import { initUiSound } from "./ui-sound.js";
+
 const layoutUrl = new URL("./cover-layout.json", import.meta.url);
 const doorsUrl = new URL("./doors.svg", import.meta.url);
 const lettersUrl = new URL("./letters.json", import.meta.url);
@@ -195,44 +198,17 @@ function syncStrokeScale() {
   document.documentElement.style.setProperty("--stroke-scale", scale.toFixed(3));
 }
 
-/**
- * Portrait voids: at most 2 swallow rows.
- * 1 row  → hug artboard
- * 2 rows → artboard + outer edge
- * 3+ fit → outer edge + next inward (skip artboard-adjacent)
- */
-function layoutVoidPatterns() {
-  const stage = document.getElementById("stage");
-  const top = document.querySelector(".stage-void-top");
-  const bot = document.querySelector(".stage-void-bot");
-  if (!stage || !artboard || !top || !bot) return;
-
-  const sr = stage.getBoundingClientRect();
-  const ar = artboard.getBoundingClientRect();
-  const voidH = Math.max(0, (sr.height - ar.height) / 2);
-  const tile = Math.round(
-    Math.min(168, Math.max(48, Math.min(sr.width, window.innerWidth) * 0.18))
-  );
-
-  document.documentElement.style.setProperty("--void-tile", `${tile}px`);
-
-  top.style.height = `${voidH}px`;
-  bot.style.height = `${voidH}px`;
-
-  const rowsFit = Math.floor(voidH / tile + 1e-6);
-  const edgePair = rowsFit >= 3;
-  const dual = !edgePair && rowsFit >= 2;
-
-  for (const el of [top, bot]) {
-    el.classList.toggle("is-dual", dual);
-    el.classList.toggle("is-edge-pair", edgePair);
-  }
-}
-
 function layoutRailsBleed() {
   const bleed = document.getElementById("rails-bleed");
   const stage = document.getElementById("stage");
   if (!bleed || !stage || !artboard) return;
+  // Freeze layout while camera zooms — transformed rects would fight the scale.
+  if (
+    artboard.classList.contains("is-entering") ||
+    document.getElementById("camera")?.classList.contains("is-zooming")
+  ) {
+    return;
+  }
 
   syncStrokeScale();
   layoutVoidPatterns();
@@ -533,6 +509,12 @@ function enterAttic(side) {
   camera.style.removeProperty("--cam-x");
   camera.style.removeProperty("--cam-y");
   camera.style.transformOrigin = `${originX}% ${originY}%`;
+  home?.style.setProperty("--floor-origin-x", `${originX}%`);
+  home?.style.setProperty("--floor-origin-y", `${originY}%`);
+  // Letterbox parallax shares door X so layers expand toward the opening
+  document.querySelectorAll(".stage-void .void-parallax").forEach((el) => {
+    el.style.setProperty("--void-px-ox", `${originX}%`);
+  });
   syncDoorEnterLayer(camera);
   applyDoorHoleMask(side, camera);
 
@@ -575,6 +557,7 @@ function enterAttic(side) {
     home?.setAttribute("aria-hidden", "false");
     enterLayer?.classList.remove("is-active", "is-enter-left", "is-enter-right");
     enterLayer?.setAttribute("aria-hidden", "true");
+    home?.classList.remove("is-floor-zoom");
     clearDoorHoleMask(camera);
     layoutFlowerRow();
     if (location.hash !== "#home") {
@@ -592,6 +575,7 @@ function enterAttic(side) {
 
   requestAnimationFrame(() => {
     camera.classList.add("is-zooming");
+    home?.classList.add("is-floor-zoom");
   });
 
   window.setTimeout(() => {
@@ -1103,7 +1087,9 @@ function setupSketchUnderlines(lettersData, marksData, layout, AW, AH) {
 }
 
 async function load() {
+  initUiSound();
   setupCoverFallbackUi();
+  prefetchVoidAssets();
 
   const [layout, doorsXml, lettersData, marksData, regionsData, railsXml] = await Promise.all([
     fetch(layoutUrl).then((r) => r.json()),
@@ -1118,6 +1104,7 @@ async function load() {
   coverLayout = layout;
 
   setupLayers(layout, AW, AH);
+  initVoidFlow();
   setupRails(railsXml);
   setupDoors(doorsXml);
   setupLetters(lettersData, AW, AH);
@@ -1131,6 +1118,7 @@ async function load() {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       if (!document.body.classList.contains("is-on-home")) {
+        artboard.dataset.readyAt = String(performance.now());
         artboard.classList.add("is-ready");
       }
     });

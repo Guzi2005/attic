@@ -16,6 +16,7 @@
   pointer-events: none;
   color: var(--ink);
   font-family: var(--sans);
+  background: #dee1f6;
 }
 
 .home.is-visible {
@@ -91,7 +92,27 @@
   position: absolute;
   inset: 0;
   z-index: -1;
+  overflow: hidden;
   background: #dee1f6;
+  transform-origin: var(--floor-origin-x, 50%) var(--floor-origin-y, 50%);
+  will-change: transform;
+}
+
+/* Approach: solid ground color scales far→near with the door camera. */
+.home.is-floor-zoom .home-atmosphere {
+  animation: floor-approach 1.65s cubic-bezier(0.55, 0.02, 0.12, 1) forwards;
+}
+
+@keyframes floor-approach {
+  0% {
+    transform: scale(0.4);
+  }
+  30% {
+    transform: scale(0.52);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .home-frame {
@@ -127,7 +148,10 @@
   overflow: hidden;
   isolation: isolate;
   background: var(--tile, #9bb5c6);
-  transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.28s ease;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 0.28s ease,
+    box-shadow 0.28s ease;
 }
 
 .tile::after {
@@ -144,16 +168,32 @@
 
 a.tile:hover,
 a.tile:focus-visible {
-  transform: translateY(-2px);
-  filter: brightness(1.03);
+  transform: translateY(-3px);
+  filter: brightness(1.04);
+  box-shadow: 0 6px 18px rgba(26, 26, 24, 0.1);
   outline: none;
   z-index: 1;
+}
+
+a.tile:hover .motif,
+a.tile:focus-visible .motif {
+  transform: scale(1.04);
+}
+
+a.tile:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--on-tile),
+    0 6px 18px rgba(26, 26, 24, 0.1);
 }
 
 .tile .motif,
 .tile .tile-title {
   position: relative;
   z-index: 1;
+}
+
+.tile .motif {
+  transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .tile-title {
@@ -174,6 +214,18 @@ a.tile:focus-visible {
   pointer-events: none;
   align-self: center;
   margin: auto 0 0.05rem;
+}
+
+.motif-cow {
+  width: min(88%, 7.5rem);
+  max-height: 62%;
+}
+
+.motif-garden {
+  width: min(92%, 13rem);
+  max-height: 74%;
+  align-self: flex-start;
+  margin-left: 0.15rem;
 }
 
 .motif-banner {
@@ -201,7 +253,7 @@ a.tile:focus-visible {
   align-items: flex-end;
   justify-content: flex-start;
   min-height: 0;
-  padding: 0 clamp(0.2rem, 0.8vmin, 0.6rem) 0.15rem;
+  padding: 0.35rem clamp(0.2rem, 0.8vmin, 0.6rem) 0.25rem;
   pointer-events: none;
 }
 
@@ -250,6 +302,7 @@ a.tile:focus-visible {
   font-size: clamp(2.4rem, 7.2vmin, 4.2rem);
   letter-spacing: -0.07em;
   line-height: 0.88;
+  color: #22232f;
 }
 
 .home-title {
@@ -259,6 +312,7 @@ a.tile:focus-visible {
   font-size: clamp(1.15rem, 2.8vmin, 1.55rem);
   line-height: 1.2;
   letter-spacing: -0.05em;
+  color: #1c1e2a;
 }
 
 .home-lede {
@@ -443,6 +497,11 @@ a.tile:focus-visible {
     animation: none !important;
     opacity: 1;
     transform: none;
+  }
+
+  .home.is-floor-zoom .home-atmosphere {
+    animation: none;
+    transform: scale(1);
   }
 
   a.tile:hover,

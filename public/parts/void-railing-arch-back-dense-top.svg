@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-28 0 56 100" preserveAspectRatio="none">
+  <!-- back on TOP void (d2/3): tip matches front-dense-top, below thick page rail -->
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3.84"
+    stroke-linecap="butt"
+    d="M-28 100 V54 M28 100 V54"
+  />
+  <path
+    fill="none"
+    stroke="#8B90A8"
+    stroke-width="3.12"
+    stroke-linejoin="miter"
+    stroke-miterlimit="10"
+    stroke-linecap="butt"
+    d="M-28 54 C-28 36 -4 16 0 13.56 C4 16 28 36 28 54"
+  />
+</svg>
