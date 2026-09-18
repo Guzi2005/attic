@@ -307,78 +307,19 @@ body.is-on-home .paper-grain {
   outline-offset: 2px;
 }
 
-/* Mixed bento: each work is a cluster so pic/copy/date stay together */
-.folio-board {
+/* Mixed bento: 6 columns; row track = one paper cell so heights can stagger */
+#works-grid,
+.works-grid {
   grid-column: 1 / -1;
   display: grid;
   position: relative;
-  grid-template-columns: 5.4rem minmax(0, 1fr);
-  column-gap: 0.45rem;
-  align-items: stretch;
-}
-
-.folio-rail {
-  position: relative;
-  min-height: 100%;
-  pointer-events: none;
-}
-
-.folio-rail__line {
-  position: absolute;
-  left: 4.55rem;
-  top: 0.2rem;
-  bottom: 0.2rem;
-  width: 0;
-  border-left: 1px dotted rgba(18, 18, 18, 0.62);
-}
-
-.folio-rail__dot {
-  position: absolute;
-  left: 4.55rem;
-  width: 8px;
-  height: 8px;
-  border: 1px solid var(--ink);
-  border-radius: 50%;
-  background: var(--paper);
-  transform: translate(-50%, -50%);
-  z-index: 1;
-}
-
-.folio-rail__tick {
-  position: absolute;
-  left: 0;
-  width: 4.15rem;
-  transform: translateY(-50%);
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.04em;
-  line-height: 1.1;
-  text-align: right;
-  white-space: nowrap;
-  color: rgba(18, 18, 18, 0.62);
-}
-
-#works-grid,
-.works-grid {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--cell) * 2.8);
-  position: relative;
-  padding: 0.35rem 0.15rem 0.85rem;
-  overflow: visible;
-}
-
-.folio-cluster {
-  display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   grid-auto-rows: var(--cell);
   column-gap: var(--cell);
   row-gap: 0;
   align-items: start;
-}
-
-.folio-cluster[hidden] {
-  display: none !important;
+  padding: 0.35rem 0.15rem 0.85rem;
+  overflow: visible;
 }
 
 .folio-card,
@@ -412,73 +353,8 @@ body.is-on-home .paper-grain {
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
-/* Combo cards: default stack; wide 1×2 = image | text on ONE row */
-.folio-combo {
-  padding: 0.35rem 0.2rem 0.55rem;
-}
-
-.folio-combo.span-1x2 {
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 0.75rem 1rem;
-}
-
-.folio-combo.span-2x1 {
-  flex-direction: column;
-}
-
-.folio-card__media {
-  aspect-ratio: 1 / 1;
-  border: 1px solid var(--line-strong);
-  background:
-    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 12px 12px,
-    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 12px 12px,
-    #ebe6d8;
-  overflow: hidden;
-  position: relative;
-  flex: 0 0 auto;
-}
-
-.folio-combo.span-1x2 .folio-card__media {
-  flex: 0 0 min(40%, 220px);
-  width: min(40%, 220px);
-  align-self: flex-start;
-}
-
-.folio-combo.span-2x1 .folio-card__media {
-  aspect-ratio: 3 / 4;
-  width: 100%;
-}
-
-.folio-card__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.folio-card__media.is-blank {
-  min-height: 120px;
-}
-
-.folio-combo.has-local-grain .folio-card__media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.18;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08  0 0 0 0 0.07  0 0 0 0 0.05  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  background-size: 64px 64px;
-}
-
-.folio-combo .folio-card__body {
-  justify-content: center;
-}
-
 .folio-card[hidden],
-.folio-spacer[hidden],
-.folio-cluster[hidden] {
+.folio-spacer[hidden] {
   display: none !important;
 }
 
@@ -496,38 +372,27 @@ body.is-on-home .paper-grain {
   padding-right: 0.05rem;
 }
 
-.folio-card:hover:not(.folio-date) {
+.folio-card:hover {
   transform: translateY(-2px);
 }
 
-.folio-date {
-  padding: 0.35rem 0.1rem 0.9rem 0.05rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.12rem;
+.folio-card__when {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: rgba(18, 18, 18, 0.42);
   pointer-events: none;
 }
 
-.folio-date__n {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: clamp(1.7rem, 3.4vw, 2.75rem);
-  letter-spacing: -0.045em;
-  line-height: 0.92;
+.folio-card__when--start {
+  top: 0.12rem;
+  left: 0.15rem;
 }
 
-.folio-date__to {
-  display: flex;
-  align-items: baseline;
-  gap: 0.35rem;
-}
-
-.folio-date__arrow {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: clamp(1.25rem, 2.6vw, 2rem);
-  line-height: 1;
+.folio-card__when--end {
+  bottom: 0.12rem;
+  right: 0.15rem;
 }
 
 .folio-pic img {
@@ -676,20 +541,8 @@ body.is-on-home .paper-grain {
 }
 
 @media (max-width: 900px) {
-  .folio-board {
-    grid-template-columns: 4.4rem minmax(0, 1fr);
-  }
-
-  .folio-rail__line,
-  .folio-rail__dot {
-    left: 3.55rem;
-  }
-
-  .folio-rail__tick {
-    width: 3.2rem;
-  }
-
-  .folio-cluster {
+  #works-grid,
+  .works-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
@@ -721,25 +574,11 @@ body.is-on-home .paper-grain {
     max-width: none;
   }
 
-  .folio-board {
-    grid-template-columns: 1fr;
-  }
-
-  .folio-rail {
-    display: none;
-  }
-
   #works-grid,
   .works-grid {
-    gap: 2.1rem;
-    padding: 0;
-  }
-
-  .folio-cluster {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-auto-rows: auto;
-    column-gap: 0.95rem;
-    row-gap: 1.35rem;
+    gap: 1.35rem 0.95rem;
   }
 
   .span-1x1,
@@ -753,23 +592,14 @@ body.is-on-home .paper-grain {
     grid-row: auto;
   }
 
-  .folio-combo.span-1x2 {
-    flex-direction: column;
-  }
-
-  .folio-combo.span-1x2 .folio-card__media {
-    width: 100%;
-    flex: 0 0 auto;
-    max-width: none;
-  }
-
   .folio-spacer {
     display: none;
   }
 }
 
 @media (max-width: 420px) {
-  .folio-cluster {
+  #works-grid,
+  .works-grid {
     grid-template-columns: 1fr;
   }
 
