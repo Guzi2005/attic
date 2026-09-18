@@ -1,0 +1,680 @@
+[
+  {
+    "id": "attic",
+    "title": "Attic / 阁楼",
+    "blurb": "手绘封面与穿门入口。fluorescentmice.fun / florescentmice.fun / attic 子域共用这一页——从开屏刺绣到推门，再到这张草稿纸作品页，想做成一整张会动的纸，而不是三个互不相干的落地页。",
+    "image": "./parts/portfolio/attic.png",
+    "url": "https://attic.fluorescentmice.fun",
+    "source": "fluorescentmice",
+    "tags": [
+      "Web",
+      "手绘",
+      "交互"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "站点",
+        "url": "https://attic.fluorescentmice.fun"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/attic"
+      }
+    ],
+    "started": "2026-08",
+    "updated": "2026-09-19"
+  },
+  {
+    "id": "irisvista",
+    "title": "云上虹 IrisVista",
+    "blurb": "民族服饰色彩数字人文平台：把色谱、纹样与叙事收进可浏览的云上档案。不是色卡墙，而是让「这块布为什么是这种红」能被点开、对照、慢慢读。主仓库之外还有期末超标完成的档案库 IrisVista-Archives——同一条色谱线，分成能上线的平台和能交差的库。",
+    "image": "./parts/portfolio/irisvista.png",
+    "url": "https://irisvista.vercel.app",
+    "source": "cursor",
+    "tags": [
+      "Digital Humanities",
+      "色彩",
+      "Web"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "站点",
+        "url": "https://irisvista.vercel.app"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/irisvista"
+      },
+      {
+        "kind": "github",
+        "label": "档案库",
+        "url": "https://github.com/Guzi2005/IrisVista-Archives-"
+      }
+    ],
+    "started": "2026-08-08",
+    "updated": "2026-09-17"
+  },
+  {
+    "id": "tenennium",
+    "title": "榫卯 · 木构千年",
+    "blurb": "中国古代榫卯结构的 3D 知识图谱：节点可转、关系可摸。",
+    "image": "./parts/portfolio/tenennium.png",
+    "url": "https://tenennium.vercel.app",
+    "source": "cursor",
+    "tags": [
+      "3D",
+      "知识图谱",
+      "Web"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "站点",
+        "url": "https://tenennium.vercel.app"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/sunmao-knowledge-graph"
+      }
+    ],
+    "started": "2026-08-10",
+    "updated": "2026-09-15"
+  },
+  {
+    "id": "layered-stamp",
+    "title": "套色印章 Skill",
+    "blurb": "把照片收成博物馆式套色印章 + 分步校对单，给 AI agent 用的印刷流程。",
+    "image": "./parts/portfolio/stamp.png",
+    "url": "https://github.com/Guzi2005/layered-stamp-skill",
+    "source": "cursor",
+    "tags": [
+      "Skill",
+      "印刷",
+      "Agent"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/layered-stamp-skill"
+      }
+    ],
+    "started": "2026-09-13",
+    "updated": "2026-09-14",
+    "ended": "2026-09-14"
+  },
+  {
+    "id": "one-step-away",
+    "title": "留步 / One Step Away",
+    "blurb": "老汉口照相馆叙事模拟：时间的当铺。Godot 制作中，留影从一九一四年秋天开始。",
+    "image": "https://cdn.bugoostudio.com/covers/ee1e6810cb3cc93340216a13b4c43bd7.png",
+    "url": "https://www.bugoostudio.com/works/project-jnphi3",
+    "source": "bugoo",
+    "tags": [
+      "Godot",
+      "叙事",
+      "历史"
+    ],
+    "links": [
+      {
+        "kind": "bugoo",
+        "label": "Bugoo",
+        "url": "https://www.bugoostudio.com/works/project-jnphi3"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/FluorescentMice/OneStepAway"
+      }
+    ],
+    "started": "2026-03",
+    "updated": "2026-09-08"
+  },
+  {
+    "id": "saga-of-deadwood",
+    "title": "Saga Of Deadwood / 朽木编年",
+    "blurb": "2026 武汉三校合作：鼠标左右键释放荣枯魔法的 2D 平台跳跃。布谷工作室提供试玩。",
+    "image": "https://cdn.bugoostudio.com/covers/d1348bd4f7284e42d825516f8326cfda.png",
+    "url": "https://www.bugoostudio.com/works/saga-of-deadwood",
+    "source": "bugoo",
+    "tags": [
+      "Unity",
+      "平台跳跃",
+      "2026"
+    ],
+    "links": [
+      {
+        "kind": "bugoo",
+        "label": "Bugoo",
+        "url": "https://www.bugoostudio.com/works/saga-of-deadwood"
+      }
+    ],
+    "started": "2026-06",
+    "updated": "2026-08"
+  },
+  {
+    "id": "weave-and-wander",
+    "title": "Weave & Wander",
+    "blurb": "Godot 近期实验：编织与游走的关卡草稿，还在生长。",
+    "image": "./parts/portfolio/weave.png",
+    "url": "https://github.com/FluorescentMice/WeaveAndWander",
+    "source": "fluorescentmice",
+    "tags": [
+      "Godot",
+      "实验"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/FluorescentMice/WeaveAndWander"
+      }
+    ],
+    "started": "2026-06-26",
+    "updated": "2026-06-26"
+  },
+  {
+    "id": "dayflow-news",
+    "title": "Dayflow News",
+    "blurb": "AI 时间追踪：后台静默录屏，自动复盘时间都花在哪。报纸皮肤可选。",
+    "image": "./parts/portfolio/dayflow.png",
+    "url": "https://github.com/Guzi2005/Dayflow-News",
+    "source": "cursor",
+    "tags": [
+      "Windows",
+      "AI",
+      "时间"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/Dayflow-News"
+      },
+      {
+        "kind": "github",
+        "label": "上游",
+        "url": "https://github.com/SeiShonagon520/Dayflow"
+      }
+    ],
+    "started": "2026-05-17",
+    "updated": "2026-05-17",
+    "ended": "2026-05-17"
+  },
+  {
+    "id": "prismify",
+    "title": "Prismify / 多棱镜",
+    "blurb": "墨水屏气质的聚合搜索：多维分类、自适应布局，一键气泡发射。",
+    "image": "./parts/portfolio/prismify.png",
+    "url": "https://prismify-all-in-one.vercel.app",
+    "source": "fluorescentmice",
+    "tags": [
+      "搜索",
+      "墨水屏",
+      "工具"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "站点",
+        "url": "https://prismify-all-in-one.vercel.app"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/Prismify_All_in_One"
+      }
+    ],
+    "started": "2026-04-03",
+    "updated": "2026-04-06",
+    "ended": "2026-04-06"
+  },
+  {
+    "id": "sunflower-pet",
+    "title": "向日葵桌宠",
+    "blurb": "两百多行的 PVZ 向日葵桌宠，会跟着音乐 rock。冷静二代，带平滑缓冲栈——会让人把电脑一直开着的那种。",
+    "image": "./parts/portfolio/sunflower.png",
+    "url": "https://www.bilibili.com/video/BV1zR9uYvEpR",
+    "source": "cursor",
+    "tags": [
+      "桌宠",
+      "Python",
+      "整活"
+    ],
+    "links": [
+      {
+        "kind": "bilibili",
+        "label": "演示",
+        "url": "https://www.bilibili.com/video/BV1zR9uYvEpR"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/Sunflower_Desktop_Pet"
+      },
+      {
+        "kind": "bilibili",
+        "label": "合集",
+        "url": "https://space.bilibili.com/95924435/lists/3636875?type=season"
+      }
+    ],
+    "started": "2025-02-28",
+    "updated": "2026-03-02",
+    "ended": "2026-03-02"
+  },
+  {
+    "id": "axolotl-snake",
+    "title": "贪吃美西螈",
+    "blurb": "MC 同人小游戏：贪吃蛇但是美西螈。菜就多练，外加一集屑日志花絮。和向日葵是同一条 Python 玩具线，但是另一件作品。",
+    "image": "./parts/portfolio/axolotl-snake.jpg",
+    "url": "https://www.bilibili.com/video/BV1sAebePEPj",
+    "source": "cursor",
+    "tags": [
+      "Python",
+      "整活",
+      "MC"
+    ],
+    "links": [
+      {
+        "kind": "bilibili",
+        "label": "演示",
+        "url": "https://www.bilibili.com/video/BV1sAebePEPj"
+      },
+      {
+        "kind": "bilibili",
+        "label": "花絮",
+        "url": "https://www.bilibili.com/video/BV1VpePe5ExK"
+      },
+      {
+        "kind": "bilibili",
+        "label": "合集",
+        "url": "https://space.bilibili.com/95924435/lists/3636875?type=season"
+      }
+    ],
+    "started": "2024-08-15",
+    "updated": "2024-08-15",
+    "ended": "2024-08-15"
+  },
+  {
+    "id": "ocr-word-game",
+    "title": "OCR 文字清障台",
+    "blurb": "面向豆包编程的文字处理页：清空格、补标点、强调关键词，告别逐字 inline 删改。",
+    "image": "./parts/portfolio/ocr.png",
+    "url": "https://github.com/Guzi2005/OCR-Word-Game-Chores-1-Page-4-All-Based-on-TRAE",
+    "source": "cursor",
+    "tags": [
+      "工具",
+      "OCR",
+      "Web"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/OCR-Word-Game-Chores-1-Page-4-All-Based-on-TRAE"
+      },
+      {
+        "kind": "bilibili",
+        "label": "填表分享",
+        "url": "https://www.bilibili.com/video/BV1qBfMBvEtc"
+      },
+      {
+        "kind": "bilibili",
+        "label": "合集",
+        "url": "https://space.bilibili.com/95924435/lists/7505016?type=season"
+      }
+    ],
+    "started": "2025-10-07",
+    "updated": "2026-02-23",
+    "ended": "2026-02-23"
+  },
+  {
+    "id": "multi-highlight",
+    "title": "Multi Highlight",
+    "blurb": "Chrome / Edge 扩展：多关键词高亮，把在线阅读拆成可扫描的层次。",
+    "image": "./parts/portfolio/multi-highlight.png",
+    "url": "https://chromewebstore.google.com/detail/multi-highlight/ghinpogonpmlphfkmnjfapdaoaainejn",
+    "source": "cursor",
+    "tags": [
+      "Extension",
+      "阅读",
+      "ADHD-friendly"
+    ],
+    "links": [
+      {
+        "kind": "store",
+        "label": "Chrome 商店",
+        "url": "https://chromewebstore.google.com/detail/multi-highlight/ghinpogonpmlphfkmnjfapdaoaainejn"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/Multi-Highlight-ADHD-friendly-maybe"
+      }
+    ],
+    "started": "2025-09-30",
+    "updated": "2025-10-20",
+    "ended": "2025-10-20"
+  },
+  {
+    "id": "software-cup-ai-interview",
+    "title": "面向大学生的 AI 面试平台",
+    "blurb": "2025 软件杯提交片：把平台能干什么说给评委听。不是产品官网，是交卷用的展示片。",
+    "image": "./parts/portfolio/software-cup.jpg",
+    "url": "https://www.bilibili.com/video/BV1LqJ1zWEGJ",
+    "source": "bilibili",
+    "tags": [
+      "软件杯",
+      "展示"
+    ],
+    "links": [
+      {
+        "kind": "bilibili",
+        "label": "提交片",
+        "url": "https://www.bilibili.com/video/BV1LqJ1zWEGJ"
+      },
+      {
+        "kind": "bilibili",
+        "label": "合集",
+        "url": "https://space.bilibili.com/95924435/lists/5571305?type=season"
+      }
+    ],
+    "started": "2025-09-23",
+    "updated": "2025-09-23",
+    "ended": "2025-09-23"
+  },
+  {
+    "id": "nyota-sprout",
+    "title": "碎片发芽",
+    "blurb": "大广赛 30 秒 nyota《碎片发芽》。校赛 ddl 前组长倒下，骑手连夜买彩纸拍了一晚。陪跑、赶工、交卷，大学生动画该有的形状。",
+    "image": "./parts/portfolio/nyota-sprout.jpg",
+    "url": "https://www.bilibili.com/video/BV1dZTszNE93",
+    "source": "bilibili",
+    "tags": [
+      "大广赛",
+      "动画",
+      "nyota"
+    ],
+    "links": [
+      {
+        "kind": "bilibili",
+        "label": "成片",
+        "url": "https://www.bilibili.com/video/BV1dZTszNE93"
+      },
+      {
+        "kind": "bilibili",
+        "label": "合集",
+        "url": "https://space.bilibili.com/95924435/lists/5571305?type=season"
+      }
+    ],
+    "started": "2025-06-05",
+    "updated": "2025-06-05",
+    "ended": "2025-06-05"
+  },
+  {
+    "id": "unique-venus",
+    "title": "唯一维纳斯，唯一纳爱斯",
+    "blurb": "大广赛 15 秒河狸广告。只有十五秒，也要把「唯一」说完——洗护的那种硬核短打。",
+    "image": "./parts/portfolio/unique-venus.jpg",
+    "url": "https://www.bilibili.com/video/BV1227BzjETm",
+    "source": "bilibili",
+    "tags": [
+      "大广赛",
+      "动画",
+      "广告"
+    ],
+    "links": [
+      {
+        "kind": "bilibili",
+        "label": "成片",
+        "url": "https://www.bilibili.com/video/BV1227BzjETm"
+      },
+      {
+        "kind": "bilibili",
+        "label": "合集",
+        "url": "https://space.bilibili.com/95924435/lists/5571305?type=season"
+      }
+    ],
+    "started": "2025-06-04",
+    "updated": "2025-06-04",
+    "ended": "2025-06-04"
+  },
+  {
+    "id": "timegraphics",
+    "title": "芝士区？我？ / TimeGraphics",
+    "blurb": "人教版历史时间轴（TimeGraphics）：纲要 + 必修/选必学期版。",
+    "image": "https://i0.hdslb.com/bfs/archive/4bcad739e43cc199e0a6944d39e1a5390217e50f.jpg",
+    "url": "https://space.bilibili.com/95924435/lists/6177295?type=season",
+    "source": "bilibili",
+    "tags": [
+      "TimeGraphics",
+      "历史",
+      "教育"
+    ],
+    "links": [
+      {
+        "kind": "bilibili",
+        "label": "合集",
+        "url": "https://space.bilibili.com/95924435/lists/6177295?type=season"
+      },
+      {
+        "kind": "bilibili",
+        "label": "毕业学期版",
+        "url": "https://www.bilibili.com/video/BV1cZYZzvEVe"
+      },
+      {
+        "kind": "bilibili",
+        "label": "纲要初版",
+        "url": "https://www.bilibili.com/video/BV1jg4y1Q7Wr"
+      }
+    ],
+    "started": "2023-11-11",
+    "updated": "2025-08-22",
+    "ended": "2025-08-22"
+  },
+  {
+    "id": "dengdongdeng",
+    "title": "登咚登",
+    "blurb": "TapTap 随机组队恐怖射击小品。正式上架，Godot 制作。",
+    "image": "https://cdn.bugoostudio.com/covers/2df6184c4479360eb0bb1e15793713be.png",
+    "url": "https://www.bugoostudio.com/works/project-zaeqbt",
+    "source": "bugoo",
+    "tags": [
+      "Godot",
+      "恐怖",
+      "射击"
+    ],
+    "links": [
+      {
+        "kind": "bugoo",
+        "label": "Bugoo",
+        "url": "https://www.bugoostudio.com/works/project-zaeqbt"
+      }
+    ],
+    "started": "2025-03",
+    "updated": "2025-08",
+    "ended": "2025-08"
+  },
+  {
+    "id": "step-or-sink-2",
+    "title": "Step or Sink! 2 / 池沼物语2",
+    "blurb": "护林员在雨林、沼泽与流沙之地执行任务的点击潜行解谜。萌芽杯最佳视听奖续作。",
+    "image": "https://cdn.bugoostudio.com/covers/fcfe4add960272701e584d2cc0bdd7e5.png",
+    "url": "https://www.bugoostudio.com/works/step-or-sink-2",
+    "source": "bugoo",
+    "tags": [
+      "Unity",
+      "Itch",
+      "解谜"
+    ],
+    "links": [
+      {
+        "kind": "bugoo",
+        "label": "Bugoo",
+        "url": "https://www.bugoostudio.com/works/step-or-sink-2"
+      },
+      {
+        "kind": "itch",
+        "label": "Itch",
+        "url": "https://guihuala.itch.io/step-or-sink2"
+      },
+      {
+        "kind": "bilibili",
+        "label": "续作视频",
+        "url": "https://www.bilibili.com/video/BV18wE2zVE7z"
+      },
+      {
+        "kind": "bilibili",
+        "label": "萌芽杯原版",
+        "url": "https://www.bilibili.com/video/BV16MNoeaEHL"
+      },
+      {
+        "kind": "bilibili",
+        "label": "游戏制作合集",
+        "url": "https://space.bilibili.com/95924435/lists/4600933?type=season"
+      }
+    ],
+    "started": "2025-01-24",
+    "updated": "2025-05-15",
+    "ended": "2025-05-15"
+  },
+  {
+    "id": "hira-katakana",
+    "title": "平假名片假名练习",
+    "blurb": "五十音练习小工具：把假名读写拆成可反复刷的关卡。",
+    "image": "./parts/portfolio/kana.png",
+    "url": "https://github.com/Guzi2005/Hira-Katakana_Learning",
+    "source": "cursor",
+    "tags": [
+      "Python",
+      "学习",
+      "工具"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/Hira-Katakana_Learning"
+      }
+    ],
+    "started": "2025-05-09",
+    "updated": "2025-05-10",
+    "ended": "2025-05-10"
+  },
+  {
+    "id": "bubble-office",
+    "title": "社畜笑传之戳戳 Bubble",
+    "blurb": "GGJ2025 杭州站：48h 模拟社畜点击游戏。",
+    "image": "https://i0.hdslb.com/bfs/archive/91535246a71022ee32a68c67b2dcdcefa36f9a75.jpg",
+    "url": "https://www.bilibili.com/video/BV1W1w6eHERL",
+    "source": "fluorescentmice",
+    "tags": [
+      "Godot",
+      "GGJ2025",
+      "点击"
+    ],
+    "links": [
+      {
+        "kind": "bilibili",
+        "label": "演示",
+        "url": "https://www.bilibili.com/video/BV1W1w6eHERL"
+      },
+      {
+        "kind": "itch",
+        "label": "Itch",
+        "url": "https://guihuala.itch.io/bubble"
+      },
+      {
+        "kind": "bilibili",
+        "label": "游戏制作合集",
+        "url": "https://space.bilibili.com/95924435/lists/4600933?type=season"
+      }
+    ],
+    "started": "2025-01-17",
+    "updated": "2025-01-19",
+    "ended": "2025-01-19"
+  },
+  {
+    "id": "sheepy-sleep",
+    "title": "Sheepy Sleep / 咩咩晚安物语",
+    "blurb": "复刻《闹鬼的房子》气质的双人非对称对抗。美术设定集入围点触奖。",
+    "image": "https://cdn.bugoostudio.com/covers/0a7c4df49b2926eb70ce3932368806dc.png",
+    "url": "https://www.bugoostudio.com/works/sheepy-sleep",
+    "source": "bugoo",
+    "tags": [
+      "Unity",
+      "双人",
+      "2D"
+    ],
+    "links": [
+      {
+        "kind": "bugoo",
+        "label": "Bugoo",
+        "url": "https://www.bugoostudio.com/works/sheepy-sleep"
+      }
+    ],
+    "started": "2024-03",
+    "updated": "2024-11"
+  },
+  {
+    "id": "send-me-2-the-missing",
+    "title": "刻舟求剑 / Send Me 2 the Missing",
+    "blurb": "情绪驱动收集品的像素平台解谜：故地重游，补全肖像的眼睛。",
+    "image": "https://cdn.bugoostudio.com/covers/d251c2af54d7a4eef1d0a38d38ced350.jpg",
+    "url": "https://www.bugoostudio.com/works/project-q6os5l",
+    "source": "bugoo",
+    "tags": [
+      "GameMaker",
+      "像素",
+      "解谜"
+    ],
+    "links": [
+      {
+        "kind": "bugoo",
+        "label": "Bugoo",
+        "url": "https://www.bugoostudio.com/works/project-q6os5l"
+      }
+    ],
+    "started": "2024-02",
+    "updated": "2024-09",
+    "ended": "2024-09"
+  },
+  {
+    "id": "aph-time",
+    "title": "APH / Time · 白鹅的千年史",
+    "blurb": "APH 白中心手书《Time》：白鹅的千年史。",
+    "image": "https://i2.hdslb.com/bfs/archive/d6570d58859841d7598b198c0eb98a175a7ec56d.jpg",
+    "url": "https://www.bilibili.com/video/BV1to4y1S7jx",
+    "source": "bilibili",
+    "tags": [
+      "APH",
+      "手书",
+      "2021"
+    ],
+    "links": [
+      {
+        "kind": "bilibili",
+        "label": "Time 正片",
+        "url": "https://www.bilibili.com/video/BV1to4y1S7jx"
+      },
+      {
+        "kind": "bilibili",
+        "label": "解梗",
+        "url": "https://www.bilibili.com/video/BV1sM4y157GN"
+      },
+      {
+        "kind": "bilibili",
+        "label": "APH 合集",
+        "url": "https://space.bilibili.com/95924435/lists/5571447?type=season"
+      }
+    ],
+    "started": "2021-07-30",
+    "updated": "2021-08-08",
+    "ended": "2021-08-08"
+  }
+]
