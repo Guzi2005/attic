@@ -107,9 +107,21 @@
     720,
     720
   ],
+  "./parts/portfolio/kana-main-dark.png": [
+    1832,
+    1832
+  ],
+  "./parts/portfolio/kana-main-light.png": [
+    1832,
+    1832
+  ],
   "./parts/portfolio/kana-stamp.jpg": [
     918,
     922
+  ],
+  "./parts/portfolio/kana-training-map.png": [
+    1832,
+    1832
   ],
   "./parts/portfolio/kana.png": [
     720,
@@ -222,6 +234,10 @@
   "./parts/portfolio/unique-venus.jpg": [
     1920,
     1080
+  ],
+  "./parts/portfolio/uploads/b128a3b7215f94f040698511.png": [
+    855,
+    265
   ],
   "./parts/portfolio/venus-clay.jpg": [
     1600,
