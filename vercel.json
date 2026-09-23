@@ -6,25 +6,25 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "has": [
         {
           "type": "host",
           "value": "fluorescentmice.fun"
         }
       ],
-      "destination": "https://attic.fluorescentmice.fun/:match*",
+      "destination": "https://attic.fluorescentmice.fun/:path*",
       "permanent": true
     },
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "has": [
         {
           "type": "host",
           "value": "www.fluorescentmice.fun"
         }
       ],
-      "destination": "https://attic.fluorescentmice.fun/:match*",
+      "destination": "https://attic.fluorescentmice.fun/:path*",
       "permanent": true
     }
   ],
