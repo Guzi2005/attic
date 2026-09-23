@@ -19,3 +19,7 @@ python scripts/serve.py 8899
 ## 域名
 
 `attic.fluorescentmice.fun` / `fluorescentmice.fun` / `florescentmice.fun` 预期均进入本页。
+
+作品集直接展示：http://127.0.0.1:8899/?view=portfolio
+
+作品分类使用 `category`（games / ugc / tools），`source` 仅保留来源信息。封面留空即显示文字纸条；加载失败的图片自动隐藏。说明来源记录见 `assets/portfolio-source-audit.json`，草拟说明标记为 `description_status: draft`。

@@ -12,7 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@500;600;700&family=Syne:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./cover.css" />
   <link rel="stylesheet" href="./enter.css" />
-  <link rel="stylesheet" href="./home.css" />
+  <link rel="stylesheet" href="./home.css?v=20260919-folio" />
+  <link rel="stylesheet" href="./folio-editorial.css?v=20260921-editor" />
   <link rel="stylesheet" href="./splash.css" />
 </head>
 <body class="is-splash">
@@ -234,6 +235,7 @@
           <span class="home-nav__brand">ATTIC / GUZI</span>
           <span class="home-nav__meta">works · drafting sheet</span>
           <div class="home-nav__links">
+              <a class="home-direct-link" href="https://fluorescentmice.fun" target="_blank" rel="noopener noreferrer">直达 fluorescentmice.fun ↗</a>
             <a href="https://www.bugoostudio.com/members/cmq67vgev000b13ywlzq7g05r" target="_blank" rel="noopener noreferrer">Bugoo · guzi</a>
             <a href="https://github.com/Guzi2005" target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href="https://space.bilibili.com/95924435" target="_blank" rel="noopener noreferrer">Bilibili</a>
@@ -245,17 +247,16 @@
             <p class="home-brand">Welcome to my ATTIC</p>
             <h1 class="home-title">嗨，我是 guzi。</h1>
             <p class="home-lede">
-              全栈开发 × 手绘设计。穿门进来先看作品——布谷、荧光鼠域名、以及最近在 Cursor 里长出来的东西。网格是纸面本身，内容块叠在上面一起滑。
+              这里收录了我参与制作的游戏、平台内容，以及一些为学习和日常使用编写的工具。
             </p>
           </div>
 
           <p class="folio-section-label">Portfolio / 作品一览</p>
-          <div class="folio-filters" id="folio-filters" role="tablist" aria-label="按来源筛选">
-            <button type="button" class="folio-filter is-active" data-source="all" role="tab" aria-selected="true">All</button>
-            <button type="button" class="folio-filter" data-source="bugoo" role="tab" aria-selected="false">Bugoo</button>
-            <button type="button" class="folio-filter" data-source="fluorescentmice" role="tab" aria-selected="false">fluorescentmice</button>
-            <button type="button" class="folio-filter" data-source="cursor" role="tab" aria-selected="false">Cursor</button>
-            <button type="button" class="folio-filter" data-source="bilibili" role="tab" aria-selected="false">Bilibili</button>
+          <div class="folio-filters" id="folio-filters" role="group" aria-label="按作品类别筛选">
+            <button type="button" class="folio-filter is-active" data-category="all" aria-pressed="true">全部</button>
+            <button type="button" class="folio-filter" data-category="games" aria-pressed="false">游戏</button>
+            <button type="button" class="folio-filter" data-category="ugc" aria-pressed="false">UGC平台</button>
+            <button type="button" class="folio-filter" data-category="tools" aria-pressed="false">工具集</button>
           </div>
           <div id="works-grid" class="works-grid" aria-live="polite"></div>
 
@@ -271,6 +272,6 @@
   <!-- procedural paper grain (runtime noise tile) -->
   <div class="paper-grain" id="paper-grain" aria-hidden="true"></div>
 
-  <script type="module" src="./cover.js"></script>
+  <script type="module" src="./cover.js?v=20260921-editor"></script>
 </body>
 </html>

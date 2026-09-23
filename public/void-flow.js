@@ -1,4 +1,6 @@
 /** Portrait letterbox swallow rows — sin path flow + responsive inner rows. */
+import { playMoonOff, playMoonOn } from "./ui-sound.js";
+
 const CIRCLE_SRC = new URL("./parts/cover-void-circle.png", import.meta.url).href;
 const SWALLOW_SRC = new URL("./parts/cover-void-swallow.png", import.meta.url).href;
 const CIRCLE_R_SRC = new URL("./parts/cover-void-circle-r.png", import.meta.url).href;
@@ -82,6 +84,21 @@ let phase = 0;
 let waveClock = 0;
 let lastTs = 0;
 let rafId = 0;
+let visibilityBound = false;
+
+function flowIsVisible() {
+  return !document.hidden && !document.body.classList.contains('is-on-home');
+}
+
+function syncFlowVisibility() {
+  if (flowIsVisible()) {
+    ensureLoop();
+  } else {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+    lastTs = 0;
+  }
+}
 
 /**
  * One sprint then coast: v = flowSpeed + boost0·e^(-t/τ).
@@ -115,7 +132,9 @@ const moon = {
 };
 
 const MOON_PHASES = 10;
-const MOON_FADE_MS = 420;
+/** Asymmetric fade: fluo ignition feels slightly delayed; switch-off is snappier. */
+const MOON_FADE_ON_MS = 260;
+const MOON_FADE_OFF_MS = 160;
 /** Lit disc fills the gray circle (no leftover gray ring). */
 const MOON_RADIUS_SCALE = 1.02;
 /**
@@ -815,6 +834,17 @@ function bindMoonInteraction() {
     moon.want = on || moon.pinned;
   };
 
+  const togglePin = () => {
+    const turningOn = !moon.pinned;
+    moon.pinned = turningOn;
+    setWant(moon.pinned);
+    document.querySelectorAll(".stage-void").forEach((v) => {
+      v.classList.toggle("is-moon-pinned", moon.pinned);
+    });
+    if (turningOn) playMoonOn(1);
+    else playMoonOff(1);
+  };
+
   for (const el of voids) {
     el.style.pointerEvents = "auto";
     el.addEventListener("pointerenter", () => setWant(true));
@@ -823,11 +853,7 @@ function bindMoonInteraction() {
     });
     el.addEventListener("click", (e) => {
       e.preventDefault();
-      moon.pinned = !moon.pinned;
-      setWant(moon.pinned);
-      document.querySelectorAll(".stage-void").forEach((v) => {
-        v.classList.toggle("is-moon-pinned", moon.pinned);
-      });
+      togglePin();
     });
     el.setAttribute("role", "button");
     el.setAttribute("tabindex", "0");
@@ -835,11 +861,7 @@ function bindMoonInteraction() {
     el.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        moon.pinned = !moon.pinned;
-        setWant(moon.pinned);
-        document.querySelectorAll(".stage-void").forEach((v) => {
-          v.classList.toggle("is-moon-pinned", moon.pinned);
-        });
+        togglePin();
       }
     });
     el.classList.toggle("is-moon-pinned", moon.pinned);
@@ -975,6 +997,11 @@ function drawCanvas(entry, layout) {
 }
 
 function tick(ts) {
+  rafId = 0;
+  if (!flowIsVisible()) {
+    lastTs = 0;
+    return;
+  }
   if (!lastTs) lastTs = ts;
   const dt = Math.min(48, ts - lastTs);
   lastTs = ts;
@@ -1013,7 +1040,7 @@ function tick(ts) {
 
   const moonTarget = moon.want || moon.pinned ? 1 : 0;
   if (moon.fade !== moonTarget) {
-    const step = dt / MOON_FADE_MS;
+    const step = dt / (moon.fade < moonTarget ? MOON_FADE_ON_MS : MOON_FADE_OFF_MS);
     if (moon.fade < moonTarget) moon.fade = Math.min(moonTarget, moon.fade + step);
     else moon.fade = Math.max(moonTarget, moon.fade - step);
   }
@@ -1031,7 +1058,7 @@ function tick(ts) {
 }
 
 function ensureLoop() {
-  if (rafId) return;
+  if (rafId || !flowIsVisible()) return;
   rafId = requestAnimationFrame(tick);
 }
 
@@ -1098,6 +1125,13 @@ export function prefetchVoidAssets() {
 }
 
 export function initVoidFlow() {
+  if (!visibilityBound) {
+    visibilityBound = true;
+    document.addEventListener('visibilitychange', syncFlowVisibility);
+    new MutationObserver(syncFlowVisibility).observe(document.body, {
+      attributes: true, attributeFilter: ['class'],
+    });
+  }
   collectCanvases();
   refreshPageMargins();
   bindMoonInteraction();

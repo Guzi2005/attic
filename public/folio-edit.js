@@ -1,3 +1,4 @@
+import { uniqueLinks } from './folio-links.js';
 const KINDS = [
   ["github", "GitHub"],
   ["bilibili", "Bilibili"],
@@ -25,6 +26,75 @@ let works = [];
 let selected = -1;
 let dirty = false;
 let applying = false;
+let previewEditing = false;
+let uploadBusy = false;
+const liveFrame = document.getElementById('live-preview');
+
+function renderLivePreview(w) {
+  if (!previewEditing && liveFrame.contentWindow) liveFrame.contentWindow.postMessage({type:'folio-preview',work:w},location.origin);
+}
+
+window.addEventListener('message', event => {
+  if (event.origin !== location.origin || event.source !== liveFrame.contentWindow) return;
+  if (event.data?.type === 'folio-ready' && selected >= 0) renderLivePreview(works[selected]);
+  if (event.data?.type !== 'folio-edit' || selected < 0 || event.data.id !== works[selected].id || !['title','blurb'].includes(event.data.field)) return;
+  form.elements.namedItem(event.data.field).value = event.data.value;
+  previewEditing = true;
+  persistCurrent();
+  previewEditing = false;
+});
+
+async function uploadImages(files) {
+  if (uploadBusy || selected < 0 || !files.length) return;
+  persistCurrent();
+  const targetId = works[selected].id;
+  if (!targetId) { setStatus('请先填写作品短名和标题。','err'); return; }
+  uploadBusy = true;
+  document.getElementById('btn-save').disabled = true;
+  const useCover = document.getElementById('upload-role').value === 'cover';
+  let added = 0;
+  try {
+    for (const file of files) {
+      if (!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type) || file.size > 20*1024*1024) throw new Error(`${file.name}：仅支持 20 MB 以内的 PNG/JPG/WebP/GIF`);
+      setStatus(`上传 ${added+1}/${files.length}：${file.name}`);
+      const res = await fetch('./api/images',{method:'POST',headers:{'Content-Type':file.type},body:file});
+      if (!res.ok) throw new Error(`上传失败（${res.status}），请确认本地管理服务已启动`);
+      const result = await res.json();
+      const index = works.findIndex(w=>w.id===targetId);
+      if (index<0) throw new Error('目标作品已被删除，图片已上传但尚未挂入作品');
+      const work = works[index];
+      work.image_sizes = {...work.image_sizes,[result.src]:[result.width,result.height]};
+      work.blocks ||= []; work.images ||= [];
+      if (useCover && added === 0) {
+        if (work.image && work.image !== result.src && !work.images.includes(work.image)) work.images.push(work.image);
+        work.image = result.src;
+        work.images = work.images.filter(src=>src!==result.src);
+        work.blocks = work.blocks.filter(b=>b.type!=='image'||b.src!==result.src);
+      } else if (work.image !== result.src && !work.images.includes(result.src) && !work.blocks.some(b=>b.src===result.src)) {
+        work.images.push(result.src); work.blocks.push({type:'image',src:result.src});
+      }
+      work.media_override = true;
+      added++;
+      if (selected === index) applyForm(work);
+      markDirty();
+    }
+    setStatus(`已上传 ${added} 张，预览已更新。点击「保存到仓库」完成发布到本地作品页。`,'dirty');
+  } catch (error) { setStatus(`${error.message}；已成功 ${added} 张。`,'err'); }
+  finally { uploadBusy=false;document.getElementById('btn-save').disabled=false; }
+}
+
+const drop = document.getElementById('image-drop');
+const filePicker = document.getElementById('image-files');
+drop.addEventListener('click',()=>filePicker.click());
+drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();filePicker.click();}});
+filePicker.addEventListener('change',()=>{uploadImages([...filePicker.files]);filePicker.value='';});
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('is-over');});
+drop.addEventListener('dragleave',()=>drop.classList.remove('is-over'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('is-over');uploadImages([...e.dataTransfer.files]);});
+window.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault();});
+window.addEventListener('drop',e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault();});
+document.getElementById('preview-mobile').onclick=()=>liveFrame.classList.add('is-mobile');
+document.getElementById('preview-desktop').onclick=()=>liveFrame.classList.remove('is-mobile');
 
 function setStatus(text, kind = "") {
   statusEl.textContent = text;
@@ -64,7 +134,9 @@ function emptyWork() {
     blurb: "",
     image: "",
     url: "",
-    source: "cursor",
+    source: "other",
+    category: "tools",
+    status: "",
     tags: [],
     links: [],
     blocks: [],
@@ -104,11 +176,11 @@ function normalize(raw) {
 
 function collectForm() {
   const data = new FormData(form);
-  const links = [...linksRows.querySelectorAll(".link-row")].map((row) => ({
-    kind: row.querySelector("[name=kind]").value,
-    label: row.querySelector("[name=label]").value.trim(),
-    url: row.querySelector("[name=url]").value.trim(),
-  })).filter((l) => l.url);
+  const links = uniqueLinks([...linksRows.querySelectorAll(".link-row")].map((row) => ({
+    kind: row.querySelector("[name=link-kind]").value,
+    label: row.querySelector("[name=link-label]").value.trim(),
+    url: row.querySelector("[name=link-url]").value.trim(),
+  })).filter((l) => l.url));
   const tags = String(data.get("tags") || "")
     .split(/[,，]/)
     .map((t) => t.trim())
@@ -129,9 +201,14 @@ function collectForm() {
     image: String(data.get("image") || "").trim(),
     url: String(data.get("url") || "").trim(),
     source: String(data.get("source") || "other"),
+    category: String(data.get("category") || "tools"),
+    status: String(data.get("status") || ""),
     tags,
     links,
     blocks,
+    images: blocks.filter(b => b.type === 'image').map(b => b.src),
+    media_override: true,
+    series_parent: String(data.get('series_parent') || ''),
     started: String(data.get("started") || "").trim(),
     updated: String(data.get("updated") || "").trim(),
     ended: String(data.get("ended") || "").trim(),
@@ -140,20 +217,30 @@ function collectForm() {
 
 function applyForm(w) {
   applying = true;
-  form.id.value = w.id || "";
-  form.title.value = w.title || "";
-  form.blurb.value = w.blurb || "";
-  form.image.value = w.image || "";
-  form.url.value = w.url || "";
-  form.source.value = w.source || "other";
-  form.tags.value = (w.tags || []).join("，");
-  form.started.value = w.started || "";
-  form.updated.value = w.updated || "";
-  form.ended.value = w.ended || "";
+  form.elements.namedItem('id').value = w.id || "";
+  form.elements.namedItem('title').value = w.title || "";
+  form.elements.namedItem('blurb').value = w.blurb || "";
+  form.elements.namedItem('image').value = w.image || "";
+  form.elements.namedItem('url').value = w.url || "";
+  form.elements.namedItem('source').value = w.source || "other";
+  form.elements.namedItem('category').value = w.category || "tools";
+  form.elements.namedItem('status').value = w.status || "";
+  form.elements.namedItem('tags').value = (w.tags || []).join("，");
+  form.elements.namedItem('started').value = w.started || "";
+  form.elements.namedItem('updated').value = w.updated || "";
+  form.elements.namedItem('ended').value = w.ended || "";
   renderLinks(w.links || []);
-  renderBlocks(w.blocks?.length ? w.blocks : deriveBlocks(w));
+  const blocks = [...(w.blocks || [])];
+  const known = new Set(blocks.filter(b => b.type === 'image').map(b => b.src));
+  for (const src of w.images || []) if (src !== w.image && !known.has(src)) { blocks.push({type:'image',src}); known.add(src); }
+  renderBlocks(blocks.filter(b => b.type !== 'image' || b.src !== w.image));
+  const series = form.elements.namedItem('series_parent');
+  series.replaceChildren(new Option('独立作品 / 系列首作', ''));
+  works.filter(x => x.id && x.id !== w.id && !x.series_parent).forEach(x => series.add(new Option(x.title || x.id, x.id)));
+  series.value = w.series_parent || '';
   updatePreview(w.image, w.title);
   applying = false;
+  renderLivePreview(w);
 }
 
 function renderBlocks(blocks) {
@@ -237,7 +324,25 @@ function blockRow(block = { type: "text", text: "" }) {
     persistCurrent();
   });
   paint();
-  row.append(type, field, del);
+  const thumb = document.createElement('img');
+  thumb.className = 'block-thumb';
+  thumb.alt = '插图预览';
+  const refreshThumb = () => { thumb.hidden = type.value !== 'image' || !src.value; if (!thumb.hidden) thumb.src = src.value; };
+  src.addEventListener('input', refreshThumb);
+  type.addEventListener('change', refreshThumb);
+  refreshThumb();
+  field.prepend(thumb);
+  const actions = document.createElement('div'); actions.className = 'block-actions';
+  for (const [label, direction] of [['↑', -1], ['↓', 1]]) {
+    const btn = document.createElement('button'); btn.type='button';btn.textContent=label;
+    btn.setAttribute('aria-label',direction<0?'上移版面块':'下移版面块');
+    btn.onclick=()=>{const other=direction<0?row.previousElementSibling:row.nextElementSibling;if(other){if(direction<0)other.before(row);else other.after(row);persistCurrent();}};
+    actions.append(btn);
+  }
+  const cover = document.createElement('button');cover.type='button';cover.textContent='设为封面';
+  cover.onclick=()=>{if(type.value!=='image'||!src.value)return;const old=form.elements.namedItem('image').value;form.elements.namedItem('image').value=src.value;if(old&&old!==src.value){src.value=old;refreshThumb();}else row.remove();persistCurrent();};
+  actions.append(cover,del);
+  row.append(type, field, actions);
   return row;
 }
 
@@ -251,7 +356,7 @@ function linkRow(link = {}) {
   const row = document.createElement("div");
   row.className = "link-row";
   const kind = document.createElement("select");
-  kind.name = "kind";
+  kind.name = "link-kind";
   KINDS.forEach(([v, label]) => {
     const o = document.createElement("option");
     o.value = v;
@@ -260,11 +365,11 @@ function linkRow(link = {}) {
   });
   kind.value = link.kind && KINDS.some(([v]) => v === link.kind) ? link.kind : guessKind(link.url);
   const label = document.createElement("input");
-  label.name = "label";
+  label.name = "link-label";
   label.placeholder = "标签";
   label.value = link.label || "";
   const url = document.createElement("input");
-  url.name = "url";
+  url.name = "link-url";
   url.placeholder = "https://";
   url.value = link.url || "";
   url.addEventListener("change", () => {
@@ -294,11 +399,13 @@ function updatePreview(src, title) {
 
 function persistCurrent() {
   if (selected < 0 || applying) return;
-  const next = collectForm();
+  const next = { ...works[selected], ...collectForm() };
   if (!next.id && next.title) next.id = slugify(next.title);
   const prev = JSON.stringify(works[selected]);
   works[selected] = next;
   renderList();
+  updatePreview(next.image, next.title);
+  renderLivePreview(next);
   if (JSON.stringify(next) !== prev) markDirty();
 }
 
@@ -341,7 +448,9 @@ async function loadWorks() {
   if (!res.ok) throw new Error(`读取失败 ${res.status}`);
   const data = await res.json();
   if (!Array.isArray(data)) throw new Error("works.json 不是数组");
-  works = data.map(normalize);
+  let media = {};
+  try { media = await fetch('./folio-media.json', {cache:'no-store'}).then(r=>r.json()); } catch {}
+  works = data.map(raw => normalize({...raw, images: [...new Set([...(raw.images || []), ...(raw.media_override ? [] : media[raw.id] || []).map(x=>x.src)])]}));
   dirty = false;
   selected = works.length ? 0 : -1;
   renderList();
@@ -360,12 +469,14 @@ function payload() {
   if (selected >= 0) persistCurrent();
   return works.map((w) => {
     const out = {
+      ...w,
       id: w.id,
       title: w.title,
       blurb: w.blurb,
       image: w.image,
       url: w.url,
       source: w.source,
+      category: w.category || "tools",
       tags: w.tags || [],
     };
     if (w.links?.length) out.links = w.links;
@@ -374,7 +485,7 @@ function payload() {
     if (w.updated) out.updated = w.updated;
     if (w.ended) out.ended = w.ended;
     return out;
-  }).sort((a, b) => String(b.updated || "").localeCompare(String(a.updated || "")));
+  });
 }
 
 function downloadJson() {
@@ -458,6 +569,7 @@ document.getElementById("file-import").addEventListener("change", async (e) => {
     const data = JSON.parse(await file.text());
     if (!Array.isArray(data)) throw new Error("不是数组");
     works = data.map(normalize);
+    selected = -1;
     select(works.length ? 0 : -1);
     markDirty();
     setStatus(`已导入 ${works.length} 条，记得保存或下载。`, "dirty");
@@ -471,6 +583,7 @@ document.getElementById("btn-up").addEventListener("click", () => {
   persistCurrent();
   const i = selected;
   [works[i - 1], works[i]] = [works[i], works[i - 1]];
+  selected = -1;
   select(i - 1);
   markDirty();
 });
@@ -479,6 +592,7 @@ document.getElementById("btn-down").addEventListener("click", () => {
   persistCurrent();
   const i = selected;
   [works[i + 1], works[i]] = [works[i], works[i + 1]];
+  selected = -1;
   select(i + 1);
   markDirty();
 });
@@ -496,8 +610,10 @@ document.getElementById("btn-del").addEventListener("click", () => {
   if (selected < 0) return;
   const name = works[selected].title || works[selected].id || "这一条";
   if (!confirm(`删除「${name}」？`)) return;
-  works.splice(selected, 1);
-  select(Math.min(selected, works.length - 1));
+  const index = selected;
+  works.splice(index, 1);
+  selected = -1;
+  select(Math.min(index, works.length - 1));
   if (!works.length) {
     selected = -1;
     sheet.hidden = true;

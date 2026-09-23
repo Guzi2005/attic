@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@500;600;700&family=Syne:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./folio-edit.css" />
+  <link rel="stylesheet" href="./folio-edit.css?v=visual-editor" />
 </head>
 <body>
   <div class="desk">
@@ -17,7 +17,7 @@
         <p class="desk-kicker">ATTIC / DRAFT</p>
         <h1>作品集维护</h1>
       </div>
-      <p class="desk-note">改的是 <code>works.json</code>。本机可直接保存；线上静态托管请下载后再提交。</p>
+      <p class="desk-note">拖入图片，直接修改右侧预览中的标题和简介。完成后点击保存。</p>
       <div class="desk-actions">
         <button type="button" id="btn-reload">重新读取</button>
         <button type="button" id="btn-download">下载 JSON</button>
@@ -62,6 +62,22 @@
           <label>主链接
             <input name="url" placeholder="https://" />
           </label>
+          <label>作品分类
+            <select name="category">
+              <option value="games">游戏</option>
+              <option value="ugc">UGC平台</option>
+              <option value="tools">工具集</option>
+            </select>
+          </label>
+          <label>项目状态
+            <select name="status">
+              <option value="">已开展</option>
+              <option value="planned">计划中</option>
+            </select>
+          </label>
+          <label class="span-2">归入系列首作
+            <select name="series_parent"></select>
+          </label>
           <label>来源
             <select name="source">
               <option value="bugoo">Bugoo</option>
@@ -85,8 +101,17 @@
           </label>
 
           <fieldset class="span-2 links-box">
+            <legend>图片素材</legend>
+            <div id="image-drop" class="image-drop" tabindex="0" role="button" aria-label="拖入或选择图片上传">
+              拖入图片到这里，或点击选择（支持多张）
+            </div>
+            <input id="image-files" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden />
+            <label>上传用途<select id="upload-role"><option value="gallery">添加为配图</option><option value="cover">第一张设为封面，其余为配图</option></select></label>
+            <p class="hint">PNG / JPG / WebP / GIF，每张最多 20 MB。上传后立即预览，保存后出现在作品页。</p>
+          </fieldset>
+          <fieldset class="span-2 links-box">
             <legend>版面块</legend>
-            <p class="hint">图和文字可以拆成多块、顺序自定。留空则按主图 + 简介自动拆段。插图按原长宽比排，不必裁成方块。</p>
+            <p class="hint">用箭头调整配图顺序，也可以将配图设为封面。删除只移出当前作品。</p>
             <div id="blocks-rows"></div>
             <button type="button" id="btn-add-image">+ 插图</button>
             <button type="button" id="btn-add-text">+ 文字</button>
@@ -94,7 +119,7 @@
 
           <fieldset class="span-2 links-box">
             <legend>聚类链接</legend>
-            <p class="hint">同一作品的 GitHub / B 站合集 / 站点 / Itch 放这里。主链接也会出现在卡片上。</p>
+            <p class="hint">填写各件作品自己的入口；相同地址会自动合并。</p>
             <div id="links-rows"></div>
             <button type="button" id="btn-add-link">+ 加一条链接</button>
           </fieldset>
@@ -106,9 +131,15 @@
         </figure>
       </section>
 
+      <aside class="live-panel">
+        <div class="live-toolbar"><strong>即时预览</strong><button type="button" id="preview-desktop">宽版</button><button type="button" id="preview-mobile">手机</button></div>
+        <p class="hint">点击标题或简介即可编辑；图片和链接随左侧修改即时更新。</p>
+        <iframe id="live-preview" src="./folio-preview.html" title="可编辑的作品即时预览"></iframe>
+      </aside>
+
       <p class="sheet-empty" id="sheet-empty">左侧点一条，或按「新建」。</p>
     </main>
   </div>
-  <script type="module" src="./folio-edit.js"></script>
+  <script type="module" src="./folio-edit.js?v=visual-editor"></script>
 </body>
 </html>

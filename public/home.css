@@ -1,16 +1,17 @@
 /* —— drafting-paper portfolio (DE SCHOOL–ish grid) —— */
 .home {
   --ink: #16181c;
-  --paper: #e4e7ea;
-  --paper-deep: #d4d8dd;
-  --paper-lift: #f3f5f7;
-  --line: rgba(22, 32, 42, 0.14);
-  --line-strong: rgba(22, 32, 42, 0.5);
+  --paper: #f3efe6;
+  --paper-deep: #e6e0d4;
+  --paper-lift: #faf7f1;
+  --line: rgba(22, 32, 42, 0.12);
+  --line-strong: rgba(22, 32, 42, 0.48);
   --accent: #1a1c20;
   --gap: 0;
   --cell: clamp(22px, 2.8vw, 32px);
   --sans: "Syne", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   --mono: "IBM Plex Mono", "Cascadia Mono", "Consolas", monospace;
+  --folio-sticky-top: 1.1rem;
 
   position: fixed;
   inset: 0;
@@ -111,7 +112,7 @@
   background:
     linear-gradient(var(--line) 1px, transparent 1px) 0 0 / var(--cell) var(--cell),
     linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / var(--cell) var(--cell),
-    radial-gradient(120% 80% at 8% 0%, #f2f4f6 0%, var(--paper) 42%, var(--paper-deep) 100%);
+    radial-gradient(120% 80% at 8% 0%, #fffaf3 0%, var(--paper) 42%, var(--paper-deep) 100%);
 }
 
 .home-frame {
@@ -307,19 +308,318 @@ body.is-on-home .paper-grain {
   outline-offset: 2px;
 }
 
-/* Mixed bento: 6 columns; row track = one paper cell so heights can stagger */
+/* Year mark sticks; month is the push unit; tab shows day + title */
+.folio-year {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: clamp(0.9rem, 2.4vw, 2.2rem);
+  align-items: start;
+  position: relative;
+}
+
+.folio-year[hidden] {
+  display: none !important;
+}
+
+.folio-year__mark {
+  position: sticky;
+  top: var(--folio-sticky-top);
+  z-index: 5;
+  align-self: start;
+  padding: 0.2rem 0.25rem 0.9rem 0;
+  font-weight: 700;
+  font-size: clamp(1.85rem, 3.8vw, 3.1rem);
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  pointer-events: none;
+}
+
+.folio-year__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.folio-month {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.folio-month[hidden] {
+  display: none !important;
+}
+
 #works-grid,
 .works-grid {
-  grid-column: 1 / -1;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   position: relative;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  grid-auto-rows: var(--cell);
-  column-gap: var(--cell);
-  row-gap: 0;
-  align-items: start;
-  padding: 0.35rem 0.15rem 0.85rem;
+  padding: 0;
   overflow: visible;
+}
+
+.folio-slide {
+  min-height: 82vh;
+  padding: 3vh 0.15rem 10vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.folio-slide[hidden] {
+  display: none !important;
+}
+
+.folio-tab {
+  position: sticky;
+  top: var(--folio-sticky-top);
+  z-index: 4;
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.28rem 0 0.55rem;
+  background: color-mix(in srgb, var(--paper) 90%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.folio-tab__day {
+  flex: 0 0 auto;
+  font-weight: 700;
+  font-size: clamp(1.55rem, 3vw, 2.35rem);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+}
+
+.folio-tab__title {
+  margin: 0;
+  min-width: 0;
+  font-size: clamp(1.15rem, 2.35vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  text-transform: none;
+}
+
+.folio-mag {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: clamp(0.7rem, 1.6vw, 1.25rem) clamp(0.7rem, 1.8vw, 1.4rem);
+  align-items: start;
+}
+
+.folio-mag__fig {
+  margin: 0;
+  min-width: 0;
+  background: transparent;
+}
+
+.folio-mag__fig img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  object-position: left top;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  filter: none;
+}
+
+.folio-mag__fig--cover {
+  grid-column: span 7;
+}
+
+.folio-mag__fig--cover[data-ar="land"] {
+  grid-column: span 8;
+}
+
+.folio-mag__fig--cover[data-ar="port"] {
+  grid-column: span 5;
+}
+
+.folio-mag__fig--cover img {
+  max-height: min(68vh, 44rem);
+}
+
+.folio-mag__fig--extra {
+  grid-column: span 4;
+}
+
+.folio-mag__fig--extra[data-ar="land"] {
+  grid-column: span 5;
+}
+
+.folio-mag__fig--extra[data-ar="port"] {
+  grid-column: span 3;
+}
+
+.folio-mag__fig--extra img {
+  max-height: min(42vh, 28rem);
+}
+
+.folio-mag__note {
+  min-width: 0;
+  grid-column: span 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 0.9rem 1.05rem;
+  text-decoration: none;
+  color: inherit;
+  align-self: start;
+}
+
+.folio-mag__dock,
+.folio-dock {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 0.1rem;
+}
+
+.folio-slide[data-mag="0"] .folio-mag__fig--cover {
+  grid-column: 1 / 8;
+}
+
+.folio-slide[data-mag="0"] .folio-mag__fig--cover[data-ar="port"] {
+  grid-column: 1 / 6;
+}
+
+.folio-slide[data-mag="0"] .folio-mag__note {
+  grid-column: 8 / 13;
+}
+
+.folio-slide[data-mag="0"] .folio-mag__fig--cover[data-ar="port"] ~ .folio-mag__note {
+  grid-column: 6 / 13;
+}
+
+.folio-slide[data-mag="1"] .folio-mag__note {
+  grid-column: 1 / 6;
+  grid-row: 1;
+}
+
+.folio-slide[data-mag="1"] .folio-mag__fig--cover {
+  grid-column: 6 / 13;
+}
+
+.folio-slide[data-mag="1"] .folio-mag__fig--cover[data-ar="port"] {
+  grid-column: 8 / 13;
+}
+
+.folio-slide[data-mag="2"] .folio-mag__fig--cover {
+  grid-column: 1 / 9;
+}
+
+.folio-slide[data-mag="2"] .folio-mag__fig--cover[data-ar="port"] {
+  grid-column: 1 / 6;
+}
+
+.folio-slide[data-mag="2"] .folio-mag__note {
+  grid-column: span 5;
+}
+
+.folio-mag:not(:has(.folio-mag__fig--extra)) .folio-mag__fig--cover {
+  grid-column: 1 / 8;
+}
+
+.folio-mag:not(:has(.folio-mag__fig--extra)) .folio-mag__note {
+  grid-column: 8 / 13;
+}
+
+.folio-chip {
+  max-width: 48px;
+  height: 48px;
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border: 0;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  align-items: center;
+  text-decoration: none;
+  transition: max-width 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.folio-chip__icon {
+  pointer-events: none;
+  flex: 0 0 48px;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  display: grid;
+}
+
+.folio-chip__icon svg {
+  display: block;
+}
+
+.folio-chip__label {
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  padding-right: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.folio-chip--github {
+  background: #1a2a48;
+  color: #fff;
+}
+
+.folio-chip--bilibili {
+  background: #fb7299;
+  color: #fff;
+}
+
+.folio-chip--bugoo {
+  background: #f18a32;
+  color: #163a8a;
+}
+
+.folio-chip--bugoo .folio-chip__label {
+  color: #fff;
+}
+
+.folio-chip--bugoo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  object-fit: contain;
+  display: block;
+}
+
+.folio-chip:hover,
+.folio-chip:focus-visible,
+.folio-chip.is-open {
+  max-width: 36rem;
+}
+
+.folio-chip:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.folio-slide__until {
+  margin: 0.35rem 0 0;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 
 .folio-card,
@@ -401,8 +701,10 @@ body.is-on-home .paper-grain {
   display: block;
   object-fit: contain;
   object-position: center;
-  border: 1px solid var(--line-strong);
-  filter: contrast(1.02) saturate(0.92);
+  border: 0;
+  box-shadow: none;
+  filter: none;
+  background: transparent;
 }
 
 .folio-pic.frame-clear img {
@@ -541,18 +843,17 @@ body.is-on-home .paper-grain {
 }
 
 @media (max-width: 900px) {
-  #works-grid,
-  .works-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .span-1x1,
-  .span-drop {
-    grid-column: span 2;
+  .folio-slide {
+    min-height: 78vh;
+    padding: 4vh 0 12vh;
   }
 }
 
 @media (max-width: 720px) {
+  .home {
+    --folio-sticky-top: 0.35rem;
+  }
+
   .home-frame {
     width: min(100% - 1.2rem, 640px);
   }
@@ -574,38 +875,123 @@ body.is-on-home .paper-grain {
     max-width: none;
   }
 
-  #works-grid,
-  .works-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: auto;
-    gap: 1.35rem 0.95rem;
+  .folio-year {
+    grid-template-columns: 1fr;
   }
 
-  .span-1x1,
-  .span-drop {
-    grid-column: span 1;
-    grid-row: span auto;
+  .folio-year__mark {
+    top: 0.35rem;
+    z-index: 6;
+    font-size: 1.55rem;
+    padding: 0.15rem 0 0.3rem;
   }
 
-  .folio-card {
-    grid-column: span 1;
+  .folio-tab {
+    top: 2.2rem;
+    z-index: 5;
+    gap: 0.4rem;
+    padding: 0.2rem 0 0.4rem;
+  }
+
+  .folio-tab__day {
+    font-size: 1.28rem;
+  }
+
+  .folio-tab__title {
+    font-size: 1.02rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .folio-slide {
+    min-height: auto;
+    padding: 0.9rem 0 2.8rem;
+  }
+
+  .folio-mag {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .folio-slide[data-mag] .folio-mag__fig--cover,
+  .folio-slide[data-mag] .folio-mag__fig--cover[data-ar="land"],
+  .folio-slide[data-mag] .folio-mag__fig--cover[data-ar="port"],
+  .folio-mag:not(:has(.folio-mag__fig--extra)) .folio-mag__fig--cover {
+    grid-column: 1 / -1;
     grid-row: auto;
   }
 
-  .folio-spacer {
-    display: none;
+  .folio-slide[data-mag] .folio-mag__fig--cover[data-ar="port"] {
+    grid-column: span 3;
+  }
+
+  .folio-slide[data-mag] .folio-mag__fig--extra,
+  .folio-slide[data-mag] .folio-mag__fig--extra[data-ar="port"] {
+    grid-column: span 3;
+    grid-row: auto;
+  }
+
+  .folio-slide[data-mag] .folio-mag__fig--extra[data-ar="land"] {
+    grid-column: 1 / -1;
+  }
+
+  .folio-slide[data-mag] .folio-mag__note,
+  .folio-slide[data-mag="0"] .folio-mag__fig--cover[data-ar="port"] ~ .folio-mag__note,
+  .folio-slide[data-mag="1"] .folio-mag__note,
+  .folio-mag:not(:has(.folio-mag__fig--extra)) .folio-mag__note {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .folio-mag__fig--cover img,
+  .folio-mag__fig--extra img {
+    max-height: none;
+  }
+
+  .folio-chip {
+    max-width: 11.5rem;
+    height: 44px;
+  }
+
+  .folio-chip__icon {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
   }
 }
 
 @media (max-width: 420px) {
-  #works-grid,
-  .works-grid {
-    grid-template-columns: 1fr;
+  .folio-year__mark {
+    font-size: 1.35rem;
   }
 
-  .span-1x1,
-  .span-drop {
+  .folio-tab {
+    top: 2rem;
+  }
+
+  .folio-mag {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .folio-slide[data-mag] .folio-mag__fig--cover,
+  .folio-slide[data-mag] .folio-mag__fig--cover[data-ar="land"],
+  .folio-slide[data-mag] .folio-mag__fig--cover[data-ar="port"],
+  .folio-slide[data-mag] .folio-mag__fig--extra,
+  .folio-slide[data-mag] .folio-mag__fig--extra[data-ar="land"],
+  .folio-slide[data-mag] .folio-mag__fig--extra[data-ar="port"],
+  .folio-slide[data-mag] .folio-mag__note {
+    grid-column: 1 / -1;
+  }
+
+  .folio-slide[data-mag] .folio-mag__fig--extra[data-ar="port"],
+  .folio-slide[data-mag] .folio-mag__fig--cover[data-ar="port"] {
     grid-column: span 1;
+  }
+}
+
+@media (hover: none) {
+  .folio-chip {
+    max-width: 12rem;
   }
 }
 
@@ -616,7 +1002,25 @@ body.is-on-home .paper-grain {
   .home.is-enter-zoom:not(.is-bento-hold) .folio-section-label,
   .home.is-enter-zoom:not(.is-bento-hold) .folio-filters,
   .home.is-enter-zoom:not(.is-bento-hold) .home-foot,
-  .home.is-enter-zoom:not(.is-bento-hold) .folio-spacer {
+  .home.is-enter-zoom:not(.is-bento-hold) .folio-spacer,
+  .folio-chip {
     animation: none !important;
+    transition: none !important;
   }
 }
+
+/* Text-only works remain small paper notes, including failed remote images. */
+.folio-slide--text { min-height: 0; padding-bottom: clamp(2.5rem, 7vh, 5rem); }
+.folio-slide--text[data-mag] .folio-mag__note {
+  grid-column: 1 / -1; grid-row: auto; width: min(100%, 42rem);
+  box-sizing: border-box; padding: clamp(1.2rem, 3vw, 2rem);
+  border-top: 3px solid var(--ink);
+}
+.folio-slide--text .folio-card__blurb { font-size: 1rem; line-height: 1.8; }
+.folio-card__blurb { white-space: pre-line; overflow-wrap: anywhere; }
+.folio-tab__title { overflow-wrap: anywhere; }
+@media (max-width: 720px) {
+  .folio-tab__title { white-space: normal; overflow: visible; }
+}
+
+.folio-description summary { cursor: pointer; font-size: .78rem; margin: .5rem 0; }
