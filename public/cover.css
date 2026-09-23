@@ -17,10 +17,29 @@ body {
   margin: 0;
   height: 100%;
   background: var(--bg);
+  touch-action: manipulation;
 }
 
 body {
   overflow: hidden;
+}
+
+/* Paper grain: light global veil — heavier fiber lives on card media */
+.paper-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: soft-light;
+  background-repeat: repeat;
+  background-size: 160px 160px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .paper-grain {
+    display: none;
+  }
 }
 
 .stage {
@@ -106,8 +125,8 @@ body {
   inset: 0;
   pointer-events: none;
   background-repeat: repeat-x;
-  /* tile = 2 slots; roomy gaps between alternating posts — do not reuse A density */
-  background-size: 200px 100%;
+  /* % of void width so same aspect → same pillar count on any screen size */
+  background-size: var(--void-post-tile, 40%) 100%;
   background-position: 0 0;
 }
 
@@ -135,17 +154,20 @@ body {
   transition: opacity 0.18s linear;
 }
 
-/* Tall A-railing (aspect ≤ 41/50). Two densities vs ref shot ≈ 2/3. */
+/* Tall A-railing (aspect ≤ 41/50). Two densities vs ref shot ≈ 2/3.
+   Tile width is % of void — locks pillar count at a given aspect (big/small screen match). */
 @media (max-aspect-ratio: 41 / 50) {
   .void-railing-arch-back,
   .void-railing-arch-front {
     display: block;
-    background-size: 80px 100%;
+    /* ~5.2 front tiles across (was 80px @ ~416px-wide ref) */
+    --void-arch-tile: 19.23%;
+    background-size: var(--void-arch-tile) 100%;
   }
 
   .void-railing-arch-back {
     background-image: url("./parts/void-railing-arch-back.svg");
-    background-position: 40px 0;
+    background-position: calc(var(--void-arch-tile) / 2) 0;
   }
 
   .void-railing-arch-front {
@@ -172,12 +194,14 @@ body {
 @media (max-aspect-ratio: 2 / 3) {
   .void-railing-arch-back,
   .void-railing-arch-front {
-    background-size: 52px 100%;
+    /* ~8 front tiles across (was 52px @ ~416px-wide small-window look) */
+    --void-arch-tile: 12.5%;
+    background-size: var(--void-arch-tile) 100%;
   }
 
   .void-railing-arch-back {
     background-image: url("./parts/void-railing-arch-back-dense.svg");
-    background-position: 26px 0;
+    background-position: calc(var(--void-arch-tile) / 2) 0;
   }
 
   .void-railing-arch-front {

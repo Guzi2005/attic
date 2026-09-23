@@ -13,6 +13,6 @@
     stroke-linejoin="miter"
     stroke-miterlimit="10"
     stroke-linecap="butt"
-    d="M-28 50 C-28 28 -4 8 0 5.56 C4 8 28 28 28 50"
+    d="M-28 50 C-28 28 -4 7 0 2.5 C4 7 28 28 28 50"
   />
 </svg>

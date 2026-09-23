@@ -20,3 +20,19 @@ assets/compose-preview.png
 assets/pad-shadow-preview.png
 assets/tmp_inventory*.json
 *.before-defringe.png
+
+# Vercel local CLI cache
+.vercel/
+
+# Local server logs
+assets/*.log
+
+# Draft scripts and debug snapshots
+scripts/_*.py
+scripts/_sticky_snap/
+
+# Debug / preview scratch files
+public/parts/_herringbone_preview.png
+public/parts/_herringbone_snippet.txt
+public/parts/bento/_grid-debug.png
+public/home-quilt-mock.png

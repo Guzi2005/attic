@@ -1,5 +1,710 @@
-import { initVoidFlow, layoutVoidPatterns, prefetchVoidAssets } from "./void-flow.js";
-import { initUiSound } from "./ui-sound.js";
+import { initVoidFlow, layoutVoidPatterns, prefetchVoidAssets } from "./void-flow.js?v=20260921-editor";
+import { initUiSound, playUnderlineScribble } from "./ui-sound.js";
+import { initPortfolio } from "./portfolio.js?v=20260921-editor";
+
+/** Block mobile pinch-zoom (iOS Safari ignores viewport user-scalable). */
+function lockPinchZoom() {
+  const block = (e) => e.preventDefault();
+  document.addEventListener("gesturestart", block, { passive: false });
+  document.addEventListener("gesturechange", block, { passive: false });
+  document.addEventListener("gestureend", block, { passive: false });
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (e.touches.length > 1) e.preventDefault();
+    },
+    { passive: false }
+  );
+}
+lockPinchZoom();
+
+/**
+ * Procedural paper grain — same idea as Leeroy MTL's postprocess grain
+ * (random2d pixels), but as a CSS overlay tile instead of a WebGL pass.
+ */
+function initPaperGrain() {
+  const el = document.getElementById("paper-grain");
+  if (!el) return;
+  if (window.matchMedia("(prefers-reduced-transparency: reduce)").matches) {
+    el.remove();
+    return;
+  }
+
+  const size = 128;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const img = ctx.createImageData(size, size);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const v = (Math.random() * 255) | 0;
+    d[i] = d[i + 1] = d[i + 2] = v;
+    d[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  el.style.backgroundImage = `url("${canvas.toDataURL("image/png")}")`;
+}
+initPaperGrain();
+
+/* —— Splash loader (bloom + embroidered text progress) —— */
+const splashEl = document.getElementById("splash");
+const splashWelcome = document.getElementById("splash-welcome");
+const splashReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * Keep in sync with splash.css:
+ * last large = 7*48 + 36 + 420 = 792ms
+ * smalls together after +72ms gap, dur 360ms → end = 792+72+360 = 1224ms
+ * core starts at 8ms
+ */
+const SPLASH_BLOOM_START_MS = 8;
+const SPLASH_BLOOM_END_MS = 1224;
+const SPLASH_MIN_MS = splashReduceMotion ? 160 : SPLASH_BLOOM_END_MS + 80;
+
+let splashBloomAt = 0;
+let splashShownP = 0;
+let splashProgressRaf = 0;
+let splashAssetsReady = false;
+/** @type {((v: number) => void) | null} */
+let splashProgressWaiter = null;
+
+function paintSplashProgress(v) {
+  splashShownP = v;
+  if (!splashWelcome) return;
+  const done = v >= 0.995;
+  // Snap to 1 so trailing glyph (C) is fully covered once embroidery completes
+  splashWelcome.style.setProperty("--splash-p", String(done ? 1 : v));
+  splashWelcome.classList.toggle("is-complete", done);
+}
+
+function bloomProgressAt(elapsedMs) {
+  if (splashReduceMotion) return 1;
+  const span = SPLASH_BLOOM_END_MS - SPLASH_BLOOM_START_MS;
+  return Math.max(0, Math.min(1, (elapsedMs - SPLASH_BLOOM_START_MS) / span));
+}
+
+function tickBloomProgress() {
+  splashProgressRaf = 0;
+  const elapsed = performance.now() - splashBloomAt;
+  const p = bloomProgressAt(elapsed);
+  paintSplashProgress(p);
+
+  if (splashProgressWaiter && p >= 1) {
+    const resolve = splashProgressWaiter;
+    splashProgressWaiter = null;
+    resolve(p);
+  }
+
+  if (p < 1) {
+    splashProgressRaf = requestAnimationFrame(tickBloomProgress);
+  }
+}
+
+/** Load events only gate dismiss — visual fill follows the flower clock. */
+function setSplashProgress(_p) {
+  /* kept for call sites; embroidery is bloom-timed */
+}
+
+function waitSplashBloomComplete() {
+  if (splashShownP >= 0.999) return Promise.resolve(splashShownP);
+  return new Promise((resolve) => {
+    splashProgressWaiter = resolve;
+    if (!splashProgressRaf) {
+      splashProgressRaf = requestAnimationFrame(tickBloomProgress);
+    }
+  });
+}
+
+function startSplashBloom() {
+  if (!splashEl) return;
+  requestAnimationFrame(() => {
+    splashBloomAt = performance.now();
+    splashEl.classList.add("is-bloom");
+    paintSplashProgress(0);
+    if (splashReduceMotion) {
+      paintSplashProgress(1);
+      return;
+    }
+    splashProgressRaf = requestAnimationFrame(tickBloomProgress);
+  });
+}
+
+/** @returns {Promise<void>} */
+async function dismissSplash() {
+  if (!splashEl || splashEl.classList.contains("is-done")) {
+    document.body.classList.remove("is-splash");
+    return;
+  }
+
+  const waitMin = Math.max(0, SPLASH_MIN_MS - (performance.now() - splashBloomAt));
+  await Promise.all([
+    waitSplashBloomComplete(),
+    new Promise((r) => window.setTimeout(r, waitMin)),
+    new Promise((resolve) => {
+      if (splashAssetsReady) {
+        resolve();
+        return;
+      }
+      const id = window.setInterval(() => {
+        if (splashAssetsReady) {
+          window.clearInterval(id);
+          resolve();
+        }
+      }, 40);
+    }),
+  ]);
+
+  // Cover must already be painted under splash — no flash after dissolve
+  if (artboard && !artboard.classList.contains("is-ready")) {
+    artboard.dataset.readyAt = String(performance.now());
+    artboard.classList.add("is-ready");
+  }
+  await waitCoverPainted();
+
+  await new Promise((r) => window.setTimeout(r, splashReduceMotion ? 40 : 120));
+  await dissolveSplashMosaic();
+
+  // Hide splash hard BEFORE any cleanup — removing mask/canvas must not flash loading
+  splashEl.style.transition = "none";
+  splashEl.style.opacity = "0";
+  splashEl.style.visibility = "hidden";
+  splashEl.classList.add("is-done");
+  document.body.classList.remove("is-splash", "is-on-home");
+  const home = document.getElementById("home");
+  home?.classList.remove("is-visible", "is-enter-zoom", "is-floor-zoom", "is-bento-hold");
+  home?.setAttribute("aria-hidden", "true");
+  splashEl.style.removeProperty("--splash-mask");
+  splashEl.classList.remove("is-mosaic");
+  document.querySelector(".splash-mosaic-fx")?.remove();
+}
+
+/** Decode cover images + wait two frames so first paint is under splash. */
+function waitCoverPainted() {
+  if (!artboard) return Promise.resolve();
+  const imgs = [...artboard.querySelectorAll("img")].filter((img) => img.getAttribute("src"));
+  return Promise.all(
+    imgs.map((img) => {
+      if (typeof img.decode === "function") {
+        return img.decode().catch(() => undefined);
+      }
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+      });
+    })
+  ).then(
+    () =>
+      new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+      })
+  );
+}
+
+/**
+ * Mosaic dissolve — splash DOM stays as-is until each cell is reached.
+ * - Mask punches splash cells when wave arrives (cover shows through)
+ * - Overlay draws morph ONLY for active cells
+ * - Flower morph: white / gray only; text: white stroke pixels; cloth: splash bg
+ * - Never recolor the intact splash (no global quantize / no fake banners)
+ */
+function dissolveSplashMosaic() {
+  if (!splashEl) return Promise.resolve();
+  if (splashReduceMotion) return Promise.resolve();
+
+  const BAYER8 = [
+    [0, 48, 12, 60, 3, 51, 15, 63],
+    [32, 16, 44, 28, 35, 19, 47, 31],
+    [8, 56, 4, 52, 11, 59, 7, 55],
+    [40, 24, 36, 20, 43, 27, 39, 23],
+    [2, 50, 14, 62, 1, 49, 13, 61],
+    [34, 18, 46, 30, 33, 17, 45, 29],
+    [10, 58, 6, 54, 9, 57, 5, 53],
+    [42, 26, 38, 22, 41, 25, 37, 21],
+  ];
+
+  const COL_WHITE = "#ffffff";
+  const COL_GRAY = "#c4c7d4";
+
+  const flowerEl = splashEl.querySelector(".splash-flower");
+  const flowerW = flowerEl?.getBoundingClientRect().width || 72;
+  const cell = Math.max(2, Math.round(flowerW / 42));
+  const cols = Math.ceil(window.innerWidth / cell);
+  const rows = Math.ceil(window.innerHeight / cell);
+  const bg = getComputedStyle(splashEl).backgroundColor || "#3a3e50";
+
+  const mask = document.createElement("canvas");
+  // Full-res mask so splash text/font stay crisp (no low-res upscale)
+  mask.width = window.innerWidth;
+  mask.height = window.innerHeight;
+  const mctx = mask.getContext("2d", { willReadFrequently: true });
+  if (!mctx) return Promise.resolve();
+  mctx.imageSmoothingEnabled = false;
+
+  const fx = document.createElement("canvas");
+  fx.className = "splash-mosaic-fx";
+  fx.width = window.innerWidth;
+  fx.height = window.innerHeight;
+  fx.style.imageRendering = "pixelated";
+  const fctx = fx.getContext("2d");
+  if (!fctx) return Promise.resolve();
+  fctx.imageSmoothingEnabled = false;
+
+  // Bottom→top percolation with Bayer noise (no lace)
+  const Y_W = 0.42;
+  const D_W = 0.42;
+  const R_W = 0.1;
+  const thr = new Float32Array(cols * rows);
+  for (let y = 0; y < rows; y++) {
+    const yB = rows <= 1 ? 0 : (rows - 1 - y) / (rows - 1);
+    for (let x = 0; x < cols; x++) {
+      const dither = BAYER8[y & 7][x & 7] / 64;
+      thr[y * cols + x] = yB * Y_W + dither * D_W + Math.random() * R_W;
+    }
+  }
+
+  const morphSpan = 0.07;
+
+  /** 0 cloth, 1 flower-white, 2 flower-gray, 3 text */
+  const kind = new Uint8Array(cols * rows);
+  const flowerRect = flowerEl?.getBoundingClientRect() || null;
+  const textRect = splashWelcome?.getBoundingClientRect() || null;
+
+  // Classify cells from live DOM geometry (does not alter splash look)
+  const classify = () => {
+    // Prefer SVG petal hit: large = white, small = gray
+    const lgPetals = flowerEl
+      ? [...flowerEl.querySelectorAll(".splash-flower__petal--lg")]
+      : [];
+    const smPetals = flowerEl
+      ? [...flowerEl.querySelectorAll(".splash-flower__petal--sm, .splash-flower__core")]
+      : [];
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const i = y * cols + x;
+        const vx = (x + 0.5) * cell;
+        const vy = (y + 0.5) * cell;
+        kind[i] = 0;
+
+        if (
+          textRect &&
+          vx >= textRect.left &&
+          vx <= textRect.right &&
+          vy >= textRect.top &&
+          vy <= textRect.bottom
+        ) {
+          // Only mark if over actual glyph ink (sample splash welcome canvas later)
+          kind[i] = 3;
+          continue;
+        }
+
+        if (
+          flowerRect &&
+          vx >= flowerRect.left &&
+          vx <= flowerRect.right &&
+          vy >= flowerRect.top &&
+          vy <= flowerRect.bottom
+        ) {
+          // Map to SVG viewBox 0..100
+          const sx = ((vx - flowerRect.left) / flowerRect.width) * 100;
+          const sy = ((vy - flowerRect.top) / flowerRect.height) * 100;
+          let hit = 0;
+          for (const g of smPetals) {
+            const poly = g.tagName === "rect" ? g : g.querySelector("polygon");
+            if (!poly) continue;
+            if (pointInPetal(poly, sx, sy)) {
+              hit = 2;
+              break;
+            }
+          }
+          if (!hit) {
+            for (const g of lgPetals) {
+              const poly = g.querySelector("polygon");
+              if (poly && pointInPetal(poly, sx, sy)) {
+                hit = 1;
+                break;
+              }
+            }
+          }
+          if (hit) kind[i] = hit;
+        }
+      }
+    }
+  };
+
+  const pointInPetal = (el, px, py) => {
+    if (el.tagName === "rect") {
+      const x = +el.getAttribute("x");
+      const y = +el.getAttribute("y");
+      const w = +el.getAttribute("width");
+      const h = +el.getAttribute("height");
+      return px >= x && px <= x + w && py >= y && py <= y + h;
+    }
+    const pts = (el.getAttribute("points") || "")
+      .trim()
+      .split(/[\s,]+/)
+      .map(Number);
+    if (pts.length < 6) return false;
+    const verts = [];
+    for (let i = 0; i < pts.length; i += 2) verts.push([pts[i], pts[i + 1]]);
+    // Ray cast
+    let inside = false;
+    for (let i = 0, j = verts.length - 1; i < verts.length; j = i++) {
+      const xi = verts[i][0];
+      const yi = verts[i][1];
+      const xj = verts[j][0];
+      const yj = verts[j][1];
+      const intersect =
+        yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi + 1e-9) + xi;
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  };
+
+  // Refine text cells + capture glyph ink with the SAME CSS font as splash
+  /** @type {HTMLCanvasElement | null} */
+  let textSrc = null;
+  /** @type {number} */
+  let textSrcLeft = 0;
+  /** @type {number} */
+  let textSrcTop = 0;
+
+  const refineTextInk = () => {
+    if (!splashWelcome || !textRect) return;
+    const cs = getComputedStyle(splashWelcome);
+    const pad = 4;
+    const tw = Math.max(1, Math.ceil(textRect.width) + pad * 2);
+    const th = Math.max(1, Math.ceil(textRect.height) + pad * 2);
+    textSrcLeft = Math.round(textRect.left) - pad;
+    textSrcTop = Math.round(textRect.top) - pad;
+    textSrc = document.createElement("canvas");
+    textSrc.width = tw;
+    textSrc.height = th;
+    const ctx = textSrc.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return;
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, tw, th);
+    // Exact computed font — do not invent another face/weight/size
+    ctx.font = cs.font;
+    try {
+      ctx.letterSpacing = cs.letterSpacing;
+    } catch (_) {
+      /* older engines */
+    }
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#ffffff";
+    const label =
+      splashWelcome.querySelector(".splash-welcome__sr")?.textContent?.trim() ||
+      "Welcome to my ATTIC";
+    ctx.fillText(label, tw / 2, th / 2);
+
+    // Hard threshold — keep Syne glyph shapes, kill AA fringe
+    const data = ctx.getImageData(0, 0, tw, th);
+    const d = data.data;
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i] > 128) {
+        d[i] = 255;
+        d[i + 1] = 255;
+        d[i + 2] = 255;
+        d[i + 3] = 255;
+      } else {
+        d[i] = 0;
+        d[i + 1] = 0;
+        d[i + 2] = 0;
+        d[i + 3] = 0;
+      }
+    }
+    ctx.putImageData(data, 0, 0);
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const i = y * cols + x;
+        if (kind[i] !== 3) continue;
+        const vx = (x + 0.5) * cell;
+        const vy = (y + 0.5) * cell;
+        const lx = Math.min(tw - 1, Math.max(0, Math.floor(vx - textSrcLeft)));
+        const ly = Math.min(th - 1, Math.max(0, Math.floor(vy - textSrcTop)));
+        const o = (ly * tw + lx) * 4;
+        if (data.data[o + 3] < 128) kind[i] = 0;
+      }
+    }
+  };
+
+  classify();
+  refineTextInk();
+
+  // Cross-stitch cloth eyes (sparse holes) on cloth only
+  const clothEye = new Uint8Array(cols * rows);
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const i = y * cols + x;
+      if (kind[i] !== 0) continue;
+      const b = BAYER8[y & 7][x & 7];
+      if (b <= 4 && ((x * 5 + y * 3) & 15) === 0) clothEye[i] = 1;
+    }
+  }
+
+  // Flower/text: sync life with local mosaic front (only slightly later)
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const i = y * cols + x;
+      if (kind[i] === 0) continue;
+      let sum = 0;
+      let n = 0;
+      for (let dy = -2; dy <= 2; dy++) {
+        for (let dx = -2; dx <= 2; dx++) {
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+          const j = ny * cols + nx;
+          if (kind[j] !== 0) continue; // compare against surrounding cloth
+          sum += thr[j];
+          n++;
+        }
+      }
+      if (n > 0) {
+        // Sit just behind the local cloth front — late a little, not immortal
+        thr[i] = sum / n + 0.035;
+      } else {
+        const yB = rows <= 1 ? 0 : (rows - 1 - y) / (rows - 1);
+        thr[i] = yB * Y_W + 0.05;
+      }
+    }
+  }
+
+  const colorFor = (i) => {
+    if (kind[i] === 1) return COL_WHITE;
+    if (kind[i] === 2) return COL_GRAY;
+    if (kind[i] === 3) return COL_WHITE;
+    return bg;
+  };
+
+  const alive = new Uint8Array(cols * rows);
+  alive.fill(1);
+
+  const paintMask = () => {
+    mctx.clearRect(0, 0, mask.width, mask.height);
+    mctx.fillStyle = "#ffffff";
+    mctx.fillRect(0, 0, mask.width, mask.height);
+    mctx.globalCompositeOperation = "destination-out";
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (alive[y * cols + x]) continue;
+        mctx.fillRect(x * cell, y * cell, cell, cell);
+      }
+    }
+    mctx.globalCompositeOperation = "source-over";
+    splashEl.style.setProperty("--splash-mask", `url("${mask.toDataURL("image/png")}")`);
+  };
+
+  const drawSpindleV = (cx, cy, tip, waist, bulge) => {
+    const pull = waist * (1 + bulge * 0.55);
+    fctx.beginPath();
+    fctx.moveTo(cx, cy - tip);
+    fctx.quadraticCurveTo(cx + pull, cy - tip * 0.12, cx + waist, cy);
+    fctx.quadraticCurveTo(cx + pull, cy + tip * 0.12, cx, cy + tip);
+    fctx.quadraticCurveTo(cx - pull, cy + tip * 0.12, cx - waist, cy);
+    fctx.quadraticCurveTo(cx - pull, cy - tip * 0.12, cx, cy - tip);
+    fctx.closePath();
+    fctx.fill();
+  };
+
+  const drawSpindleH = (cx, cy, tip, waist, bulge) => {
+    const pull = waist * (1 + bulge * 0.55);
+    fctx.beginPath();
+    fctx.moveTo(cx - tip, cy);
+    fctx.quadraticCurveTo(cx - tip * 0.12, cy + pull, cx, cy + waist);
+    fctx.quadraticCurveTo(cx + tip * 0.12, cy + pull, cx + tip, cy);
+    fctx.quadraticCurveTo(cx + tip * 0.12, cy - pull, cx, cy - waist);
+    fctx.quadraticCurveTo(cx - tip * 0.12, cy - pull, cx - tip, cy);
+    fctx.closePath();
+    fctx.fill();
+  };
+
+  const drawSpindleMorph = (cx, cy, half, u) => {
+    if (u >= 1) return;
+    // Gentler initial velocity → fat spindle; then thin & die
+    let tip = half * 0.98;
+    let waist;
+    let bulge;
+    if (u < 0.16) {
+      const t = u / 0.16;
+      const e = 1 - (1 - t) ** 2.5;
+      waist = half * (0.9 - 0.42 * e); // → ~0.48 fat
+      bulge = 0.3 + 0.7 * e;
+    } else if (u < 0.42) {
+      waist = half * 0.48;
+      bulge = 1;
+    } else if (u < 0.68) {
+      const t = (u - 0.42) / 0.26;
+      const e = t * t;
+      waist = half * (0.48 - 0.38 * e);
+      bulge = 1 - e;
+    } else {
+      const t = (u - 0.68) / 0.32;
+      const e = t * t;
+      waist = half * 0.1 * (1 - e);
+      bulge = 0;
+      tip = half * 0.98 * (1 - e);
+    }
+    waist = Math.max(half * 0.005, waist);
+    tip = Math.max(half * 0.005, tip);
+    drawSpindleV(cx, cy, tip, waist, bulge);
+    drawSpindleH(cx, cy, tip, waist, bulge);
+  };
+
+  const drawTextMorph = (x, y, u) => {
+    if (u >= 1 || !textSrc) return;
+    // Scale original Syne glyph pixels in this cell — do not replace the typeface
+    const scale = Math.max(0.04, 1 - u * u);
+    const cw = cell * scale;
+    const ch = cell * scale;
+    const dx = x * cell + (cell - cw) * 0.5;
+    const dy = y * cell + (cell - ch) * 0.5;
+    const sx = Math.round(x * cell - textSrcLeft);
+    const sy = Math.round(y * cell - textSrcTop);
+    fctx.imageSmoothingEnabled = false;
+    fctx.drawImage(textSrc, sx, sy, cell, cell, dx, dy, cw, ch);
+  };
+
+  /** Hairline stitch gutters on flower once its mosaic cell starts dissolving */
+  const stitchGutter = () => (cell >= 3 ? 1 : 0);
+
+  const drawFlowerStitchGrid = (x, y) => {
+    const g = stitchGutter();
+    if (g <= 0) return;
+    fctx.fillStyle = bg;
+    const x0 = Math.round(x * cell);
+    const y0 = Math.round(y * cell);
+    const w = Math.round((x + 1) * cell) - x0;
+    const h = Math.round((y + 1) * cell) - y0;
+    fctx.fillRect(x0 + w - g, y0, g, h);
+    fctx.fillRect(x0, y0 + h - g, w, g);
+  };
+
+  const cellU = (p, i, y, x) => {
+    const u0 = (p - thr[i]) / morphSpan;
+    const isContent = kind[i] === 1 || kind[i] === 2 || kind[i] === 3;
+
+    // Cloth eyes open a bit early
+    if (clothEye[i] && !isContent && u0 > -0.12) {
+      return Math.min(1, Math.max(0, u0) * 2.2 + 0.1);
+    }
+
+    let u = u0;
+
+    if (isContent) {
+      let deadN = 0;
+      let nearN = 0;
+      let minThr = thr[i];
+      for (let dy = -2; dy <= 2; dy++) {
+        for (let dx = -2; dx <= 2; dx++) {
+          if (dx === 0 && dy === 0) continue;
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+          const j = ny * cols + nx;
+          if (kind[j] !== 0) continue;
+          nearN++;
+          minThr = Math.min(minThr, thr[j]);
+          if (p >= thr[j]) deadN++;
+        }
+      }
+      if (nearN > 0 && deadN / nearN >= 0.35) {
+        u = Math.max(u, (p - (minThr + 0.025)) / morphSpan);
+      }
+    }
+
+    // Short trail: after mid morph, accelerate to clean
+    if (u > 0.35) u = 0.35 + (u - 0.35) * 2.4;
+    if (u0 > 1.2) u = Math.max(u, Math.min(1, (u0 - 0.4) / 0.9));
+    return u;
+  };
+
+  splashEl.classList.add("is-mosaic");
+  document.body.appendChild(fx);
+  paintMask();
+
+  const duration = 920;
+  const start = performance.now();
+  let lastMask = 0;
+
+  return new Promise((resolve) => {
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const p = t * t * (3 - 2 * t);
+
+      fctx.clearRect(0, 0, fx.width, fx.height);
+      fctx.globalAlpha = 1;
+      fctx.imageSmoothingEnabled = false;
+
+      let maskDirty = false;
+      const half = cell * 0.5;
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const i = y * cols + x;
+          const u = cellU(p, i, y, x);
+          const isFlower = kind[i] === 1 || kind[i] === 2;
+
+          if (u <= 0) {
+            if (!alive[i]) {
+              alive[i] = 1;
+              maskDirty = true;
+            }
+            continue;
+          }
+
+          if (alive[i]) {
+            alive[i] = 0;
+            maskDirty = true;
+          }
+
+          if (u >= 1) continue;
+
+          const cx = x * cell + half;
+          const cy = y * cell + half;
+          const g = stitchGutter();
+
+          if (kind[i] === 3) {
+            fctx.fillStyle = colorFor(i);
+            drawTextMorph(x, y, u);
+          } else if (isFlower) {
+            fctx.fillStyle = bg;
+            fctx.fillRect(Math.round(x * cell), Math.round(y * cell), cell, cell);
+            fctx.fillStyle = colorFor(i);
+            drawSpindleMorph(cx, cy, Math.max(half - g, half * 0.85), u);
+            drawFlowerStitchGrid(x, y);
+          } else {
+            fctx.fillStyle = colorFor(i);
+            drawSpindleMorph(cx, cy, half, u);
+          }
+        }
+      }
+
+      if (maskDirty || now - lastMask > 48) {
+        paintMask();
+        lastMask = now;
+      }
+
+      if (t < 1) requestAnimationFrame(tick);
+      else {
+        alive.fill(0);
+        paintMask();
+        fctx.clearRect(0, 0, fx.width, fx.height);
+        resolve();
+      }
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+startSplashBloom();
 
 const layoutUrl = new URL("./cover-layout.json", import.meta.url);
 const doorsUrl = new URL("./doors.svg", import.meta.url);
@@ -398,7 +1103,9 @@ function clearDoorHoleMask(camera) {
 function prepareBentoPush() {
   const bento = document.querySelector(".bento");
   if (!bento) return;
-  const cells = bento.querySelectorAll(".tile, .home-hello, .home-build");
+  const cells = bento.querySelectorAll(
+    ".tile, .home-hello, .folio-section-label, .folio-filters, .home-foot, .folio-spacer"
+  );
   const br = bento.getBoundingClientRect();
   const cx = br.left + br.width / 2;
   const cy = br.top + br.height / 2;
@@ -410,6 +1117,17 @@ function prepareBentoPush() {
     el.style.setProperty("--push-x", `${(cx - ex) * 0.62}px`);
     el.style.setProperty("--push-y", `${(cy - ey) * 0.62}px`);
     el.style.setProperty("--push-i", String(i));
+  });
+}
+
+function setupPortfolioChrome() {
+  const back = document.getElementById("folio-back-cover");
+  back?.addEventListener("click", (e) => {
+    e.preventDefault();
+    const url = new URL(location.href);
+    url.searchParams.delete("view");
+    url.hash = "";
+    location.assign(url.href);
   });
 }
 
@@ -553,11 +1271,10 @@ function enterAttic(side) {
   const finish = () => {
     document.body.classList.add("is-on-home");
     home?.classList.add("is-visible");
-    home?.classList.remove("is-bento-hold");
+    home?.classList.remove("is-bento-hold", "is-enter-zoom", "is-floor-zoom");
     home?.setAttribute("aria-hidden", "false");
     enterLayer?.classList.remove("is-active", "is-enter-left", "is-enter-right");
     enterLayer?.setAttribute("aria-hidden", "true");
-    home?.classList.remove("is-floor-zoom");
     clearDoorHoleMask(camera);
     layoutFlowerRow();
     if (location.hash !== "#home") {
@@ -647,9 +1364,11 @@ function setupFlowerRow() {
 }
 
 function setupRouting() {
-  if (location.hash === "#home") {
-    showHomeImmediate();
+  // Splash → cover. Don't skip to home just because a prior visit left #home.
+  if (document.body.classList.contains("is-splash") && location.hash === "#home") {
+    history.replaceState(null, "", `${location.pathname}${location.search}`);
   }
+
   window.addEventListener("popstate", () => {
     if (location.hash === "#home") {
       showHomeImmediate();
@@ -1025,10 +1744,17 @@ function setupSketchUnderlines(lettersData, marksData, layout, AW, AH) {
   const marks = marksData.marks || [];
 
   const bind = (el, cls) => {
-    el.addEventListener("pointerenter", () => artboard.classList.add(cls));
-    el.addEventListener("pointerleave", () => artboard.classList.remove(cls));
-    el.addEventListener("focus", () => artboard.classList.add(cls));
-    el.addEventListener("blur", () => artboard.classList.remove(cls));
+    const animDur = cls === "is-hover-top-text" ? 1.15 : 0.7;
+    const startLine = () => {
+      // Sound first (≤ animation start), then kick the underline.
+      playUnderlineScribble(animDur);
+      artboard.classList.add(cls);
+    };
+    const endLine = () => artboard.classList.remove(cls);
+    el.addEventListener("pointerenter", startLine);
+    el.addEventListener("pointerleave", endLine);
+    el.addEventListener("focus", startLine);
+    el.addEventListener("blur", endLine);
   };
   bind(hitTop, "is-hover-top-text");
 
@@ -1087,18 +1813,29 @@ function setupSketchUnderlines(lettersData, marksData, layout, AW, AH) {
 }
 
 async function load() {
+  if (new URLSearchParams(location.search).get("view") === "portfolio") {
+    splashEl?.remove();
+    document.body.classList.remove("is-splash");
+    setupPortfolioChrome();
+    await initPortfolio();
+    showHomeImmediate();
+    return;
+  }
   initUiSound();
   setupCoverFallbackUi();
   prefetchVoidAssets();
 
-  const [layout, doorsXml, lettersData, marksData, regionsData, railsXml] = await Promise.all([
+  const jobs = [
     fetch(layoutUrl).then((r) => r.json()),
     fetch(doorsUrl).then((r) => r.text()),
     fetch(lettersUrl).then((r) => r.json()),
     fetch(marksUrl).then((r) => r.json()),
     fetch(regionsUrl).then((r) => r.json()),
     fetch(railsUrl).then((r) => r.text()),
-  ]);
+  ];
+
+  const [layout, doorsXml, lettersData, marksData, regionsData, railsXml] =
+    await Promise.all(jobs);
 
   const { w: AW, h: AH } = layout.meta.artboard;
   coverLayout = layout;
@@ -1113,16 +1850,11 @@ async function load() {
   setupSketchUnderlines(lettersData, marksData, layout, AW, AH);
   setupRouting();
   setupFlowerRow();
+  setupPortfolioChrome();
+  await initPortfolio();
+  splashAssetsReady = true;
 
-  // kick entrance animations after first paint
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      if (!document.body.classList.contains("is-on-home")) {
-        artboard.dataset.readyAt = String(performance.now());
-        artboard.classList.add("is-ready");
-      }
-    });
-  });
+  await dismissSplash();
 
   console.info("[attic] cover ready", {
     letters: lettersData.letters.length,
@@ -1135,4 +1867,6 @@ load().catch((err) => {
   console.error(err);
   setupCoverFallbackUi();
   showCoverFallback();
+  splashAssetsReady = true;
+  dismissSplash();
 });
