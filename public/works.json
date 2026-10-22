@@ -133,7 +133,7 @@
     "title": "Tenennium · 榫卯 · 木构千年",
     "blurb": "中国古代榫卯结构知识图谱 — 3D Knowledge Graph of Chinese Mortise-Tenon Joinery",
     "image": "./parts/portfolio/tenennium.png",
-    "url": "https://tennenium.fluorescentmice.fun",
+    "url": "https://tenennium.fluorescentmice.fun",
     "source": "cursor",
     "tags": [
       "3D",
@@ -144,7 +144,7 @@
       {
         "kind": "live",
         "label": "直达网站",
-        "url": "https://tennenium.fluorescentmice.fun"
+        "url": "https://tenennium.fluorescentmice.fun"
       },
       {
         "kind": "github",
@@ -695,6 +695,7 @@
     "updated": "2025-05-10",
     "ended": "2025-05-10",
     "images": [
+      "./parts/portfolio/kana-app-icon.png",
       "./parts/portfolio/kana-main-dark.png",
       "./parts/portfolio/kana-training-map.png",
       "./parts/portfolio/kana-stamp.jpg"

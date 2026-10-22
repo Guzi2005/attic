@@ -161,6 +161,16 @@ function compactStamp(value, withYear) {
   return withYear ? `${y}.${tail}` : tail;
 }
 
+function tintOfWork(w, paletteCount = 8) {
+  const seed = String(w.id || w.title || '').trim();
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return ((h >>> 0) % paletteCount + paletteCount) % paletteCount;
+}
+
 function srcKey(src) {
   const raw = String(src || "").trim().split("?")[0].replace(/\\/g, "/");
   if (!raw) return "";
@@ -301,12 +311,28 @@ export function makeSlide(w, index = 0) {
 
   const tab = document.createElement("header");
   tab.className = "folio-tab";
+  tab.dataset.tint = String(tintOfWork(w));
   const day = document.createElement("span");
   day.className = "folio-tab__day";
   day.textContent = w.status === 'planned' ? '待启' : parts.d;
   const title = document.createElement("h3");
   title.className = "folio-tab__title";
-  title.textContent = String(w.title || "").replace(/\n/g, " / ");
+  const titleText = document.createElement("span");
+  titleText.className = "folio-tab__title-text";
+  titleText.textContent = String(w.title || "").replace(/\n/g, " / ");
+  title.appendChild(titleText);
+  const until = untilOf(w);
+  const born = bornOf(w);
+  if (until) {
+    const stamp = document.createElement("span");
+    stamp.className = "folio-tab__until";
+    const untilP = dateParts(until);
+    const bornP = dateParts(born);
+    const withYear = !bornP.y || untilP.y !== bornP.y;
+    stamp.textContent = compactStamp(until, true);
+    stamp.setAttribute("aria-label", `完成日期 ${compactStamp(until, true)}`);
+    tab.appendChild(stamp);
+  }
   tab.append(day, title);
   slide.appendChild(tab);
 
@@ -359,16 +385,7 @@ export function makeSlide(w, index = 0) {
     note.appendChild(tags);
   }
 
-  const until = untilOf(w);
-  const born = bornOf(w);
-  if (until) {
-    const end = document.createElement("p");
-    end.className = "folio-slide__until";
-    const bornY = dateParts(born).y;
-    const untilY = dateParts(until).y;
-    end.textContent = `→ ${compactStamp(until, Boolean(untilY && untilY !== bornY))}`;
-    note.appendChild(end);
-  }
+
 
   const rest = restLinks(w);
   if (rest.length) {

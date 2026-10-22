@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Attic 手账 · 拼贴版 — fluorescentmice.fun</title>
+  <meta name="description" content="Guzi 的阁楼手账拼贴版：像翻笔记本一样看作品，页签直达。" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@500;600;700&family=Syne:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./journal.css?v=20261013-j1" />
+</head>
+<body>
+  <div class="desk">
+    <main class="book" id="book">
+      <div class="book__rings" aria-hidden="true"></div>
+      <div class="book__pages" id="pages"></div>
+      <noscript>需要启用 JavaScript 才能读取 works.json 渲染手账。</noscript>
+      <nav class="book__tabs" id="tabs" aria-label="章节页签"></nav>
+    </main>
+    <div class="book__pager">
+      <button class="pager__btn" id="prev" type="button">← 上一页</button>
+      <span class="pager__label" id="pagerLabel">—</span>
+      <button class="pager__btn" id="next" type="button">下一页 →</button>
+    </div>
+  </div>
+  <script src="./journal.js?v=20261013-j1"></script>
+</body>
+</html>

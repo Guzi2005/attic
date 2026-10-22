@@ -60,9 +60,125 @@ body.is-on-home .stage { visibility: hidden; pointer-events: none; }
 .folio-year[data-year="计划"] .folio-year__mark { font-size: 30px; }
 .folio-year[data-year="计划"] .folio-year__mark::after { content: 'UP NEXT'; }
 .folio-year[data-year="计划"] .folio-month__mark { visibility: hidden; }
-.folio-tab { position: sticky; top: 0; z-index: 5; display: flex; align-items: baseline; gap: 16px; padding: 24px 0 20px; background: var(--paper); backdrop-filter: none; }
-.folio-tab__day { flex: 0 0 auto; font: 700 34px/1.15 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-.folio-tab__title { font-size: clamp(23px, 2.6vw, 38px); max-width: none; }
+.folio-tab {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: baseline; gap: 16px;
+  padding: 28px 30px 22px;
+  margin: 0 -14px 8px;
+  background: var(--paper);
+  border: 1px solid rgba(30, 40, 50, .07);
+  border-left-width: 2px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 2px;
+  box-shadow:
+    2px 3px 0 rgba(30, 40, 50, .035),
+    0 18px 40px -30px rgba(25, 30, 45, .22),
+    0 2px 0 rgba(255,255,255,.35) inset;
+  transform: rotate(var(--rot, 0deg)) translateY(0);
+  isolation: isolate;
+  overflow: hidden;
+  backdrop-filter: none;
+  transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
+}
+.folio-tab::after {
+  /* 细格纸纹（淡），增加便签纸质感 */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(30, 40, 50, .028) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(90deg, rgba(30, 40, 50, .018) 1px, transparent 1px) 0 0 / 22px 22px;
+  mix-blend-mode: multiply;
+  opacity: .7;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 2px;
+  z-index: -1;
+}
+/* ===== 莫兰迪淡彩 8 色便签色卡 =====
+   配色原则：低饱和、灰调、纸感、青/紫/黄/粉/绿/蓝/米/玫
+   每张便签 2 个 CSS var：轻微旋转角（模拟手工贴歪）/ 同色系深色（压印用） */
+.folio-tab[data-tint="0"] { background: #dbe9ec; --tint-deep: #7fa3ae; --rot: -0.18deg; }
+.folio-tab[data-tint="1"] { background: #e5dff0; --tint-deep: #9b8bc0; --rot: +0.14deg; }
+.folio-tab[data-tint="2"] { background: #f3ead4; --tint-deep: #bfa367; --rot: -0.10deg; }
+.folio-tab[data-tint="3"] { background: #f1dede; --tint-deep: #c08f9a; --rot: +0.16deg; }
+.folio-tab[data-tint="4"] { background: #dbe6d8; --tint-deep: #86a67f; --rot: -0.12deg; }
+.folio-tab[data-tint="5"] { background: #dfe4ec; --tint-deep: #8b9ac0; --rot: +0.22deg; }
+.folio-tab[data-tint="6"] { background: #ece1d2; --tint-deep: #b09a79; --rot: -0.16deg; }
+.folio-tab[data-tint="7"] { background: #ecdbe1; --tint-deep: #bd8fa2; --rot: +0.18deg; }
+
+/* hover 浮起——让便签有「从本子上掀起来一点点」的质感 */
+.folio-tab:hover {
+  transform: rotate(calc(var(--rot, 0deg) + 0.12deg)) translateY(-1px);
+  box-shadow:
+    3px 5px 0 rgba(30, 40, 50, .05),
+    0 28px 50px -32px rgba(25, 30, 45, .28),
+    0 2px 0 rgba(255,255,255,.45) inset;
+}
+
+.folio-tab__day {
+  flex: 0 0 auto;
+  font: 700 34px/1.15 var(--sans);
+  letter-spacing: -.04em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(25, 30, 45, .78);
+  position: relative;
+  padding: 0 14px 0 4px;
+}
+/* 日期左侧细竖分隔线（老胶片 perforation） */
+.folio-tab__day::before {
+  content: "";
+  position: absolute;
+  right: 0; top: 18%;
+  height: 64%;
+  width: 1px;
+  background: rgba(30, 40, 50, .12);
+}
+.folio-tab__title {
+  font-size: clamp(23px, 2.6vw, 38px);
+  max-width: none;
+  position: relative;
+  padding-right: 80px;
+  line-height: 1.22;
+}
+.folio-tab__title-text {
+  position: relative;
+  z-index: 1;
+}
+/* ===== 止日期压印水印（便签右下角，同色系深色加深纸面，超出便签裁掉） ===== */
+.folio-tab__until {
+  position: absolute;
+  right: 12px;
+  bottom: 4px;
+  font: 700 clamp(42px, 4.6vw, 86px)/1 var(--sans);
+  letter-spacing: -.05em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" on, "lnum" on;
+  color: color-mix(in srgb, var(--tint-deep, #93a3ab) 62%, transparent);
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--tint-deep, #93a3ab) 40%, transparent);
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+  text-align: right;
+  z-index: 0;
+  mix-blend-mode: multiply;
+}
+/* 系列成员（.folio-slide--member）的便签稍微缩小，显得层级低一级 */
+.folio-slide--member .folio-tab {
+  margin: 0 -4px 6px;
+  padding: 16px 20px 14px;
+}
+.folio-slide--member .folio-tab__until {
+  font-size: clamp(28px, 2.6vw, 48px);
+  right: 8px;
+  bottom: 0;
+}
+/* 状态为计划中/未定的作品：整体加浅绿灰调提示 */
+.folio-slide[data-born=""] .folio-tab,
+.folio-slide[data-until=""] .folio-tab,
+.folio-slide .folio-tab.is-planned {
+  filter: saturate(.92) brightness(.995);
+}
 .folio-slide { padding-top: 0; }
 .folio-mag:not(:has(.folio-mag__fig--cover)) .folio-mag__note { grid-column: 1 / -1; grid-row: 1; }
 .folio-slide--text .folio-mag { background: none; }
