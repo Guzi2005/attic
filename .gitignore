@@ -27,6 +27,10 @@ assets/tmp_inventory*.json
 # Local server logs
 assets/*.log
 
+# Local agent / deskpet tools
+.workbuddy/
+ai-deskpet/
+
 # Draft scripts and debug snapshots
 scripts/_*.py
 scripts/_sticky_snap/

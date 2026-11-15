@@ -1,6 +1,6 @@
 import { initVoidFlow, layoutVoidPatterns, prefetchVoidAssets } from "./void-flow.js?v=20260921-editor";
 import { initUiSound, playUnderlineScribble } from "./ui-sound.js";
-import { initPortfolio } from "./portfolio.js?v=20260921-editor";
+import { initPortfolio } from "./portfolio.js?v=20261116-v8";
 
 /** Block mobile pinch-zoom (iOS Safari ignores viewport user-scalable). */
 function lockPinchZoom() {
