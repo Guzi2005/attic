@@ -6,6 +6,7 @@
 import { linkKey } from './folio-links.js';
 const NOTE_FRAMES = ["outer", "grid"];
 let imageSizes = {};
+let mediaCaptions = {};
 export function setImageSizes(sizes) { imageSizes = { ...imageSizes, ...sizes }; }
 
 function hashStr(str) {
@@ -50,6 +51,15 @@ export async function initPortfolio() {
 
   try {
     const media = await fetch(new URL('./folio-media.json', import.meta.url), { cache: 'no-store' }).then(r => r.json());
+    for (const [id, items] of Object.entries(media || {})) {
+      if (Array.isArray(items)) {
+        for (const item of items) {
+          if (item?.src && item?.caption) {
+            mediaCaptions[srcKey(item.src)] = item.caption;
+          }
+        }
+      }
+    }
     works = works.map(w => ({ ...w, images: [...(w.images || []), ...(w.media_override ? [] : media[w.id] || []).map(item => item.src)] }));
   } catch (err) { console.warn('[attic] supplementary media unavailable', err); }
 
@@ -60,9 +70,9 @@ export async function initPortfolio() {
   }
 
   works = [...works].sort((a, b) => {
-    const born = String(b.started || b.updated || "").localeCompare(String(a.started || a.updated || ""));
-    if (born) return born;
-    return String(b.updated || "").localeCompare(String(a.updated || ""));
+    const upd = String(b.updated || b.started || "").localeCompare(String(a.updated || a.started || ""));
+    if (upd) return upd;
+    return String(b.started || "").localeCompare(String(a.started || ""));
   });
 
   // Keep every member as a complete work, anchored beneath its founding work.
@@ -74,7 +84,7 @@ export async function initPortfolio() {
     members.push(w);
     children.set(w.series_parent, members);
   });
-  works.forEach(w => { w.series_members = (children.get(w.id) || []).sort((a, b) => bornOf(a).localeCompare(bornOf(b))); });
+  works.forEach(w => { w.series_members = (children.get(w.id) || []).sort((a, b) => updatedOf(b).localeCompare(updatedOf(a))); });
   works = works.filter(w => !w.series_parent || !byId.has(w.series_parent));
   const frag = document.createDocumentFragment();
   let index = 0;
@@ -83,12 +93,12 @@ export async function initPortfolio() {
     frag.appendChild(makeYear({ year: '计划', months: [{ key: '计划-—', items: planned }] }, index));
     index += planned.length;
   }
-  const undated = works.filter(w => w.status !== 'planned' && !bornOf(w));
+  const undated = works.filter(w => w.status !== 'planned' && !updatedOf(w));
   if (undated.length) {
     frag.appendChild(makeYear({year:'未定',months:[{key:'未定-—',items:undated}]},index));
     index += undated.length;
   }
-  groupByYear(works.filter(w => w.status !== 'planned' && bornOf(w))).forEach((year) => {
+  groupByYear(works.filter(w => w.status !== 'planned' && updatedOf(w))).forEach((year) => {
     frag.appendChild(makeYear(year, index));
     year.months.forEach((month) => {
       index += month.items.length;
@@ -100,12 +110,20 @@ export async function initPortfolio() {
   setupFolioEditorLaunch();
 }
 
+function updatedOf(w) {
+  return String(w.updated || w.started || "").trim();
+}
+
+function startedOf(w) {
+  return String(w.started || "").trim();
+}
+
 function bornOf(w) {
-  return String(w.started || w.updated || "").trim();
+  return updatedOf(w);
 }
 
 function untilOf(w) {
-  return String(w.ended || w.updated || "").trim();
+  return startedOf(w);
 }
 
 function dateParts(value) {
@@ -181,16 +199,16 @@ function srcKey(src) {
 function relatedImages(w) {
   const seen = new Set([srcKey(w.image)].filter(Boolean));
   const out = [];
-  const add = (src) => {
+  const add = (src, caption) => {
     const s = String(src || "").trim();
     const key = srcKey(s);
     if (!s || !key || seen.has(key) || s === String(w.image || "").trim()) return;
     seen.add(key);
-    out.push(s);
+    out.push({ src: s, caption: caption || "" });
   };
-  (Array.isArray(w.images) ? w.images : []).forEach(add);
+  (Array.isArray(w.images) ? w.images : []).forEach(s => add(s));
   (Array.isArray(w.blocks) ? w.blocks : []).forEach((b) => {
-    if (b && b.type === "image") add(b.src);
+    if (b && b.type === "image") add(b.src, b.caption);
   });
   return out;
 }
@@ -264,21 +282,32 @@ function classifyAr(w, h) {
   return "sq";
 }
 
-function makeFig(src, kind, eager, title, number) {
+function makeFig(src, kind, eager, title, number, customCaption) {
   const fig = document.createElement("figure");
   fig.className = `folio-mag__fig folio-mag__fig--${kind}`;
+  const isGif = /\.gif\b/i.test(src);
+  const isIcon = !isGif && /(?:icon|logo|badge|avatar)\b/i.test(src);
+  if (isIcon) fig.classList.add("folio-mag__fig--icon");
+  if (isGif) fig.classList.add("folio-mag__fig--anim");
   const img = document.createElement("img");
   img.src = src;
   img.alt = `${title} · 图 ${String(number).padStart(2, '0')}`;
   img.loading = eager ? "eager" : "lazy";
   img.decoding = "async";
-  const size = imageSizes[src];
+  const sizeEntry = imageSizes[src];
+  const size = Array.isArray(sizeEntry) ? sizeEntry : (sizeEntry?.w ? [sizeEntry.w, sizeEntry.h] : null);
   if (size) {
     [img.width, img.height] = size;
-    fig.dataset.ar = classifyAr(...size);
+    fig.dataset.ar = isGif ? "anim" : classifyAr(size[0], size[1]);
+    if (isIcon && size[0] <= 260 && size[1] <= 260) fig.classList.add("folio-mag__fig--icon");
   }
   const applyAr = () => {
-    fig.dataset.ar = classifyAr(img.naturalWidth, img.naturalHeight);
+    if (isGif) {
+      fig.dataset.ar = "anim";
+    } else {
+      fig.dataset.ar = classifyAr(img.naturalWidth, img.naturalHeight);
+      if (isIcon && img.naturalWidth <= 260 && img.naturalHeight <= 260) fig.classList.add("folio-mag__fig--icon");
+    }
   };
   if (img.complete && img.naturalWidth) applyAr();
   else img.addEventListener("load", applyAr, { once: true });
@@ -289,8 +318,87 @@ function makeFig(src, kind, eager, title, number) {
   }, { once: true });
   fig.appendChild(img);
   const caption = document.createElement('figcaption');
-  caption.textContent = `${String(number).padStart(2, '0')} / ${kind === 'cover' ? 'OVERVIEW' : 'DETAIL'}`;
+  const text = customCaption || mediaCaptions[srcKey(src)] || "";
+  caption.textContent = `${String(number).padStart(2, '0')} / ${kind === 'cover' ? 'OVERVIEW' : 'DETAIL'}${text ? ` · ${text}` : ''}`;
   fig.appendChild(caption);
+  return fig;
+}
+
+function extractBiliVideos(w) {
+  const list = [];
+  const seen = new Set();
+  const candidates = [];
+  if (Array.isArray(w.blocks)) {
+    w.blocks.forEach((b) => {
+      if (b && (b.type === "bilibili" || b.type === "video")) {
+        const u = b.url || (b.bvid ? `https://www.bilibili.com/video/${b.bvid}` : "");
+        if (u) candidates.push({ url: u, label: b.caption || b.label || "实机演示" });
+      }
+    });
+  }
+  if (Array.isArray(w.links)) {
+    w.links.forEach((l) => {
+      if (l && l.url) candidates.push({ url: l.url, label: l.label });
+    });
+  }
+  if (w.url) candidates.push({ url: w.url, label: "在线正片" });
+  if (w.bvid) candidates.push({ url: `https://www.bilibili.com/video/${w.bvid}`, label: "在线正片" });
+
+  for (const c of candidates) {
+    const u = String(c.url || "");
+    const m = u.match(/(BV[0-9a-zA-Z]{10})/i);
+    if (m) {
+      const bvid = m[1];
+      if (!seen.has(bvid)) {
+        seen.add(bvid);
+        const label = c.label && c.label !== "url" && c.label !== "观看视频" ? c.label : "B站视频正片 / 演示";
+        list.push({
+          bvid,
+          label,
+          url: u.startsWith("http") ? u : `https://www.bilibili.com/video/${bvid}`
+        });
+      }
+    }
+  }
+  return list;
+}
+
+function makeBiliFig(item, title, number) {
+  const fig = document.createElement("figure");
+  fig.className = "folio-mag__fig folio-mag__fig--video";
+  fig.dataset.ar = "land";
+
+  const wrap = document.createElement("div");
+  wrap.className = "folio-video-wrap";
+
+  const iframe = document.createElement("iframe");
+  iframe.className = "folio-video-iframe";
+  iframe.src = `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(item.bvid)}&page=1&autoplay=0&danmaku=0&high_quality=1`;
+  iframe.setAttribute("scrolling", "no");
+  iframe.setAttribute("border", "0");
+  iframe.setAttribute("frameborder", "no");
+  iframe.setAttribute("framespacing", "0");
+  iframe.setAttribute("allowfullscreen", "true");
+  iframe.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
+  iframe.setAttribute("loading", "lazy");
+  iframe.title = `${title} · ${item.label}`;
+
+  wrap.appendChild(iframe);
+  fig.appendChild(wrap);
+
+  const caption = document.createElement("figcaption");
+  caption.className = "folio-video-caption";
+  const numSpan = document.createElement("span");
+  numSpan.textContent = `${String(number).padStart(2, "0")} / VIDEO · ${item.label}`;
+  const extLink = document.createElement("a");
+  extLink.className = "folio-video-link";
+  extLink.href = item.url;
+  extLink.target = "_blank";
+  extLink.rel = "noopener noreferrer";
+  extLink.textContent = "在 B 站观看 ↗";
+  caption.append(numSpan, extLink);
+  fig.appendChild(caption);
+
   return fig;
 }
 
@@ -321,16 +429,13 @@ export function makeSlide(w, index = 0) {
   titleText.className = "folio-tab__title-text";
   titleText.textContent = String(w.title || "").replace(/\n/g, " / ");
   title.appendChild(titleText);
-  const until = untilOf(w);
-  const born = bornOf(w);
-  if (until) {
+  const started = startedOf(w);
+  const updated = updatedOf(w);
+  if (started) {
     const stamp = document.createElement("span");
     stamp.className = "folio-tab__until";
-    const untilP = dateParts(until);
-    const bornP = dateParts(born);
-    const withYear = !bornP.y || untilP.y !== bornP.y;
-    stamp.textContent = compactStamp(until, true);
-    stamp.setAttribute("aria-label", `完成日期 ${compactStamp(until, true)}`);
+    stamp.textContent = compactStamp(started, true);
+    stamp.setAttribute("aria-label", `立项/开始日期 ${compactStamp(started, true)}`);
     tab.appendChild(stamp);
   }
   tab.append(day, title);
@@ -385,6 +490,18 @@ export function makeSlide(w, index = 0) {
     note.appendChild(tags);
   }
 
+  if (w.deco) {
+    const decoImg = document.createElement("img");
+    decoImg.className = "folio-card__deco";
+    const decoSrc = typeof w.deco === 'string' ? w.deco : w.deco.src;
+    decoImg.src = decoSrc;
+    decoImg.alt = "";
+    decoImg.loading = "lazy";
+    decoImg.decoding = "async";
+    if (w.deco.pos) decoImg.dataset.pos = w.deco.pos;
+    note.appendChild(decoImg);
+  }
+
 
 
   const rest = restLinks(w);
@@ -404,10 +521,17 @@ export function makeSlide(w, index = 0) {
   }
   mag.appendChild(note);
 
-  relatedImages(w).forEach((src, i) => {
-    const fig = makeFig(src, "extra", false, w.title, i + (cover ? 2 : 1));
+  relatedImages(w).forEach((item, i) => {
+    const fig = makeFig(item.src, "extra", false, w.title, i + (cover ? 2 : 1), item.caption);
     fig.dataset.slot = String(i % 3);
     mag.appendChild(fig);
+  });
+
+  const biliVideos = extractBiliVideos(w);
+  biliVideos.slice(0, 1).forEach((bili, bIdx) => {
+    const figNum = (cover ? 1 : 0) + relatedImages(w).length + bIdx + 1;
+    const biliFig = makeBiliFig(bili, w.title, figNum);
+    mag.appendChild(biliFig);
   });
 
   const brands = brandLinks(w);
@@ -421,7 +545,7 @@ export function makeSlide(w, index = 0) {
   if (!mag.querySelector(".folio-mag__fig")) slide.classList.add("folio-slide--text");
   const longFigure = [...mag.querySelectorAll('.folio-mag__fig')].find(fig => {
     const img = fig.querySelector('img');
-    return img.width && img.height / img.width > 2;
+    return img && img.width && img.height / img.width > 2;
   });
   if (longFigure) {
     mag.classList.add('folio-mag--long');

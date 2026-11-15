@@ -1,258 +1,592 @@
 {
-  "./parts/portfolio/aph-nata.jpg": [
-    819,
-    1600
-  ],
-  "./parts/portfolio/aph-promo.jpg": [
-    1362,
-    979
-  ],
-  "./parts/portfolio/aph-time-reading.jpg": [
-    1473,
-    920
-  ],
-  "./parts/portfolio/attic-home.png": [
-    1160,
-    1441
-  ],
-  "./parts/portfolio/attic.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/axolotl-snake.jpg": [
-    1369,
-    769
-  ],
-  "./parts/portfolio/bubble-cat.png": [
-    388,
-    281
-  ],
-  "./parts/portfolio/dayflow.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/deadwood.png": [
-    1600,
-    900
-  ],
-  "./parts/portfolio/deng-char.png": [
-    828,
-    1077
-  ],
-  "./parts/portfolio/eagle-mebgyicc0ue7n.webp": [
-    1600,
-    900
-  ],
-  "./parts/portfolio/eagle-mebgyicdino0z.webp": [
-    1600,
-    900
-  ],
-  "./parts/portfolio/eagle-mebh26d46t7g2.webp": [
-    800,
-    800
-  ],
-  "./parts/portfolio/eagle-mebh26d4a1lk3.webp": [
-    1487,
-    1600
-  ],
-  "./parts/portfolio/eagle-mebjqabzqkjp2.webp": [
-    1024,
-    720
-  ],
-  "./parts/portfolio/eagle-meeakkytvsmfn.webp": [
-    1600,
-    892
-  ],
-  "./parts/portfolio/eagle-meebxv0n97qn8.webp": [
-    1600,
-    901
-  ],
-  "./parts/portfolio/eagle-meha0cm7cdtz9.webp": [
-    1600,
-    1067
-  ],
-  "./parts/portfolio/eagle-mfi5roxgdnh10.webp": [
-    828,
-    1077
-  ],
-  "./parts/portfolio/eagle-mfj5wz4ahx58d.webp": [
-    1600,
-    1240
-  ],
-  "./parts/portfolio/eagle-mq0bmr5qysqa8.webp": [
-    1271,
-    1600
-  ],
-  "./parts/portfolio/eagle-msohr91hccz07.webp": [
-    1600,
-    1600
-  ],
-  "./parts/portfolio/eagle-mtsdbkmleu5wm.webp": [
-    1600,
-    881
-  ],
-  "./parts/portfolio/eagle-mtswl17rmkn3j.webp": [
-    1527,
-    1080
-  ],
-  "./parts/portfolio/iris-palette.png": [
-    1600,
-    860
-  ],
-  "./parts/portfolio/iris-site.png": [
-    1296,
-    1600
-  ],
-  "./parts/portfolio/irisvista.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/kana-main-dark.png": [
-    1832,
-    1832
-  ],
-  "./parts/portfolio/kana-main-light.png": [
-    1832,
-    1832
-  ],
-  "./parts/portfolio/kana-stamp.jpg": [
-    918,
-    922
-  ],
-  "./parts/portfolio/kana-training-map.png": [
-    1832,
-    1832
-  ],
-  "./parts/portfolio/kana.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/layered-stamp-cover.png": [
-    1326,
-    1034
-  ],
-  "./parts/portfolio/multi-highlight.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/nyota-cover.jpg": [
-    1600,
-    900
-  ],
-  "./parts/portfolio/nyota-sprout.jpg": [
-    1920,
-    1080
-  ],
-  "./parts/portfolio/ocr-xhs-cover.jpg": [
-    1200,
-    1600
-  ],
-  "./parts/portfolio/ocr-xhs-ticket.png": [
-    537,
-    320
-  ],
-  "./parts/portfolio/ocr.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/onestep-full.jpg": [
-    3840,
-    10800
-  ],
-  "./parts/portfolio/onestep.jpg": [
-    568,
-    1600
-  ],
-  "./parts/portfolio/prismify.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/rural-mosaic-cover.png": [
-    855,
-    265
-  ],
-  "./parts/portfolio/sendme-long.png": [
-    604,
-    1600
-  ],
-  "./parts/portfolio/sheepy-guide.png": [
-    1600,
-    900
-  ],
-  "./parts/portfolio/software-cup.jpg": [
-    1840,
-    1035
-  ],
-  "./parts/portfolio/softwarecup-proto.png": [
-    1600,
-    834
-  ],
-  "./parts/portfolio/sos-icon.png": [
-    1600,
-    1600
-  ],
-  "./parts/portfolio/sos-lv3.jpg": [
-    1600,
-    900
-  ],
-  "./parts/portfolio/sos-photo.png": [
-    800,
-    800
-  ],
-  "./parts/portfolio/stamp.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/step-or-sink.jpg": [
-    2682,
-    1508
-  ],
-  "./parts/portfolio/sunflower.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/tenennium.png": [
-    720,
-    720
-  ],
-  "./parts/portfolio/tenon-ipad.png": [
-    800,
-    1151
-  ],
-  "./parts/portfolio/tenon-phone.png": [
-    429,
-    931
-  ],
-  "./parts/portfolio/timegraphics-graduation.jpg": [
-    1706,
-    959
-  ],
-  "./parts/portfolio/timegraphics-original.jpg": [
-    1920,
-    1200
-  ],
-  "./parts/portfolio/unique-venus.jpg": [
-    1920,
-    1080
-  ],
-  "./parts/portfolio/uploads/b128a3b7215f94f040698511.png": [
-    855,
-    265
-  ],
-  "./parts/portfolio/venus-clay.jpg": [
-    1600,
-    1200
-  ],
-  "./parts/portfolio/venus-still.jpg": [
-    1600,
-    900
-  ],
-  "./parts/portfolio/weave-logo.png": [
-    1080,
-    1080
-  ],
-  "./parts/portfolio/weave.png": [
-    720,
-    720
-  ]
+  "./parts/portfolio/airswiper-avatar.png": {
+    "w": 1440,
+    "h": 810,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/airswiper-cover.png": {
+    "w": 1600,
+    "h": 900,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/airswiper-scene.png": {
+    "w": 1600,
+    "h": 900,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/aph-nata.jpg": {
+    "w": 819,
+    "h": 1600,
+    "aspect": 0.512
+  },
+  "./parts/portfolio/aph-promo.jpg": {
+    "w": 1362,
+    "h": 979,
+    "aspect": 1.391
+  },
+  "./parts/portfolio/aph-time-reading.jpg": {
+    "w": 1473,
+    "h": 920,
+    "aspect": 1.601
+  },
+  "./parts/portfolio/asterisk-civ-cover.png": {
+    "w": 1440,
+    "h": 1000,
+    "aspect": 1.44
+  },
+  "./parts/portfolio/asterisk-civ-dome.png": {
+    "w": 1440,
+    "h": 960,
+    "aspect": 1.5
+  },
+  "./parts/portfolio/asterisk-civ-mosaic.png": {
+    "w": 1440,
+    "h": 900,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/asterisk-civ-star.png": {
+    "w": 1432,
+    "h": 1431,
+    "aspect": 1.001
+  },
+  "./parts/portfolio/asterisk-civ-workbench.png": {
+    "w": 1440,
+    "h": 1000,
+    "aspect": 1.44
+  },
+  "./parts/portfolio/attic-home.png": {
+    "w": 1160,
+    "h": 1441,
+    "aspect": 0.805
+  },
+  "./parts/portfolio/attic.png": {
+    "w": 720,
+    "h": 720,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/axolotl-snake.jpg": {
+    "w": 1369,
+    "h": 769,
+    "aspect": 1.78
+  },
+  "./parts/portfolio/babel-tower-cover.png": {
+    "w": 1648,
+    "h": 887,
+    "aspect": 1.858
+  },
+  "./parts/portfolio/babel-tower-icon.png": {
+    "w": 128,
+    "h": 128,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/babel-tower-play.png": {
+    "w": 1672,
+    "h": 941,
+    "aspect": 1.777
+  },
+  "./parts/portfolio/bubble-cat.png": {
+    "w": 388,
+    "h": 281,
+    "aspect": 1.381
+  },
+  "./parts/portfolio/bugoo-studio-activity.png": {
+    "w": 1600,
+    "h": 1000,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/bugoo-studio-cover.png": {
+    "w": 1417,
+    "h": 757,
+    "aspect": 1.872
+  },
+  "./parts/portfolio/bugoo-studio-works.png": {
+    "w": 1417,
+    "h": 757,
+    "aspect": 1.872
+  },
+  "./parts/portfolio/danarena-cards.png": {
+    "w": 1600,
+    "h": 900,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/danarena-cover.png": {
+    "w": 2457,
+    "h": 1341,
+    "aspect": 1.832
+  },
+  "./parts/portfolio/dayflow-cover.png": {
+    "w": 1280,
+    "h": 800,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/deadwood.png": {
+    "w": 1600,
+    "h": 900,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/deng-char.png": {
+    "w": 828,
+    "h": 1077,
+    "aspect": 0.769
+  },
+  "./parts/portfolio/dev-diary-cover.png": {
+    "w": 1417,
+    "h": 757,
+    "aspect": 1.872
+  },
+  "./parts/portfolio/dsh-whale-anim.gif": {
+    "w": 858,
+    "h": 792,
+    "aspect": 1.083
+  },
+  "./parts/portfolio/dsh-whale-cover.png": {
+    "w": 1975,
+    "h": 796,
+    "aspect": 2.481
+  },
+  "./parts/portfolio/eagle-mebgyicdino0z.webp": {
+    "w": 1600,
+    "h": 900,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/eagle-mebh26d46t7g2.webp": {
+    "w": 800,
+    "h": 800,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/eagle-mebh26d4a1lk3.webp": {
+    "w": 1487,
+    "h": 1600,
+    "aspect": 0.929
+  },
+  "./parts/portfolio/eagle-mebjqabzqkjp2.webp": {
+    "w": 1024,
+    "h": 720,
+    "aspect": 1.422
+  },
+  "./parts/portfolio/eagle-meeakkytvsmfn.webp": {
+    "w": 1600,
+    "h": 892,
+    "aspect": 1.794
+  },
+  "./parts/portfolio/eagle-meha0cm7cdtz9.webp": {
+    "w": 1600,
+    "h": 1067,
+    "aspect": 1.5
+  },
+  "./parts/portfolio/eagle-mfi5roxgdnh10.webp": {
+    "w": 828,
+    "h": 1077,
+    "aspect": 0.769
+  },
+  "./parts/portfolio/eagle-mfj5wz4ahx58d.webp": {
+    "w": 1600,
+    "h": 1240,
+    "aspect": 1.29
+  },
+  "./parts/portfolio/eagle-mq0bmr5qysqa8.webp": {
+    "w": 1271,
+    "h": 1600,
+    "aspect": 0.794
+  },
+  "./parts/portfolio/eagle-msohr91hccz07.webp": {
+    "w": 1600,
+    "h": 1600,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/eagle-mtsdbkmleu5wm.webp": {
+    "w": 1600,
+    "h": 881,
+    "aspect": 1.816
+  },
+  "./parts/portfolio/eagle-mtswl17rmkn3j.webp": {
+    "w": 1527,
+    "h": 1080,
+    "aspect": 1.414
+  },
+  "./parts/portfolio/echo-skeleton.gif": {
+    "w": 488,
+    "h": 749,
+    "aspect": 0.652
+  },
+  "./parts/portfolio/ezreader-cover.png": {
+    "w": 2478,
+    "h": 1307,
+    "aspect": 1.896
+  },
+  "./parts/portfolio/fanggezhi-ui.png": {
+    "w": 1122,
+    "h": 1402,
+    "aspect": 0.8
+  },
+  "./parts/portfolio/iris-palette.png": {
+    "w": 1600,
+    "h": 860,
+    "aspect": 1.86
+  },
+  "./parts/portfolio/iris-site.png": {
+    "w": 1296,
+    "h": 1600,
+    "aspect": 0.81
+  },
+  "./parts/portfolio/irisvista-cover.png": {
+    "w": 1837,
+    "h": 988,
+    "aspect": 1.859
+  },
+  "./parts/portfolio/irisvista-hero.png": {
+    "w": 1828,
+    "h": 2977,
+    "aspect": 0.614
+  },
+  "./parts/portfolio/kana-app-icon.png": {
+    "w": 121,
+    "h": 121,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/kana-stamp.jpg": {
+    "w": 918,
+    "h": 922,
+    "aspect": 0.996
+  },
+  "./parts/portfolio/kana.png": {
+    "w": 720,
+    "h": 720,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/layered-stamp-cover.png": {
+    "w": 1326,
+    "h": 1034,
+    "aspect": 1.282
+  },
+  "./parts/portfolio/ledokol-cover.png": {
+    "w": 1280,
+    "h": 800,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/ledokol-game.png": {
+    "w": 1280,
+    "h": 800,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/mouse-orchestra-anim.gif": {
+    "w": 1050,
+    "h": 1036,
+    "aspect": 1.014
+  },
+  "./parts/portfolio/mouse-orchestra-cover.png": {
+    "w": 1350,
+    "h": 839,
+    "aspect": 1.609
+  },
+  "./parts/portfolio/multi-highlight-cover.png": {
+    "w": 1440,
+    "h": 900,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/mushroom-pot-cover.png": {
+    "w": 1672,
+    "h": 941,
+    "aspect": 1.777
+  },
+  "./parts/portfolio/mushroom-pot-poster.png": {
+    "w": 1086,
+    "h": 1448,
+    "aspect": 0.75
+  },
+  "./parts/portfolio/nyota-cover.jpg": {
+    "w": 1600,
+    "h": 900,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/nyota-sprout.jpg": {
+    "w": 1920,
+    "h": 1080,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/ocr-chores-cover.png": {
+    "w": 1280,
+    "h": 800,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/ocr-xhs-ticket.png": {
+    "w": 537,
+    "h": 320,
+    "aspect": 1.678
+  },
+  "./parts/portfolio/onestep-full.jpg": {
+    "w": 3840,
+    "h": 10800,
+    "aspect": 0.356
+  },
+  "./parts/portfolio/papercut-editor-anim.gif": {
+    "w": 1920,
+    "h": 1002,
+    "aspect": 1.916
+  },
+  "./parts/portfolio/papercut-editor-cover.png": {
+    "w": 2477,
+    "h": 1354,
+    "aspect": 1.829
+  },
+  "./parts/portfolio/preview-editorial.png": {
+    "w": 1408,
+    "h": 1704,
+    "aspect": 0.826
+  },
+  "./parts/portfolio/prismify-cover.png": {
+    "w": 1440,
+    "h": 900,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/rural-mosaic-cover.png": {
+    "w": 855,
+    "h": 265,
+    "aspect": 3.226
+  },
+  "./parts/portfolio/sendme-long.png": {
+    "w": 604,
+    "h": 1600,
+    "aspect": 0.378
+  },
+  "./parts/portfolio/sheepy-angel.gif": {
+    "w": 260,
+    "h": 277,
+    "aspect": 0.939
+  },
+  "./parts/portfolio/sheepy-guide.png": {
+    "w": 1600,
+    "h": 900,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/software-cup.jpg": {
+    "w": 1840,
+    "h": 1035,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/softwarecup-proto.png": {
+    "w": 1600,
+    "h": 834,
+    "aspect": 1.918
+  },
+  "./parts/portfolio/sos-icon.png": {
+    "w": 1600,
+    "h": 1600,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/sos-lv3.jpg": {
+    "w": 1600,
+    "h": 900,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/sos-photo.png": {
+    "w": 800,
+    "h": 800,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/step-or-sink.jpg": {
+    "w": 2682,
+    "h": 1508,
+    "aspect": 1.779
+  },
+  "./parts/portfolio/sunflower-anim.gif": {
+    "w": 73,
+    "h": 74,
+    "aspect": 0.986
+  },
+  "./parts/portfolio/syntopo-cover.png": {
+    "w": 2201,
+    "h": 871,
+    "aspect": 2.527
+  },
+  "./parts/portfolio/syntopo-live.png": {
+    "w": 1280,
+    "h": 800,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/tenennium-cover.png": {
+    "w": 1920,
+    "h": 1610,
+    "aspect": 1.193
+  },
+  "./parts/portfolio/tenennium-knowledge.png": {
+    "w": 1641,
+    "h": 894,
+    "aspect": 1.836
+  },
+  "./parts/portfolio/tenon-ipad.png": {
+    "w": 800,
+    "h": 1151,
+    "aspect": 0.695
+  },
+  "./parts/portfolio/tenon-phone.png": {
+    "w": 429,
+    "h": 931,
+    "aspect": 0.461
+  },
+  "./parts/portfolio/textrail-catalog.png": {
+    "w": 1402,
+    "h": 703,
+    "aspect": 1.994
+  },
+  "./parts/portfolio/textrail-cover.png": {
+    "w": 1402,
+    "h": 703,
+    "aspect": 1.994
+  },
+  "./parts/portfolio/textrail-live.png": {
+    "w": 1280,
+    "h": 800,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/timegraphics-graduation.jpg": {
+    "w": 1706,
+    "h": 959,
+    "aspect": 1.779
+  },
+  "./parts/portfolio/timegraphics-original.jpg": {
+    "w": 1920,
+    "h": 1200,
+    "aspect": 1.6
+  },
+  "./parts/portfolio/tokenspy-cover.png": {
+    "w": 1101,
+    "h": 642,
+    "aspect": 1.715
+  },
+  "./parts/portfolio/tokenspy-hud.png": {
+    "w": 394,
+    "h": 575,
+    "aspect": 0.685
+  },
+  "./parts/portfolio/unique-venus.jpg": {
+    "w": 1920,
+    "h": 1080,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/ux-practice-lab-cover.png": {
+    "w": 2430,
+    "h": 1338,
+    "aspect": 1.816
+  },
+  "./parts/portfolio/ux-practice-lab-detail.png": {
+    "w": 1945,
+    "h": 1102,
+    "aspect": 1.765
+  },
+  "./parts/portfolio/ux-practice-lab-logo.png": {
+    "w": 1774,
+    "h": 887,
+    "aspect": 2.0
+  },
+  "./parts/portfolio/venus-clay.jpg": {
+    "w": 1600,
+    "h": 1200,
+    "aspect": 1.333
+  },
+  "./parts/portfolio/weave-cover.png": {
+    "w": 1922,
+    "h": 1077,
+    "aspect": 1.785
+  },
+  "./parts/portfolio/weave-demo.gif": {
+    "w": 1120,
+    "h": 630,
+    "aspect": 1.778
+  },
+  "./parts/portfolio/weave-logo.png": {
+    "w": 1080,
+    "h": 1080,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/whenfree-cover.png": {
+    "w": 1417,
+    "h": 757,
+    "aspect": 1.872
+  },
+  "./parts/portfolio/whenfree-ui.png": {
+    "w": 2457,
+    "h": 1332,
+    "aspect": 1.845
+  },
+  "./parts/portfolio/deco/airswiper-badge.png": {
+    "w": 240,
+    "h": 240,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/deco/asterisk-jade.png": {
+    "w": 220,
+    "h": 200,
+    "aspect": 1.1
+  },
+  "./parts/portfolio/deco/asterisk-tile.png": {
+    "w": 200,
+    "h": 200,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/deco/bugoo-emblem.png": {
+    "w": 214,
+    "h": 220,
+    "aspect": 0.973
+  },
+  "./parts/portfolio/deco/deadwood-web.png": {
+    "w": 240,
+    "h": 207,
+    "aspect": 1.159
+  },
+  "./parts/portfolio/deco/echo-feather.png": {
+    "w": 160,
+    "h": 160,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/deco/echo-seagull.png": {
+    "w": 240,
+    "h": 97,
+    "aspect": 2.474
+  },
+  "./parts/portfolio/deco/onestep-avatar.png": {
+    "w": 180,
+    "h": 148,
+    "aspect": 1.216
+  },
+  "./parts/portfolio/deco/onestep-frame.png": {
+    "w": 320,
+    "h": 105,
+    "aspect": 3.048
+  },
+  "./parts/portfolio/deco/sheepy-black.png": {
+    "w": 200,
+    "h": 162,
+    "aspect": 1.235
+  },
+  "./parts/portfolio/deco/sink-cat.png": {
+    "w": 200,
+    "h": 126,
+    "aspect": 1.587
+  },
+  "./parts/portfolio/deco/sink-dolphin.png": {
+    "w": 220,
+    "h": 132,
+    "aspect": 1.667
+  },
+  "./parts/portfolio/deco/sticker-circle.png": {
+    "w": 161,
+    "h": 180,
+    "aspect": 0.894
+  },
+  "./parts/portfolio/deco/sticker-flower.png": {
+    "w": 185,
+    "h": 200,
+    "aspect": 0.925
+  },
+  "./parts/portfolio/deco/weave-emblem.png": {
+    "w": 240,
+    "h": 240,
+    "aspect": 1.0
+  },
+  "./parts/portfolio/uploads/b128a3b7215f94f040698511.png": {
+    "w": 855,
+    "h": 265,
+    "aspect": 3.226
+  }
 }

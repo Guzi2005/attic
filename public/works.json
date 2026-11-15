@@ -1,41 +1,577 @@
 [
   {
+    "id": "dsh-whale",
+    "title": "DSH鲸鱼娘挂件\ndsh-whale-combo",
+    "category": "tool",
+    "started": "2026-10-21",
+    "updated": "2026-10-22",
+    "status": "done",
+    "blurb": "桌面级用量汇报悬浮挂件，基于双模型用量实时监控设计。支持多状态微表情动画与交互提示，让桌面陪伴与 AI 用量管理融为一体。",
+    "tags": [
+      "插件",
+      "桌宠",
+      "Godot",
+      "用量日记"
+    ],
+    "image": "./parts/portfolio/dsh-whale-cover.png",
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/dsh-whale-anim.gif",
+        "caption": "DSH鲸鱼娘挂件 · 悬浮交互与动态表情实机录制"
+      }
+    ]
+  },
+  {
+    "id": "danarena",
+    "title": "DanArena",
+    "blurb": "Web 互动实验项目。",
+    "image": "./parts/portfolio/danarena-cover.png",
+    "url": "",
+    "category": "ugc",
+    "source": "dev-diary",
+    "tags": [
+      "Web"
+    ],
+    "links": [],
+    "started": "2026-09",
+    "updated": "2026-11-13",
+    "status": "in-development",
+    "images": [],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/danarena-cards.png",
+        "caption": "DanArena · 卡牌规则与角色对弈场景"
+      }
+    ]
+  },
+  {
+    "id": "mushroom-pot",
+    "title": "MushroomPot · 野菌小馆",
+    "blurb": "Godot 4.7 制作的 7 日挑战小游戏工程《野菌小馆》，探索 AI 原生游戏开发工作流。",
+    "image": "./parts/portfolio/mushroom-pot-cover.png",
+    "url": "",
+    "category": "games",
+    "source": "dev-diary",
+    "tags": [
+      "Godot",
+      "游戏",
+      "AI原生"
+    ],
+    "links": [],
+    "started": "2026-10-19",
+    "updated": "2026-10-22",
+    "status": "in-development",
+    "images": [
+      "./parts/portfolio/mushroom-pot-cover.png"
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/mushroom-pot-poster.png",
+        "caption": "菌子小馆 · 竖版海报"
+      }
+    ]
+  },
+  {
+    "id": "whenfree",
+    "title": "对表 · WhenFree",
+    "blurb": "多人活动有空时间收集 Web 应用：支持拖拽框选课表一键排除、热力图聚合与日/周/月/年多视图切换。",
+    "image": "./parts/portfolio/whenfree-cover.png",
+    "url": "https://github.com/Guzi2005/duibiao-whenfree",
+    "category": "tools",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "工具",
+      "协作"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/duibiao-whenfree"
+      }
+    ],
+    "started": "2026-10-22",
+    "updated": "2026-10-28",
+    "status": "in-development",
+    "images": [],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/whenfree-ui.png",
+        "caption": "对表 WhenFree · 网页版多端时间对齐交互界面"
+      }
+    ]
+  },
+  {
+    "id": "tokenspy",
+    "title": "TokenSpy",
+    "blurb": "本地桌宠式 AI 用量看板与额度同步工具，实时监测各家模型剩余额度与消耗。",
+    "image": "./parts/portfolio/tokenspy-cover.png",
+    "url": "https://github.com/Guzi2005/rockabuddy",
+    "category": "tools",
+    "source": "dev-diary",
+    "tags": [
+      "桌宠",
+      "AI",
+      "效率工具"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/rockabuddy"
+      }
+    ],
+    "started": "2026-09",
+    "updated": "2026-10-28",
+    "status": "in-development",
+    "images": [],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/tokenspy-hud.png",
+        "caption": "TokenSpy · 桌面悬浮 HUD 实时监控"
+      }
+    ]
+  },
+  {
+    "id": "mouse-orchestra",
+    "title": "鼠鼠 Orchestra · Mouse Orchestra",
+    "blurb": "23 位鼠鼠组成的桌面乐团：实时捕捉系统音频并识别乐器音色与人声，由不同皮肤、头饰的鼠鼠同步演奏响应。",
+    "image": "./parts/portfolio/mouse-orchestra-cover.png",
+    "url": "https://github.com/Guzi2005/mouse-orchestra",
+    "category": "tools",
+    "source": "dev-diary",
+    "tags": [
+      "桌宠",
+      "音频",
+      "Python"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/mouse-orchestra"
+      }
+    ],
+    "started": "2026-09-27",
+    "updated": "2026-11-15",
+    "status": "in-development",
+    "images": [
+      "./parts/portfolio/mouse-orchestra-anim.gif"
+    ],
+    "blocks": []
+  },
+  {
+    "id": "dev-diary",
+    "title": "开发日记 · DevDiary",
+    "blurb": "汇总 Codex、Cursor、WorkBuddy、Kimi、DeepSeek、Gemini 等本地 AI Agent 日志，按项目自动生成日报、周报、月报、年报与活动热力图。",
+    "image": "./parts/portfolio/dev-diary-cover.png",
+    "url": "https://github.com/Guzi2005/dev-diary",
+    "category": "tools",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "可视化",
+      "AI Agent",
+      "效率工具"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/dev-diary"
+      }
+    ],
+    "started": "2026-10",
+    "updated": "2026-11-16",
+    "status": "in-development",
+    "images": [],
+    "blocks": []
+  },
+  {
+    "id": "papercut-editor",
+    "title": "剪纸资产编辑器 · 百工工坊",
+    "blurb": "面向《针脚与远方》与 Godot 4 的浏览器端矢量剪纸资产编辑器：支持剪纸、笔刀、纸娃娃、图章与织带纹样笔刷，可导出 SVG、PNG 与 Godot 场景。",
+    "image": "./parts/portfolio/papercut-editor-cover.png",
+    "url": "https://github.com/Guzi2005/papercut-editor",
+    "category": "tools",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "编辑器",
+      "Godot",
+      "矢量"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/papercut-editor"
+      }
+    ],
+    "started": "2026-09",
+    "updated": "2026-11-01",
+    "status": "in-development",
+    "images": [],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/papercut-editor-anim.gif",
+        "caption": "剪纸资产编辑器 · Godot 实机操作录屏"
+      }
+    ]
+  },
+  {
+    "id": "airswiper",
+    "title": "闪光怪盗 · Airswiper",
+    "blurb": "Godot 开发的 2D 潜行窃宝游戏，结合 AI 原生工作流与手绘剪纸风图层，在博物馆展厅等场景中躲避守卫完成盗宝挑战。",
+    "image": "./parts/portfolio/airswiper-cover.png",
+    "url": "",
+    "category": "games",
+    "source": "dev-diary",
+    "tags": [
+      "Godot",
+      "游戏",
+      "AI原生"
+    ],
+    "links": [],
+    "started": "2026-10",
+    "updated": "2026-11-15",
+    "status": "in-development",
+    "images": [
+      "./parts/portfolio/airswiper-scene.png"
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/airswiper-avatar.png",
+        "caption": "闪光怪盗 · 人物揭示与交互对话界面"
+      }
+    ],
+    "deco": "./parts/portfolio/deco/airswiper-badge.png"
+  },
+  {
+    "id": "ledokol",
+    "title": "LEDOKOL · 破冰船本地单词本",
+    "blurb": "结合 AI 定时问候与六角敲冰小游戏的纯静态多语种（英/日/俄）单词本，词库与学习记录完全保存在本地浏览器。",
+    "image": "./parts/portfolio/ledokol-game.png",
+    "url": "https://github.com/Guzi2005/ledokol",
+    "category": "tools",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "背单词",
+      "小游戏",
+      "工具"
+    ],
+    "links": [
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/ledokol"
+      }
+    ],
+    "started": "2026-10-31",
+    "updated": "2026-11-15",
+    "status": "in-development",
+    "images": [
+      "./parts/portfolio/ledokol-cover.png"
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/ledokol-cover.png",
+        "caption": "破冰船 · 驾驶舱状态与词库管理仪表盘"
+      }
+    ]
+  },
+  {
+    "id": "bugoo-studio",
+    "title": "布谷工作室官网 · Bugoo Studio",
+    "blurb": "武汉大学游戏开发社团「布谷工作室」官方网站：作品库、成员介绍、活动月历与议程时间轴、实用工具导航及管理后台。",
+    "image": "./parts/portfolio/bugoo-studio-cover.png",
+    "url": "https://www.bugoostudio.com",
+    "category": "ugc",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "Next.js",
+      "社团官网"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "直达网站",
+        "url": "https://www.bugoostudio.com"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Cyoltose509/Bugu-studio"
+      }
+    ],
+    "started": "2026",
+    "updated": "2026-11-15",
+    "status": "in-development",
+    "images": [
+      "./parts/portfolio/bugoo-studio-works.png",
+      "./parts/portfolio/bugoo-studio-activity.png"
+    ],
+    "blocks": [],
+    "deco": "./parts/portfolio/deco/bugoo-emblem.png"
+  },
+  {
+    "id": "babel-tower",
+    "title": "巴别塔的寓言 · Babel Tower",
+    "blurb": "基于 Three.js 的 3D 攀塔群体控制小游戏：已部署上线，在语言分裂背景下维系探险小队并赶在巴别塔倒塌前登顶；支持光标驱动的动态视线穿透（X-Ray）、古绿洲多层枣椰树与沙漠生态群落。",
+    "image": "./parts/portfolio/babel-tower-cover.png",
+    "url": "https://babeltower.fluorescentmice.fun",
+    "category": "games",
+    "source": "dev-diary",
+    "tags": [
+      "3D",
+      "Web",
+      "游戏",
+      "Three.js"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "直达网站",
+        "url": "https://babeltower.fluorescentmice.fun"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/Babel-Tower"
+      }
+    ],
+    "started": "2025",
+    "updated": "2026-11-16",
+    "status": "in-development",
+    "images": [
+      "./parts/portfolio/babel-tower-play.png"
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/babel-tower-play.png",
+        "caption": "巴别：失落的同位语 · 语义拼合交互实机"
+      }
+    ],
+    "deco": "./parts/portfolio/deco/sticker-flower.png"
+  },
+  {
+    "id": "syntopo",
+    "title": "句拓 · Syntopo",
+    "blurb": "优化阅读障碍者阅读体验的视觉句法电子阅读器，通过句法结构分析与视觉层级排布降低长句认知负担；已部署上线，并与「EZReader 实验阅读器」实现线上互联互通。",
+    "image": "./parts/portfolio/syntopo-cover.png",
+    "url": "https://syntopo.fluorescentmice.fun",
+    "category": "tools",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "无障碍",
+      "阅读器",
+      "句法排版"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "直达网站",
+        "url": "https://syntopo.fluorescentmice.fun"
+      }
+    ],
+    "started": "2026-10-24",
+    "updated": "2026-11-16",
+    "status": "in-development",
+    "images": [],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/syntopo-live.png",
+        "caption": "句拓 Syntopo · 句子拓扑关系在线交互分析"
+      }
+    ]
+  },
+  {
+    "id": "ezreader",
+    "title": "EZReader · 「视界」实验阅读器",
+    "blurb": "大学生电子阅读界面交互偏好与包容性设计实验平台：接入 Cloudflare Worker + D1 数据库与 Vercel 云端服务，实现受试者阅读偏好与行为数据实时采集（preference-exploration-v4 协议）与在线管理后台；提供全自由排版与无障碍辅助（专注标尺、仿生阅读、网页朗读、12 组预设），并在线打通「句拓 · 视觉句法阅读」实现多维阅读联动。",
+    "image": "./parts/portfolio/ezreader-cover.png",
+    "url": "https://ez-reader-lab.fluorescentmice.fun",
+    "category": "tools",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "无障碍",
+      "阅读器",
+      "HCI",
+      "Cloudflare D1"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "直达网站",
+        "url": "https://ez-reader-lab.fluorescentmice.fun"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/EZReader"
+      }
+    ],
+    "started": "2026-10-16",
+    "updated": "2026-11-16",
+    "status": "in-development",
+    "images": [],
+    "blocks": []
+  },
+  {
+    "id": "asterisk-civ",
+    "title": "文明的星空 · AsteriskCIV",
+    "blurb": "以星形纹样（3~n 芒星）为线索的跨文化非遗比较与数字人文平台：已打通 Cloudflare Pages + Worker + D1 数据库云端联动，支持全功能在线账号体系、用户投稿与管理审核闭环，并通过动态 API 实时合入公开档案库；内置 Three.js 3D 穹庐天幕漫游、Ultra Water FFT 水波流冰模拟、松冷针阔混交林生态、程序化生灵贴地与重力提灯交互、马赛克星图及几何采编工作台。",
+    "image": "./parts/portfolio/asterisk-civ-cover.png",
+    "url": "https://asterisk.civ.fluorescentmice.fun",
+    "category": "ugc",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "数字人文",
+      "3D",
+      "非遗",
+      "Cloudflare D1"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "直达网站",
+        "url": "https://asterisk.civ.fluorescentmice.fun"
+      }
+    ],
+    "started": "2026-10-19",
+    "updated": "2026-11-16",
+    "status": "in-development",
+    "images": [
+      "./parts/portfolio/asterisk-civ-mosaic.png",
+      "./parts/portfolio/asterisk-civ-workbench.png",
+      "./parts/portfolio/asterisk-civ-dome.png"
+    ],
+    "blocks": [],
+    "deco": "./parts/portfolio/deco/asterisk-jade.png"
+  },
+  {
+    "id": "textrail",
+    "title": "文踪字驿 · TexTrail",
+    "blurb": "近现代中文书面表达时空差异可视化与语料档案（1903—1965）：已部署上线，收录 85 条跨年代转录正文（约 39.7 万汉字），提供时间热力图、字频上下文检索与作者籍贯/出版地多层级地理钻取。",
+    "image": "./parts/portfolio/textrail-cover.png",
+    "url": "https://textrail.fluorescentmice.fun",
+    "category": "ugc",
+    "source": "dev-diary",
+    "tags": [
+      "Web",
+      "数字人文",
+      "数据可视化",
+      "语料库"
+    ],
+    "links": [
+      {
+        "kind": "live",
+        "label": "直达网站",
+        "url": "https://textrail.fluorescentmice.fun"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/textrail"
+      }
+    ],
+    "started": "2026-11",
+    "updated": "2026-11-16",
+    "status": "in-development",
+    "images": [
+      "./parts/portfolio/textrail-catalog.png"
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/textrail-live.png",
+        "caption": "TexTrail · 轨迹化沉浸双语阅读器在线版"
+      }
+    ]
+  },
+  {
     "id": "rural-mosaic-archive",
-    "title": "江浙沪农村自建房瓷砖马赛克画档案",
-    "blurb": "江浙沪农村自建房瓷砖马赛克画档案。",
-    "status": "planned",
+    "title": "方格志 · 城乡瓷砖马赛克画档案",
+    "blurb": "城乡景观众包归档与拼砖工具平台：收录江浙沪农村自建房瓷砖马赛克画档案，并提供照片透视采样、像素画编辑、数字积木立面生成与拼图 Playground。",
+    "status": "in-development",
     "image": "./parts/portfolio/rural-mosaic-cover.png",
     "category": "ugc",
     "tags": [
+      "Web",
       "档案",
       "乡土建筑",
-      "瓷砖马赛克"
+      "瓷砖马赛克",
+      "工具"
     ],
     "links": [],
-    "blocks": [],
-    "images": []
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/fanggezhi-ui.png",
+        "caption": "方格志 · 乡村自建房瓷砖立面档案与拼图工作台"
+      }
+    ],
+    "images": [
+      "./parts/portfolio/fanggezhi-ui.png"
+    ],
+    "started": "2026",
+    "updated": "2026-11-15",
+    "deco": "./parts/portfolio/deco/asterisk-tile.png"
   },
   {
     "id": "ux-practice-lab",
     "title": "UX Practice Lab",
-    "blurb": "",
-    "image": "",
+    "blurb": "交互设计练习与作品画廊：收录 UX 设计实践、设计灵感导航与个人实验页面。",
+    "image": "./parts/portfolio/ux-practice-lab-cover.png",
     "url": "https://ux-practice-lab.fluorescentmice.fun",
     "category": "tools",
     "source": "cursor",
-    "tags": [],
+    "tags": [
+      "Web",
+      "UX",
+      "交互设计"
+    ],
     "links": [
       {
         "kind": "live",
         "label": "直达网站",
         "url": "https://ux-practice-lab.fluorescentmice.fun"
+      },
+      {
+        "kind": "github",
+        "label": "GitHub",
+        "url": "https://github.com/Guzi2005/ux-practice-lab"
       }
     ],
     "started": "2026-09-03",
-    "updated": "2026-09-23",
+    "updated": "2026-10-28",
     "status": "in-development",
-    "images": [],
-    "blocks": []
+    "images": [
+      "./parts/portfolio/ux-practice-lab-logo.png"
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/ux-practice-lab-detail.png",
+        "caption": "UX Practice Lab · 多维体验指标与设计分析"
+      }
+    ]
   },
   {
     "id": "attic",
@@ -72,7 +608,7 @@
       }
     ],
     "started": "2026-08",
-    "updated": "2026-09-19",
+    "updated": "2026-11-16",
     "category": "tools",
     "description_source": "https://github.com/Guzi2005/attic",
     "description_status": "source",
@@ -82,7 +618,7 @@
     "id": "irisvista",
     "title": "云上虹 IrisVista",
     "blurb": "云上虹 IrisVista — 民族服饰色彩数字人文平台",
-    "image": "",
+    "image": "./parts/portfolio/irisvista-cover.png",
     "url": "https://irisvista.fluorescentmice.fun",
     "source": "cursor",
     "tags": [
@@ -111,14 +647,6 @@
       {
         "type": "text",
         "text": "云上虹 IrisVista — 民族服饰色彩数字人文平台 | Digital Humanities Platform for Ethnic Costume Color Culture"
-      },
-      {
-        "type": "image",
-        "src": "./parts/portfolio/iris-palette.png"
-      },
-      {
-        "type": "image",
-        "src": "./parts/portfolio/iris-site.png"
       }
     ],
     "started": "2026-08-08",
@@ -126,13 +654,15 @@
     "category": "ugc",
     "description_source": "https://github.com/Guzi2005/irisvista",
     "description_status": "source-excerpt",
-    "images": []
+    "images": [
+      "./parts/portfolio/irisvista-hero.png"
+    ]
   },
   {
     "id": "tenennium",
     "title": "Tenennium · 榫卯 · 木构千年",
     "blurb": "中国古代榫卯结构知识图谱 — 3D Knowledge Graph of Chinese Mortise-Tenon Joinery",
-    "image": "./parts/portfolio/tenennium.png",
+    "image": "./parts/portfolio/tenennium-cover.png",
     "url": "https://tenennium.fluorescentmice.fun",
     "source": "cursor",
     "tags": [
@@ -155,8 +685,7 @@
     "started": "2026-08-10",
     "updated": "2026-09-15",
     "images": [
-      "./parts/portfolio/tenon-ipad.png",
-      "./parts/portfolio/tenon-phone.png"
+      "./parts/portfolio/tenennium-knowledge.png"
     ],
     "category": "ugc",
     "description_source": "https://github.com/Guzi2005/sunmao-knowledge-graph",
@@ -204,7 +733,7 @@
     "id": "one-step-away",
     "title": "留步 / One Step Away",
     "blurb": "One Step Away — Godot 4.7 photographic narrative game",
-    "image": "./parts/portfolio/onestep-full.jpg",
+    "image": "./parts/portfolio/eagle-mtswl17rmkn3j.webp",
     "url": "https://onestepaway.fluorescentmice.fun",
     "source": "bugoo",
     "tags": [
@@ -231,17 +760,21 @@
     ],
     "started": "2026-03",
     "updated": "2026-09-08",
-    "images": [],
+    "images": [
+      "./parts/portfolio/eagle-mtsdbkmleu5wm.webp",
+      "./parts/portfolio/onestep-full.jpg"
+    ],
     "category": "games",
     "description_source": "https://github.com/FluorescentMice/OneStepAway",
     "description_status": "source",
-    "blocks": []
+    "blocks": [],
+    "deco": "./parts/portfolio/deco/onestep-avatar.png"
   },
   {
     "id": "ocr-xhs-receipt",
     "title": "小红书数据采集小票机",
     "blurb": "为正大杯项目制作的小红书笔记采集工具，将采集结果整理为小票形式。",
-    "image": "./parts/portfolio/ocr-xhs-cover.jpg",
+    "image": "./parts/portfolio/ocr-xhs-ticket.png",
     "url": "",
     "source": "cursor",
     "tags": [
@@ -252,9 +785,7 @@
     "started": "2026-02-22",
     "updated": "2026-08-13",
     "ended": "2026-08-13",
-    "images": [
-      "./parts/portfolio/ocr-xhs-ticket.png"
-    ],
+    "images": [],
     "category": "tools",
     "description_status": "draft",
     "blocks": [],
@@ -285,40 +816,56 @@
     "description_source": "https://www.bugoostudio.com/works/saga-of-deadwood",
     "description_status": "source",
     "images": [],
-    "blocks": []
+    "blocks": [],
+    "deco": "./parts/portfolio/deco/deadwood-web.png"
   },
   {
     "id": "weave-and-wander",
-    "title": "WeaveAndWander",
-    "blurb": "使用 Godot 制作的游戏实验。",
-    "image": "",
+    "title": "针脚与远方 / Weave & Wander",
+    "blurb": "以传统织物与手工艺为灵感的 2.5D/3D 数字人文箱庭游戏：包含 3D 纪念品木偶工坊仿真制作与跨文化服饰图鉴 Wiki。",
+    "image": "./parts/portfolio/weave-cover.png",
     "url": "https://github.com/FluorescentMice/WeaveAndWander",
     "source": "fluorescentmice",
     "tags": [
       "Godot",
-      "实验"
+      "游戏",
+      "数字人文",
+      "3D"
     ],
     "links": [
       {
         "kind": "github",
         "label": "GitHub",
         "url": "https://github.com/FluorescentMice/WeaveAndWander"
+      },
+      {
+        "kind": "github",
+        "label": "Wiki 仓库",
+        "url": "https://github.com/Guzi2005/weave-and-wander-wiki"
       }
     ],
     "started": "2026-06-26",
-    "updated": "2026-06-26",
+    "updated": "2026-11-15",
     "images": [
-      "./parts/portfolio/weave-logo.png"
+      "./parts/portfolio/weave-demo.gif"
     ],
     "category": "games",
     "description_status": "draft",
-    "blocks": []
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/weave-demo.gif",
+        "caption": "针脚与远方 · Godot 2.5D 原型动态漫游实机"
+      }
+    ],
+    "status": "in-development",
+    "deco": "./parts/portfolio/deco/weave-emblem.png"
   },
   {
     "id": "dayflow-news",
     "title": "Dayflow News",
     "blurb": "增加更多皮肤，主要是报纸风格~ ⏱️ AI 驱动的智能时间追踪工具 (Windows) - 后台静默录屏，自动分析你的时间都花在哪了",
-    "image": "",
+    "image": "./parts/portfolio/dayflow-cover.png",
     "url": "https://github.com/Guzi2005/Dayflow-News",
     "source": "cursor",
     "tags": [
@@ -351,7 +898,7 @@
     "id": "prismify",
     "title": "Prismify",
     "blurb": "Prismify 是一款以墨水屏风格为特色的聚合搜索引擎，支持多维度分类检索、多端自适应布局及一键气泡发射模式。",
-    "image": "./parts/portfolio/prismify.png",
+    "image": "./parts/portfolio/prismify-cover.png",
     "url": "https://prismify-all-in-one.vercel.app",
     "source": "fluorescentmice",
     "tags": [
@@ -384,7 +931,7 @@
     "id": "sunflower-pet",
     "title": "【Py/Zombies on Your Lawn】桌宠向日葵的音频捕捉唱跳rap",
     "blurb": "200多行代码做的一个简易pvz向日葵桌宠，会随音乐rock起来，已经导致我听音乐必开电脑",
-    "image": "",
+    "image": "./parts/portfolio/sunflower-anim.gif",
     "url": "https://www.bilibili.com/video/BV1zR9uYvEpR",
     "source": "cursor",
     "tags": [
@@ -417,7 +964,7 @@
     "id": "ocr-word-game",
     "title": "OCR 文字清障台",
     "blurb": "完全面向豆包编程的一个文字处理网页。专攻OCR后遗症之空格清除、标点补正、关键词强调、回车样式等，再也不用一个一个一个一个inline删改了",
-    "image": "",
+    "image": "./parts/portfolio/ocr-chores-cover.png",
     "url": "https://github.com/Guzi2005/OCR-Word-Game-Chores-1-Page-4-All-Based-on-TRAE",
     "source": "cursor",
     "tags": [
@@ -441,7 +988,9 @@
     "updated": "2026-02-23",
     "ended": "2026-02-23",
     "category": "tools",
-    "images": [],
+    "images": [
+      "./parts/portfolio/ocr-xhs-ticket.png"
+    ],
     "blocks": [],
     "description_source": "https://github.com/Guzi2005/OCR-Word-Game-Chores-1-Page-4-All-Based-on-TRAE",
     "description_status": "source"
@@ -450,7 +999,7 @@
     "id": "multi-highlight",
     "title": "Multi Highlight",
     "blurb": "Efficiently and flexibly highlight your online reading.",
-    "image": "",
+    "image": "./parts/portfolio/multi-highlight-cover.png",
     "url": "https://chromewebstore.google.com/detail/multi-highlight/ghinpogonpmlphfkmnjfapdaoaainejn",
     "source": "cursor",
     "tags": [
@@ -670,13 +1219,14 @@
     "description_source": "https://www.bugoostudio.com/works/step-or-sink-2",
     "description_status": "source",
     "blocks": [],
-    "series_parent": "step-or-sink"
+    "series_parent": "step-or-sink",
+    "deco": "./parts/portfolio/deco/sink-cat.png"
   },
   {
     "id": "hira-katakana",
     "title": "五十音 · Hira-Katakana Learning",
     "blurb": "轻量的五十音桌面练习程序：平/片假名双向识别、深浅模式、连胜纪录、熟练度热力图 + 错字加强训练。",
-    "image": "./parts/portfolio/kana-main-light.png",
+    "image": "./parts/portfolio/kana.png",
     "url": "https://github.com/Guzi2005/Hira-Katakana_Learning",
     "source": "cursor",
     "tags": [
@@ -695,9 +1245,6 @@
     "updated": "2025-05-10",
     "ended": "2025-05-10",
     "images": [
-      "./parts/portfolio/kana-app-icon.png",
-      "./parts/portfolio/kana-main-dark.png",
-      "./parts/portfolio/kana-training-map.png",
       "./parts/portfolio/kana-stamp.jpg"
     ],
     "category": "tools",
@@ -773,7 +1320,14 @@
     "category": "games",
     "description_source": "https://www.bugoostudio.com/works/sheepy-sleep",
     "description_status": "source",
-    "blocks": []
+    "blocks": [
+      {
+        "type": "image",
+        "src": "./parts/portfolio/sheepy-angel.gif",
+        "caption": "咩咩晚安物语 · 天使羊 Spine 呼吸引导动画"
+      }
+    ],
+    "deco": "./parts/portfolio/deco/sheepy-black.png"
   },
   {
     "id": "send-me-2-the-missing",
@@ -907,7 +1461,11 @@
     "category": "ugc",
     "started": "2021-08-08",
     "updated": "2021-08-08",
-    "tags": [],
+    "tags": [
+      "手书",
+      "动画",
+      "历史"
+    ],
     "links": [
       {
         "kind": "bilibili",
@@ -943,6 +1501,7 @@
     ],
     "images": [],
     "blocks": [],
-    "series_title": "Step or Sink / 池沼物语"
+    "series_title": "Step or Sink / 池沼物语",
+    "deco": "./parts/portfolio/deco/sink-dolphin.png"
   }
 ]
