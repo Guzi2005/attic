@@ -1,0 +1,16 @@
+{
+  "name": "attic-cf",
+  "main": "./cloudflare/worker.mjs",
+  "compatibility_date": "2026-10-30",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "attic.fluorescentmice.fun/*", "zone_name": "fluorescentmice.fun" },
+    { "pattern": "www.fluorescentmice.fun/*", "zone_name": "fluorescentmice.fun" },
+    { "pattern": "fluorescentmice.fun/*", "zone_name": "fluorescentmice.fun" }
+  ],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}

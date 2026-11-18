@@ -24,6 +24,9 @@ assets/tmp_inventory*.json
 # Vercel local CLI cache
 .vercel/
 
+# Cloudflare local cache
+.wrangler/
+
 # Local server logs
 assets/*.log
 
